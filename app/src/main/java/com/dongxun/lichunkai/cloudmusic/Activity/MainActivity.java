@@ -12,7 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -22,8 +22,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dongxun.lichunkai.cloudmusic.Class.MusicMediaPlayer;
+import com.dongxun.lichunkai.cloudmusic.Class.Song;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.R;
+import com.dongxun.lichunkai.cloudmusic.Util.PermissionUtil;
 import com.gyf.immersionbar.ImmersionBar;
 
 import org.json.JSONArray;
@@ -46,6 +48,7 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private String TAG = "MainActivity";
     private ImageView imageView_search;
 
     //其他
@@ -102,8 +105,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void getPermission() {
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.WRITE_APN_SETTINGS},502);
+            PermissionUtil.getInstance().requestSD(this);
         }else {
             createDirectory();
         }
@@ -113,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
             case 502:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     createDirectory();
                 }else {
                     Toast.makeText(this,"用户拒绝了权限申请",Toast.LENGTH_SHORT).show();
@@ -172,7 +174,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent_play);
                 break;
             case R.id.imageView_playOrPause:
-                Toast.makeText(this,"暂停/播放",Toast.LENGTH_SHORT).show();
+                //发送本地广播播放
+                Intent intent_broadcast = new Intent("com.dongxun.lichunkai.cloudmusic.MUSIC_BROADCAST");
+                intent_broadcast.putExtra("ACTION","PLAY_PAUSE");
+                LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+                localBroadcastManager.sendBroadcast(intent_broadcast);
                 break;
             case R.id.imageView_list:
                 Toast.makeText(this,"歌单",Toast.LENGTH_SHORT).show();
@@ -278,6 +284,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 os.close();
                 is.close();
             }
+            //显示时间
+            Common.song_playing.setSunTime(getAudioFileVoiceTime(fileName));
             //播放
             musicMediaPlayer.initMediaPlayer(this);
             musicMediaPlayer.startOption();
@@ -286,8 +294,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * 获取音频文件的总时长大小(毫秒)
+     *
+     * @param filePath 音频文件路径
+     * @return 返回时长大小
+     */
+    public int getAudioFileVoiceTime(String filePath) {
+        long mediaPlayerDuration = 0L;
+        if (filePath == null || filePath.isEmpty()) {
+            return 0;
+        }
+        MediaPlayer mediaPlayer = new MediaPlayer();
+        try {
+            mediaPlayer.setDataSource(filePath);
+            mediaPlayer.prepare();
+            mediaPlayerDuration = mediaPlayer.getDuration();
+        } catch (IOException ioException) {
+            ioException.getMessage();
+        }
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.reset();
+            mediaPlayer.release();
+        }
+        return (int) mediaPlayerDuration;
+    }
 
-    class MusicReceiver extends BroadcastReceiver {
+    @Override
+    protected void onResume() {
+        //更新歌曲显示
+        textView_name.setText(Common.song_playing.getName() == null?"暂无歌曲":Common.song_playing.getName());
+        super.onResume();
+    }
+
+    public class MusicReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -299,9 +340,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     musicMediaPlayer.stopOption();
                     //获取歌曲信息并下载播放
                     getSongUrl();
+                    //更新UI
+                    imageView_playOrPause.setImageResource(R.drawable.logo_pause2);
                     break;
                 case "PLAY_PAUSE":
                     //暂停/播放
+                    if (musicMediaPlayer.isPlayingOption()){
+                        //暂停
+                        musicMediaPlayer.pauseOption();
+                        imageView_playOrPause.setImageResource(R.drawable.logo_play2);
+                        Common.state_playing = false;
+                    }else {
+                        //播放
+                        musicMediaPlayer.startOption();
+                        imageView_playOrPause.setImageResource(R.drawable.logo_pause2);
+                        Common.state_playing = true;
+                    }
                     break;
                 case "LAST":
                     //上一曲
@@ -320,6 +374,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case "LIST":
                     //歌曲列表
+                    break;
+                case "CHANGEPROGRESS":
+                    //歌曲列表
+                    Toast.makeText(context,"更改钢琴曲进度："+ Common.changeProgress,Toast.LENGTH_SHORT).show();
+                    musicMediaPlayer.seekToOption();
+                    break;
+                case "COMPLETE":
+                    //播放完当前音频
+                    Toast.makeText(context,"播放完当前音频",Toast.LENGTH_SHORT).show();
+                    musicMediaPlayer.pauseOption();
+
+
+                    Common.changeProgress = 0;
+                    musicMediaPlayer.seekToOption();
+                    Common.state_playing = false;
+                    //更改UI
+                    imageView_playOrPause.setImageResource(R.drawable.logo_play);
                     break;
             }
         }

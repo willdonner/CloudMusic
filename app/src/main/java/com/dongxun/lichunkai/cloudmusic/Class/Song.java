@@ -8,6 +8,24 @@ public class Song {
     private String artist;//艺术家
     private Bitmap cover;//封面图Bitmap
     private String coverURL;//封面图URL
+    private int sunTime;//歌曲总时间
+    private int nowTime;//歌曲当前播放到的时间
+
+    public int getNowTime() {
+        return nowTime;
+    }
+
+    public void setNowTime(int nowTime) {
+        this.nowTime = nowTime;
+    }
+
+    public int getSunTime() {
+        return sunTime;
+    }
+
+    public void setSunTime(int sunTime) {
+        this.sunTime = sunTime;
+    }
 
     public String getCoverURL() {
         return coverURL;

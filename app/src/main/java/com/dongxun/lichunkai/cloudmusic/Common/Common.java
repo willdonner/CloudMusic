@@ -17,6 +17,9 @@ public class Common {
     //播放状态
     public static Boolean state_playing = false;
 
+    //调整进度变量
+    public static int changeProgress = 0;
+
     //当前歌单
     public static List<Song> songList = new ArrayList<>();
 

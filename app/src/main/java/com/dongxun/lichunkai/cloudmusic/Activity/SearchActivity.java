@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -90,7 +91,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                 intent_broadcast.putExtra("ACTION","PLAYNEW");
                 LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(SearchActivity.this);
                 localBroadcastManager.sendBroadcast(intent_broadcast);
-                //跳转
+                //跳转(带参数，说明是播放新歌曲)
                 Intent intent = new Intent(SearchActivity.this,PlayActivity.class);
                 startActivity(intent);
             }
