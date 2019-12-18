@@ -381,16 +381,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     musicMediaPlayer.seekToOption();
                     break;
                 case "COMPLETE":
+                    //更改UI
+                    imageView_playOrPause.setImageResource(R.drawable.logo_play2);
                     //播放完当前音频
                     Toast.makeText(context,"播放完当前音频",Toast.LENGTH_SHORT).show();
                     musicMediaPlayer.pauseOption();
 
-
                     Common.changeProgress = 0;
                     musicMediaPlayer.seekToOption();
                     Common.state_playing = false;
-                    //更改UI
-                    imageView_playOrPause.setImageResource(R.drawable.logo_play);
+
                     break;
             }
         }

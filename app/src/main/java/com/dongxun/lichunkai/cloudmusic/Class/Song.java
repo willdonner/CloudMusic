@@ -10,6 +10,24 @@ public class Song {
     private String coverURL;//封面图URL
     private int sunTime;//歌曲总时间
     private int nowTime;//歌曲当前播放到的时间
+    private String lyric;//歌词
+    private String lyricURL;//歌词URL
+
+    public String getLyricURL() {
+        return lyricURL;
+    }
+
+    public void setLyricURL(String lyricURL) {
+        this.lyricURL = lyricURL;
+    }
+
+    public String getLyric() {
+        return lyric;
+    }
+
+    public void setLyric(String lyric) {
+        this.lyric = lyric;
+    }
 
     public int getNowTime() {
         return nowTime;

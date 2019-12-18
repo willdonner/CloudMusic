@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,9 +22,19 @@ import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.gyf.immersionbar.ImmersionBar;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class PlayActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
@@ -41,6 +52,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView imageView_list;
     private TextView textView_nowTime;
     private TextView textView_sumTime;
+
     //其他
     private LocalBroadcastManager localBroadcastManager;
     private TimeReceiver timeReceiver;
@@ -77,10 +89,15 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         textView_name.setText(Common.song_playing.getName());
         textView_author.setText(Common.song_playing.getArtist());
         if (Common.song_playing.getCover() != null){
+            //显示封面
             imageView_coverImg.setImageBitmap(Common.song_playing.getCover());
         }else {
+            //加载封面
             if (!(Common.song_playing.getCoverURL() == null))getCoverImage(Common.song_playing.getCoverURL());
         }
+        //加载歌词
+        if (!(Common.song_playing.getId() == null))getLyric(Common.song_playing.getId());
+
         if (Common.state_playing) imageView_playOrPause.setImageResource(R.drawable.logo_pause);
         else imageView_playOrPause.setImageResource(R.drawable.logo_play);
         textView_sumTime.setText(generateTime(Common.song_playing.getSunTime()));
@@ -137,6 +154,52 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                     });
                     is.close();
                 } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * 加载歌词
+     * @param id：歌曲ID
+     */
+    public void getLyric(final String id) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
+                    //和风请求方式
+                    Request request = new Request.Builder()
+                            .url("https://api.imjad.cn/cloudmusic/?type=lyric&id="+ id +"")
+                            .build();//创建一个Request对象
+                    //第三步构建Call对象
+                    Call call = client.newCall(request);
+                    //第四步:异步get请求
+                    call.enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                        }
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            final String responseData = response.body().string();//处理返回的数据
+                            //解析歌词
+                            try {
+                                String lycir = new JSONObject(responseData).getJSONObject("lrc").getString("lyric");
+                                Common.song_playing.setLyric(lycir);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        //显示歌词
+                                    }
+                                });
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }catch (Exception e){
                     e.printStackTrace();
                 }
             }
@@ -284,6 +347,11 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                     if (Common.state_playing) imageView_playOrPause.setImageResource(R.drawable.logo_pause);
                     else imageView_playOrPause.setImageResource(R.drawable.logo_play);
                     seekBar.setMax(Common.song_playing.getSunTime());
+                    if (updateSeekbar) seekBar.setProgress(Common.song_playing.getNowTime());
+                    break;
+                case "COMPLETE":
+                    imageView_playOrPause.setImageResource(R.drawable.logo_play);
+                    if (updateSeekbar) textView_nowTime.setText(generateTime(Common.song_playing.getNowTime()));
                     if (updateSeekbar) seekBar.setProgress(Common.song_playing.getNowTime());
                     break;
             }

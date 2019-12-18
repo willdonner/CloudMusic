@@ -47,11 +47,17 @@ public class MusicMediaPlayer extends MediaPlayer {
         mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
+                Common.song_playing.setNowTime(0);
                 //发送播放完广播
                 Intent intent_broadcast = new Intent("com.dongxun.lichunkai.cloudmusic.MUSIC_BROADCAST");
                 intent_broadcast.putExtra("ACTION","COMPLETE");
                 LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
                 localBroadcastManager.sendBroadcast(intent_broadcast);
+                //发送播放完广播
+                Intent intent_broadcast2 = new Intent("com.dongxun.lichunkai.cloudmusic.TIME_BROADCAST");
+                intent_broadcast2.putExtra("ACTION","COMPLETE");
+                LocalBroadcastManager localBroadcastManager2 = LocalBroadcastManager.getInstance(context);
+                localBroadcastManager2.sendBroadcast(intent_broadcast2);
             }
         });
         timer = new Timer();
