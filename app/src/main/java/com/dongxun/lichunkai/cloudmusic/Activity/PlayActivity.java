@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -22,6 +23,8 @@ import com.dongxun.lichunkai.cloudmusic.Class.Lyric;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.gyf.immersionbar.ImmersionBar;
+import com.martinrgb.animer.Animer;
+import com.martinrgb.animer.core.interpolator.AndroidNative.AccelerateDecelerateInterpolator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,6 +74,10 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private Boolean updateSeekbar = true;//是否更新进度条，用户自行调整进度时使用
 
 
+    private int time1000 = 15000;
+    Handler handler = new Handler();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +87,26 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         initView();
         initReceiver();
     }
+
+    //歌词滚动动画
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                handler.postDelayed(this,time1000);
+                // 创建一个 Animer 解算器对象，采用了原生的插值动画类
+                Animer.AnimerSolver solver1  = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(),7000);
+
+// 模仿 ObjectAnimator 的构造
+                Animer animer1 = new Animer(imageView_coverImg,solver1,Animer.ROTATION,0,360);
+
+                animer1.start();
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    };
 
     /**
      * 初始化状态栏
@@ -313,6 +340,13 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 }else {
                     //播放
                     imageView_playOrPause.setImageResource(R.drawable.logo_pause);
+                    Animer.AnimerSolver solver1  = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(),15000);
+
+// 模仿 ObjectAnimator 的构造
+                    Animer animer1 = new Animer(imageView_coverImg,solver1,Animer.ROTATION,0,360);
+
+                    animer1.start();
+                    handler.postDelayed(runnable, time1000);
                 }
                 break;
             case R.id.imageView_nextSong:

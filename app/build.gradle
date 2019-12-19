@@ -5,7 +5,7 @@ android {
     buildToolsVersion "29.0.1"
     defaultConfig {
         applicationId "com.dongxun.lichunkai.cloudmusic"
-        minSdkVersion 15
+        minSdkVersion 26
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -34,4 +34,6 @@ dependencies {
     // fragment快速实现（可选）
     implementation 'com.gyf.immersionbar:immersionbar-components:3.0.0'
     implementation 'com.google.android.material:material:1.0.0'
+    //動畫animer
+    implementation 'com.martinrgb:animer:0.1.5.7'
 }
