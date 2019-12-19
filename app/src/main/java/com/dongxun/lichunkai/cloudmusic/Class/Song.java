@@ -2,6 +2,8 @@ package com.dongxun.lichunkai.cloudmusic.Class;
 
 import android.graphics.Bitmap;
 
+import java.util.List;
+
 public class Song {
     private String name;//歌曲名
     private String id;//歌曲ID
@@ -10,8 +12,16 @@ public class Song {
     private String coverURL;//封面图URL
     private int sunTime;//歌曲总时间
     private int nowTime;//歌曲当前播放到的时间
-    private String lyric;//歌词
+    private List<Lyric> lyricList;//歌词
     private String lyricURL;//歌词URL
+
+    public List<Lyric> getLyricList() {
+        return lyricList;
+    }
+
+    public void setLyricList(List<Lyric> lyricList) {
+        this.lyricList = lyricList;
+    }
 
     public String getLyricURL() {
         return lyricURL;
@@ -21,13 +31,6 @@ public class Song {
         this.lyricURL = lyricURL;
     }
 
-    public String getLyric() {
-        return lyric;
-    }
-
-    public void setLyric(String lyric) {
-        this.lyric = lyric;
-    }
 
     public int getNowTime() {
         return nowTime;

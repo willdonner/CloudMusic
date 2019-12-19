@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
                     //和风请求方式
                     Request request = new Request.Builder()
-                            .url("https://api.imjad.cn/cloudmusic/?type=song&id="+ Common.song_playing.getId() +"")
+                            .url("https://api.imjad.cn/cloudmusic/?type=song&id="+ Common.song_playing.getId() +"&br=320000")
                             .build();//创建一个Request对象
                     //第三步构建Call对象
                     Call call = client.newCall(request);

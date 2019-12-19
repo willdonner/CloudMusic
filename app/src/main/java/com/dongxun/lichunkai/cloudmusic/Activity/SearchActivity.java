@@ -61,6 +61,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private RecyclerView recyclerView_result;
 
     private SearchAdapter searchAdapter;
+    private LinearLayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +78,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
      * 初始化适配器
      */
     private void initAdapter() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager = new LinearLayoutManager(this);
         recyclerView_result.setLayoutManager(layoutManager);
         searchAdapter = new SearchAdapter(songList);
         recyclerView_result.setAdapter(searchAdapter);
@@ -219,6 +220,9 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    //回到顶部并应用更改
+                    layoutManager.scrollToPosition(0);
+                    layoutManager.setStackFromEnd(true);
                     searchAdapter.notifyDataSetChanged();
                 }
             });

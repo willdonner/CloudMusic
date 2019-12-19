@@ -16,6 +16,8 @@ public class Common {
     public static Song song_playing = new Song();
     //播放状态
     public static Boolean state_playing = false;
+    //歌词位置
+    public static int lyricPosition_playing = 0;
 
     //调整进度变量
     public static int changeProgress = 0;

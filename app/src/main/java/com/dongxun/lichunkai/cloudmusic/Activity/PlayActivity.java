@@ -18,6 +18,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dongxun.lichunkai.cloudmusic.Class.Lyric;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.gyf.immersionbar.ImmersionBar;
@@ -29,6 +30,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -52,13 +56,17 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView imageView_list;
     private TextView textView_nowTime;
     private TextView textView_sumTime;
+    private TextView textView_lastLyric;
+    private TextView textView_nowLyric;
+    private TextView textView_nextLyric;
+
 
     //其他
     private LocalBroadcastManager localBroadcastManager;
     private TimeReceiver timeReceiver;
     private IntentFilter intentFilter;
 
-    private String TAG = "PlayActivity";
+    private static String TAG = "PlayActivity";
 
     private Boolean updateSeekbar = true;//是否更新进度条，用户自行调整进度时使用
 
@@ -186,12 +194,32 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                             final String responseData = response.body().string();//处理返回的数据
                             //解析歌词
                             try {
-                                String lycir = new JSONObject(responseData).getJSONObject("lrc").getString("lyric");
-                                Common.song_playing.setLyric(lycir);
+                                String lycirs = new JSONObject(responseData).getJSONObject("lrc").getString("lyric");
+                                Log.d(TAG, "onResponse: "+lycirs.trim());
+
+                                final List<Lyric> lyricList = new ArrayList<>();
+                                String[] we = lycirs.split("\n");
+                                for (String x:we){
+                                    if (isInteger(x.substring(1,3))) {
+                                        String time = x.substring(x.indexOf("[")+1,x.indexOf("]"));
+                                        String text = x.substring(x.indexOf("]")+1);
+                                        Lyric lyric = new Lyric();
+                                        lyric.setTime(toMillisecond(time));
+                                        lyric.setText(text);
+                                        if (text.trim().length()!=0) lyricList.add(lyric);
+                                    }
+                                }
+
+                                Common.song_playing.setLyricList(lyricList);
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         //显示歌词
+                                        Log.d(TAG, "run: ————————————————————————————————————");
+                                        for (Lyric lyric:lyricList){
+                                            Log.d(TAG, "onResponse: "+lyric.getTime()+"："+lyric.getText());
+                                        }
+
                                     }
                                 });
                             } catch (JSONException e) {
@@ -207,6 +235,28 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
+     * 将歌词时间转换为毫秒
+     * @param str
+     * @return
+     */
+    public static int toMillisecond(String str) {
+        int minute = Integer.valueOf(str.substring(0,2));
+        int second = Integer.valueOf(str.substring(3,5));
+        int millisecond = Integer.valueOf(str.substring(6));
+        return minute*60*1000+second*1000+millisecond;
+    }
+
+    /**
+     * 判断是否为数字
+     * @param str
+     * @return
+     */
+    public static boolean isInteger(String str) {
+        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+        return pattern.matcher(str).matches();
+    }
+
+    /**
      * 初始化组件
      */
     private void initView() {
@@ -215,7 +265,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         imageView_close = findViewById(R.id.imageView_close);
         imageView_close.setOnClickListener(this);
         imageView_coverImg = findViewById(R.id.imageView_coverImg);
-        imageView_coverImg.setOnClickListener(this);
         textView_nowTime = findViewById(R.id.textView_nowTime);
         textView_sumTime = findViewById(R.id.textView_sumTime);
         seekBar = findViewById(R.id.seekBar);
@@ -236,6 +285,9 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         imageView_comments.setOnClickListener(this);
         imageView_list = findViewById(R.id.imageView_list);
         imageView_list.setOnClickListener(this);
+        textView_lastLyric = findViewById(R.id.textView_lastLyric);
+        textView_nowLyric  = findViewById(R.id.textView_nowLyric);
+        textView_nextLyric  = findViewById(R.id.textView_nextLyric);
     }
 
     @Override
@@ -243,9 +295,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()){
             case R.id.imageView_close:
                 finish();
-                break;
-            case R.id.imageView_coverImg:
-                Toast.makeText(this,"封面",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.imageView_lastSong:
                 Toast.makeText(this,"上一曲",Toast.LENGTH_SHORT).show();
@@ -353,6 +402,15 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                     imageView_playOrPause.setImageResource(R.drawable.logo_play);
                     if (updateSeekbar) textView_nowTime.setText(generateTime(Common.song_playing.getNowTime()));
                     if (updateSeekbar) seekBar.setProgress(Common.song_playing.getNowTime());
+                    break;
+                case "LYRIC":
+                    //歌词滚动
+                    Toast.makeText(context,"歌词滚动",Toast.LENGTH_SHORT).show();
+                    if (Common.song_playing.getLyricList().size()>0){
+                        textView_lastLyric.setText(Common.song_playing.getLyricList().get(Common.lyricPosition_playing-1).getText());
+                        textView_nowLyric.setText(Common.song_playing.getLyricList().get(Common.lyricPosition_playing).getText());
+                        textView_nextLyric.setText(Common.song_playing.getLyricList().get(Common.lyricPosition_playing+1).getText());
+                    }
                     break;
             }
         }
