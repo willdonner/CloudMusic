@@ -440,11 +440,11 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 case "LYRIC":
                     //歌词滚动
                     Toast.makeText(context,"歌词滚动",Toast.LENGTH_SHORT).show();
-                    if (Common.song_playing.getLyricList().size()>0){
-                        textView_lastLyric.setText(Common.song_playing.getLyricList().get(Common.lyricPosition_playing-1).getText());
-                        textView_nowLyric.setText(Common.song_playing.getLyricList().get(Common.lyricPosition_playing).getText());
-                        textView_nextLyric.setText(Common.song_playing.getLyricList().get(Common.lyricPosition_playing+1).getText());
-                    }
+//                    if (Common.song_playing.getLyricList().size()>0){
+//                        textView_lastLyric.setText(Common.song_playing.getLyricList().get(Common.lyricPosition_playing-1).getText());
+//                        textView_nowLyric.setText(Common.song_playing.getLyricList().get(Common.lyricPosition_playing).getText());
+//                        textView_nextLyric.setText(Common.song_playing.getLyricList().get(Common.lyricPosition_playing+1).getText());
+//                    }
                     break;
             }
         }

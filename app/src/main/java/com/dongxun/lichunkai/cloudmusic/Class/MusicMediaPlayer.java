@@ -87,17 +87,17 @@ public class MusicMediaPlayer extends MediaPlayer {
             @Override
             public void run() {
                 if (Common.state_playing){
-                    if (Common.song_playing.getLyricList().get(Common.lyricPosition_playing).getTime() <= mediaPlayer.getCurrentPosition()){
-                        Common.lyricPosition_playing++;
+//                    if (Common.song_playing.getLyricList().get(Common.lyricPosition_playing).getTime() <= mediaPlayer.getCurrentPosition()){
+//                        Common.lyricPosition_playing++;
                         //发送刷新时间广播
                         Intent intent_broadcast = new Intent("com.dongxun.lichunkai.cloudmusic.TIME_BROADCAST");
                         intent_broadcast.putExtra("ACTION","LYRIC");
                         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
                         localBroadcastManager.sendBroadcast(intent_broadcast);
-                    }
+//                    }
                 }
             }
-        },0,100);
+        },0,1000);
     }
 
 

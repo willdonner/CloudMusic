@@ -1,7 +1,6 @@
 package com.dongxun.lichunkai.cloudmusic.PopWindow;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
@@ -49,7 +48,7 @@ public class PlayWindow extends PopupWindow implements View.OnClickListener, See
         super(context);
         mContext = context;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mMenuView = inflater.inflate(R.layout.playwindow, null);
+        mMenuView = inflater.inflate(R.layout.popwindow_play, null);
         setContentView(mMenuView);
 
         //设置弹窗宽度

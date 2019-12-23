@@ -68,11 +68,5 @@
 
         </LinearLayout>
 
-        <include
-            android:id="@+id/play"
-            layout="@layout/play"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true" />
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

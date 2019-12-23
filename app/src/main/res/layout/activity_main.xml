@@ -29,7 +29,7 @@
                 android:src="@drawable/search" />
         </LinearLayout>
 
-        <include layout="@layout/play"
+        <include layout="@layout/playing"
             android:id="@+id/play"
             android:layout_alignParentBottom="true"
             android:layout_height="wrap_content"
