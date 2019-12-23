@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.dongxun.lichunkai.cloudmusic.Class.MusicMediaPlayer;
 import com.dongxun.lichunkai.cloudmusic.Class.Song;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
+import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.dongxun.lichunkai.cloudmusic.Util.PermissionUtil;
 import com.dongxun.lichunkai.cloudmusic.Util.ToolHelper;
@@ -195,10 +196,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.imageView_playOrPause:
                 //发送本地广播播放
-                Intent intent_broadcast = new Intent("com.dongxun.lichunkai.cloudmusic.MUSIC_BROADCAST");
-                intent_broadcast.putExtra("ACTION","PLAY_PAUSE");
-                LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-                localBroadcastManager.sendBroadcast(intent_broadcast);
+                SendLocalBroadcast.playOrPause(this);
                 break;
             case R.id.imageView_list:
                 Toast.makeText(this,"歌单",Toast.LENGTH_SHORT).show();

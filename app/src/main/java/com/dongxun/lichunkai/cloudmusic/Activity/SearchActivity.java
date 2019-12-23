@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.dongxun.lichunkai.cloudmusic.Adapter.SearchAdapter;
 import com.dongxun.lichunkai.cloudmusic.Class.Song;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
+import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 import com.dongxun.lichunkai.cloudmusic.PopWindow.PlayWindow;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.gyf.immersionbar.ImmersionBar;
@@ -88,10 +89,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                 //更改公共变量
                 Common.song_playing = songList.get(position);
                 //发送本地广播播放
-                Intent intent_broadcast = new Intent("com.dongxun.lichunkai.cloudmusic.MUSIC_BROADCAST");
-                intent_broadcast.putExtra("ACTION","PLAYNEW");
-                LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(SearchActivity.this);
-                localBroadcastManager.sendBroadcast(intent_broadcast);
+                SendLocalBroadcast.playNew(SearchActivity.this);
                 //跳转(带参数，说明是播放新歌曲)
                 Intent intent = new Intent(SearchActivity.this,PlayActivity.class);
                 startActivity(intent);
@@ -231,6 +229,10 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    /**
+     * 点击事件
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()){

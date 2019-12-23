@@ -43,7 +43,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         mList = searchHistoryList;
     }
 
-    //第一步 定义接口（点击城市标签）
+    //第一步 定义接口（点击播放/菜单）
     public interface OnItemClickListener {
         void onClickPlay(int position);
         void onClickMenu(int position);

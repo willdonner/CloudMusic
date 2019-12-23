@@ -13,6 +13,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.dongxun.lichunkai.cloudmusic.Activity.MainActivity;
 import com.dongxun.lichunkai.cloudmusic.Activity.PlayActivity;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
+import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,15 +54,9 @@ public class MusicMediaPlayer extends MediaPlayer {
             public void onCompletion(MediaPlayer mediaPlayer) {
                 Common.song_playing.setNowTime(0);
                 //发送播放完广播
-                Intent intent_broadcast = new Intent("com.dongxun.lichunkai.cloudmusic.MUSIC_BROADCAST");
-                intent_broadcast.putExtra("ACTION","COMPLETE");
-                LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
-                localBroadcastManager.sendBroadcast(intent_broadcast);
+                SendLocalBroadcast.completeMusic(context);
                 //发送播放完广播
-                Intent intent_broadcast2 = new Intent("com.dongxun.lichunkai.cloudmusic.TIME_BROADCAST");
-                intent_broadcast2.putExtra("ACTION","COMPLETE");
-                LocalBroadcastManager localBroadcastManager2 = LocalBroadcastManager.getInstance(context);
-                localBroadcastManager2.sendBroadcast(intent_broadcast2);
+                SendLocalBroadcast.completeTime(context);
             }
         });
         //歌曲进度子线程（1000ms刷新一次)
@@ -73,10 +68,7 @@ public class MusicMediaPlayer extends MediaPlayer {
                     Common.song_playing.setNowTime(mediaPlayer.getCurrentPosition());
                     Log.e("TAG","没隔1秒执行一次操作" + Common.song_playing.getNowTime());
                     //发送刷新时间广播
-                    Intent intent_broadcast = new Intent("com.dongxun.lichunkai.cloudmusic.TIME_BROADCAST");
-                    intent_broadcast.putExtra("ACTION","REFRESH");
-                    LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
-                    localBroadcastManager.sendBroadcast(intent_broadcast);
+                    SendLocalBroadcast.refreshTime(context);
                 }
             }
         },0,1000);
@@ -90,10 +82,7 @@ public class MusicMediaPlayer extends MediaPlayer {
 //                    if (Common.song_playing.getLyricList().get(Common.lyricPosition_playing).getTime() <= mediaPlayer.getCurrentPosition()){
 //                        Common.lyricPosition_playing++;
                         //发送刷新时间广播
-                        Intent intent_broadcast = new Intent("com.dongxun.lichunkai.cloudmusic.TIME_BROADCAST");
-                        intent_broadcast.putExtra("ACTION","LYRIC");
-                        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
-                        localBroadcastManager.sendBroadcast(intent_broadcast);
+                        SendLocalBroadcast.refreshLyric(context);
 //                    }
                 }
             }
