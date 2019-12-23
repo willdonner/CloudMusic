@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.Class.MusicMediaPlayer;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
@@ -192,8 +193,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent_play);
                 break;
             case R.id.imageView_playOrPause:
-                //发送本地广播播放
-                SendLocalBroadcast.playOrPause(this);
+                if (Common.song_playing.getId() != null) {
+                    //发送本地广播播放
+                    SendLocalBroadcast.playOrPause(this);
+                }else {
+                    Toast.makeText(this,"当前暂无歌曲，快去选一首吧",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.imageView_list:
                 Toast.makeText(this,"歌单",Toast.LENGTH_SHORT).show();

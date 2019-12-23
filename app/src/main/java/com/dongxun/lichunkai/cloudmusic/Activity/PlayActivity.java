@@ -326,33 +326,52 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 finish();
                 break;
             case R.id.imageView_lastSong:
-                SendLocalBroadcast.last(this);
+                if (Common.songList.size() != 0) {
+                    SendLocalBroadcast.last(this);
+                }else {
+                    Toast.makeText(this,"歌单空空如也",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.imageView_playOrPause:
                 Toast.makeText(this,"播放/暂停",Toast.LENGTH_SHORT).show();
-//                Toast.makeText(this,(Common.state_playing).toString(),Toast.LENGTH_SHORT).show();
-                //发送本地广播播放
-                SendLocalBroadcast.playOrPause(this);
-                //更新UI
-                if (Common.state_playing){
-                    //暂停
-                    imageView_playOrPause.setImageResource(R.drawable.logo_play);
+                if (Common.song_playing.getId() != null) {
+                    //发送本地广播播放
+                    SendLocalBroadcast.playOrPause(this);
+                    //更新UI
+                    if (Common.state_playing){
+                        //暂停
+                        imageView_playOrPause.setImageResource(R.drawable.logo_play);
+                    }else {
+                        //播放
+                        imageView_playOrPause.setImageResource(R.drawable.logo_pause);
+                    }
                 }else {
-                    //播放
-                    imageView_playOrPause.setImageResource(R.drawable.logo_pause);
+                    Toast.makeText(this,"当前暂无歌曲，快去选一首吧",Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.imageView_nextSong:
-                SendLocalBroadcast.next(this);
+                if (Common.songList.size() != 0) {
+                    SendLocalBroadcast.next(this);
+                }else {
+                    Toast.makeText(this,"歌单空空如也",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.imageView_like:
-                Toast.makeText(this,"收藏",Toast.LENGTH_SHORT).show();
+                if (Common.song_playing.getId() != null) {
+                    Toast.makeText(this,"收藏",Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(this,"当前暂无歌曲，快去选一首吧",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.imageView_loop:
                 Toast.makeText(this,"循环",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.imageView_comments:
-                Toast.makeText(this,"评论",Toast.LENGTH_SHORT).show();
+                if (Common.song_playing.getId() != null) {
+                    Toast.makeText(this,"评论",Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(this,"当前暂无歌曲，快去选一首吧",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.imageView_list:
                 Toast.makeText(this,"歌单",Toast.LENGTH_SHORT).show();
@@ -369,35 +388,42 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
      */
     @Override
     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-        switch (seekBar.getId()){
-            case R.id.seekBar:
-                if (!updateSeekbar)textView_nowTime.setText(generateTime(Long.valueOf(seekBar.getProgress())));
-                break;
+        if (Common.song_playing.getId() != null) {
+            switch (seekBar.getId()){
+                case R.id.seekBar:
+                    if (!updateSeekbar)textView_nowTime.setText(generateTime(Long.valueOf(seekBar.getProgress())));
+                    break;
+            }
         }
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        switch (seekBar.getId()){
-            case R.id.seekBar:
-                Log.d(TAG, "onStartTrackingTouch: 开始");
-                updateSeekbar = false;
-                break;
+        if (Common.song_playing.getId() != null) {
+            switch (seekBar.getId()){
+                case R.id.seekBar:
+                    Log.d(TAG, "onStartTrackingTouch: 开始");
+                    updateSeekbar = false;
+                    break;
+            }
         }
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        switch (seekBar.getId()){
-            case R.id.seekBar:
-                Log.d(TAG, "onStartTrackingTouch: 结束");
-                updateSeekbar = true;
-                //调整歌曲进度
-                Common.changeProgress = Integer.valueOf(seekBar.getProgress());
-                //发送广播
-                SendLocalBroadcast.changeProgress(this);
-                break;
+        if (Common.song_playing.getId() != null) {
+            switch (seekBar.getId()){
+                case R.id.seekBar:
+                    Log.d(TAG, "onStartTrackingTouch: 结束");
+                    updateSeekbar = true;
+                    //调整歌曲进度
+                    Common.changeProgress = Integer.valueOf(seekBar.getProgress());
+                    //发送广播
+                    SendLocalBroadcast.changeProgress(this);
+                    break;
+            }
         }
+
     }
 
     /**
