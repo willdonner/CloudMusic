@@ -18,6 +18,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ import com.dongxun.lichunkai.cloudmusic.Class.Song;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.dongxun.lichunkai.cloudmusic.Util.PermissionUtil;
+import com.dongxun.lichunkai.cloudmusic.Util.ToolHelper;
 import com.gyf.immersionbar.ImmersionBar;
 
 import org.json.JSONArray;
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MusicMediaPlayer musicMediaPlayer;
 
     //底部布局组件
+    private LinearLayout LinearLayout_playing;
     private TextView textView_name;
     private ImageView imageView_playOrPause;
     private ImageView imageView_list;
@@ -95,6 +98,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String path_cover=sd.getPath()+"/CloudMusic/jpg";
         File file_cover=new File(path_cover);
         if(!file_cover.exists())
+            file_cover.mkdir();
+        //创建歌词文件夹
+        String path_lyric=sd.getPath()+"/CloudMusic/lyric";
+        File file_lyric=new File(path_lyric);
+        if(!file_lyric.exists())
+            file_cover.mkdir();
+        //创建歌曲详情文件夹
+        String path_details=sd.getPath()+"/CloudMusic/details";
+        File file_details=new File(path_details);
+        if(!file_details.exists())
             file_cover.mkdir();
     }
 
@@ -133,14 +146,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         imageView_search.setOnClickListener(this);
 
         //底部组件
+        LinearLayout_playing = findViewById(R.id.LinearLayout_playing);
+        LinearLayout_playing.setOnClickListener(this);
+        imageView_head = findViewById(R.id.imageView_head);
         textView_name = findViewById(R.id.textView_name);
-        textView_name.setOnClickListener(this);
         imageView_playOrPause = findViewById(R.id.imageView_playOrPause);
         imageView_playOrPause.setOnClickListener(this);
         imageView_list = findViewById(R.id.imageView_list);
         imageView_list.setOnClickListener(this);
 
-        imageView_head = findViewById(R.id.imageView_head);
     }
 
     /**
@@ -164,6 +178,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+    /**
+     * 点击事件
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -171,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intent_search = new Intent(MainActivity.this,SearchActivity.class);
                 startActivity(intent_search);
                 break;
-            case R.id.textView_name:
+            case R.id.LinearLayout_playing:
                 Intent intent_play = new Intent(MainActivity.this,PlayActivity.class);
                 startActivity(intent_play);
                 break;
@@ -287,7 +305,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 is.close();
             }
             //显示时间
-            Common.song_playing.setSunTime(getAudioFileVoiceTime(fileName));
+            Common.song_playing.setSunTime(ToolHelper.getAudioFileVoiceTime(fileName));
             //播放
             musicMediaPlayer.initMediaPlayer(this);
             musicMediaPlayer.startOption();
@@ -296,32 +314,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /**
-     * 获取音频文件的总时长大小(毫秒)
-     *
-     * @param filePath 音频文件路径
-     * @return 返回时长大小
-     */
-    public int getAudioFileVoiceTime(String filePath) {
-        long mediaPlayerDuration = 0L;
-        if (filePath == null || filePath.isEmpty()) {
-            return 0;
-        }
-        MediaPlayer mediaPlayer = new MediaPlayer();
-        try {
-            mediaPlayer.setDataSource(filePath);
-            mediaPlayer.prepare();
-            mediaPlayerDuration = mediaPlayer.getDuration();
-        } catch (IOException ioException) {
-            ioException.getMessage();
-        }
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.reset();
-            mediaPlayer.release();
-        }
-        return (int) mediaPlayerDuration;
-    }
+
 
     @Override
     protected void onResume() {
@@ -330,6 +323,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onResume();
     }
 
+    /**
+     * 本地广播接收器（音乐控制）
+     */
     public class MusicReceiver extends BroadcastReceiver {
 
         @Override
@@ -408,6 +404,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onDestroy();
     }
 
+    /**
+     * 最小化
+     */
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);

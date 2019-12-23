@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -60,6 +61,33 @@ public class ToolHelper {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * 获取音频文件的总时长大小(毫秒)
+     *
+     * @param filePath 音频文件路径
+     * @return 返回时长大小
+     */
+    public static int getAudioFileVoiceTime(String filePath) {
+        long mediaPlayerDuration = 0L;
+        if (filePath == null || filePath.isEmpty()) {
+            return 0;
+        }
+        MediaPlayer mediaPlayer = new MediaPlayer();
+        try {
+            mediaPlayer.setDataSource(filePath);
+            mediaPlayer.prepare();
+            mediaPlayerDuration = mediaPlayer.getDuration();
+        } catch (IOException ioException) {
+            ioException.getMessage();
+        }
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.reset();
+            mediaPlayer.release();
+        }
+        return (int) mediaPlayerDuration;
     }
 
 
