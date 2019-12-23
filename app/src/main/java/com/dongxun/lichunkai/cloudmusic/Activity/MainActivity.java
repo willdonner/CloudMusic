@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(!file_song.exists())
             file_song.mkdir();
         //创建封面文件夹
-        String path_cover=sd.getPath()+"/CloudMusic/jpg";
+        String path_cover=sd.getPath()+"/CloudMusic/cover";
         File file_cover=new File(path_cover);
         if(!file_cover.exists())
             file_cover.mkdir();
@@ -103,12 +103,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String path_lyric=sd.getPath()+"/CloudMusic/lyric";
         File file_lyric=new File(path_lyric);
         if(!file_lyric.exists())
-            file_cover.mkdir();
+            file_lyric.mkdir();
         //创建歌曲详情文件夹
         String path_details=sd.getPath()+"/CloudMusic/details";
         File file_details=new File(path_details);
         if(!file_details.exists())
-            file_cover.mkdir();
+            file_details.mkdir();
     }
 
 
