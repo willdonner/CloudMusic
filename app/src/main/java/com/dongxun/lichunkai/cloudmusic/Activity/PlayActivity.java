@@ -326,7 +326,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 finish();
                 break;
             case R.id.imageView_lastSong:
-                Toast.makeText(this,"上一曲",Toast.LENGTH_SHORT).show();
+                SendLocalBroadcast.last(this);
                 break;
             case R.id.imageView_playOrPause:
                 Toast.makeText(this,"播放/暂停",Toast.LENGTH_SHORT).show();
@@ -343,7 +343,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.imageView_nextSong:
-                Toast.makeText(this,"下一曲",Toast.LENGTH_SHORT).show();
+                SendLocalBroadcast.next(this);
                 break;
             case R.id.imageView_like:
                 Toast.makeText(this,"收藏",Toast.LENGTH_SHORT).show();

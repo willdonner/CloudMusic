@@ -352,25 +352,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case "LAST":
                     //上一曲
+                    Toast.makeText(context,"上一曲",Toast.LENGTH_SHORT).show();
                     break;
                 case "NEXT":
                     //下一曲
-                    break;
-                case "LIKE":
-                    //收藏
-                    break;
-                case "LOOP":
-                    //循环
-                    break;
-                case "COMMENTS":
-                    //评论
-                    break;
-                case "LIST":
-                    //歌曲列表
+                    Toast.makeText(context,"下一曲",Toast.LENGTH_SHORT).show();
                     break;
                 case "CHANGEPROGRESS":
-                    //歌曲列表
-                    Toast.makeText(context,"更改钢琴曲进度："+ Common.changeProgress,Toast.LENGTH_SHORT).show();
+                    //更改歌曲进度
+                    Toast.makeText(context,"更改歌曲进度："+ Common.changeProgress,Toast.LENGTH_SHORT).show();
                     musicMediaPlayer.seekToOption();
                     break;
                 case "COMPLETE":
