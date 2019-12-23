@@ -1,7 +1,3 @@
 <resources>
     <string name="app_name">CloudMusic</string>
-    <!--    本地广播（音乐控制）-->
-    <string name="locaBroadcast_music">com.dongxun.lichunkai.cloudmusic.MUSIC_BROADCAST</string>
-    <!--    本地广播（时间控制）-->
-    <string name="locaBroadcast_time">com.dongxun.lichunkai.cloudmusic.MUSIC_BROADCAST</string>
 </resources>

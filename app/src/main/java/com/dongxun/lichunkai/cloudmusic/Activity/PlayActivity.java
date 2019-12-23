@@ -102,7 +102,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private void initReceiver() {
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         intentFilter = new IntentFilter();
-        intentFilter.addAction(String.valueOf(R.string.locaBroadcast_time));
+        intentFilter.addAction("com.dongxun.lichunkai.cloudmusic.TIME_BROADCAST");
         timeReceiver = new TimeReceiver();
         localBroadcastManager.registerReceiver(timeReceiver,intentFilter);
     }
