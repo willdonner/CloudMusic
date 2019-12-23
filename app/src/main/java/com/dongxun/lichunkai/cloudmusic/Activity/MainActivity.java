@@ -15,7 +15,6 @@ import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -28,8 +27,6 @@ import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.dongxun.lichunkai.cloudmusic.Util.PermissionUtil;
 import com.gyf.immersionbar.ImmersionBar;
-import com.martinrgb.animer.Animer;
-import com.martinrgb.animer.core.interpolator.AndroidNative.AccelerateDecelerateInterpolator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,8 +63,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView imageView_playOrPause;
     private ImageView imageView_list;
     private ImageView imageView_head;
-    private int time1000 = 7000;
-    Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,26 +75,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getPermission();
 
     }
-
-    //歌词滚动动画
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                handler.postDelayed(this,time1000);
-                // 创建一个 Animer 解算器对象，采用了原生的插值动画类
-                Animer.AnimerSolver solver1  = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(),7000);
-
-// 模仿 ObjectAnimator 的构造
-                Animer animer1 = new Animer(imageView_head,solver1,Animer.ROTATION,0,360);
-
-                animer1.start();
-
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-    };
 
     /**
      * 创建文件夹（根目录下新建文件夹CloudMusic及其子文件夹mp3及jpg）
@@ -166,18 +141,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         imageView_list.setOnClickListener(this);
 
         imageView_head = findViewById(R.id.imageView_head);
-
-        // 创建一个 Animer 解算器对象，采用了原生的插值动画类
-        Animer.AnimerSolver solver1  = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(),7000);
-
-// 模仿 ObjectAnimator 的构造
-        Animer animer1 = new Animer(imageView_head,solver1,Animer.ROTATION,0,360);
-
-        animer1.start();
-
-        // 创建一个 Animer 解算器对象，采用了原生的插值动画类
-        Animer.AnimerSolver anlogo_aqi  = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(),600);
-
     }
 
     /**
@@ -394,13 +357,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         musicMediaPlayer.startOption();
                         imageView_playOrPause.setImageResource(R.drawable.logo_pause2);
                         Common.state_playing = true;
-                        Animer.AnimerSolver solver1  = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(),7000);
-
-// 模仿 ObjectAnimator 的构造
-                        Animer animer1 = new Animer(imageView_head,solver1,Animer.ROTATION,0,360);
-
-                        animer1.start();
-                        handler.postDelayed(runnable, time1000);
                     }
                     break;
                 case "LAST":
