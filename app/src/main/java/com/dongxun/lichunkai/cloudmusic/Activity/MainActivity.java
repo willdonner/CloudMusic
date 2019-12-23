@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initReceiver() {
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
         intentFilter = new IntentFilter();
-        intentFilter.addAction("com.dongxun.lichunkai.cloudmusic.MUSIC_BROADCAST");
+        intentFilter.addAction(String.valueOf(R.string.locaBroadcast_music));
         musicReceiver = new MusicReceiver();
         localBroadcastManager.registerReceiver(musicReceiver,intentFilter);
     }
