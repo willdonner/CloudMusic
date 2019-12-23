@@ -1,8 +1,6 @@
 package com.dongxun.lichunkai.cloudmusic.Common;
 
-import android.graphics.Bitmap;
-
-import com.dongxun.lichunkai.cloudmusic.Class.Song;
+import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 
 import java.util.ArrayList;
 import java.util.List;

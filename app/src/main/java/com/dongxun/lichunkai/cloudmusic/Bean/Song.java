@@ -1,4 +1,4 @@
-package com.dongxun.lichunkai.cloudmusic.Class;
+package com.dongxun.lichunkai.cloudmusic.Bean;
 
 import android.graphics.Bitmap;
 

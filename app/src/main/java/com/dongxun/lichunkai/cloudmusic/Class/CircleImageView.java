@@ -15,11 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 
 /**
- * 功能描述：一个简洁而高效的圆形ImageView
- *
- * @author (作者) edward（冯丰枫）
- * @link http://www.jianshu.com/u/f7176d6d53d2
- * 创建时间： 2018/4/17 0017
+ * 圆形ImageView
  */
 public class CircleImageView extends AppCompatImageView {
     private float width;

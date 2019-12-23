@@ -3,7 +3,6 @@ package com.dongxun.lichunkai.cloudmusic.Activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,22 +10,18 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dongxun.lichunkai.cloudmusic.Class.Lyric;
+import com.dongxun.lichunkai.cloudmusic.Bean.Lyric;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.gyf.immersionbar.ImmersionBar;
-import com.martinrgb.animer.Animer;
-import com.martinrgb.animer.core.interpolator.AndroidNative.AccelerateDecelerateInterpolator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
