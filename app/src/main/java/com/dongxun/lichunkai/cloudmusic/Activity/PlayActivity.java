@@ -3,6 +3,7 @@ package com.dongxun.lichunkai.cloudmusic.Activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -74,9 +75,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private Boolean updateSeekbar = true;//是否更新进度条，用户自行调整进度时使用
 
 
-    private int time1000 = 15000;
-    Handler handler = new Handler();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,26 +85,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         initView();
         initReceiver();
     }
-
-    //歌词滚动动画
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                handler.postDelayed(this,time1000);
-                // 创建一个 Animer 解算器对象，采用了原生的插值动画类
-                Animer.AnimerSolver solver1  = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(),7000);
-
-// 模仿 ObjectAnimator 的构造
-                Animer animer1 = new Animer(imageView_coverImg,solver1,Animer.ROTATION,0,360);
-
-                animer1.start();
-
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-    };
 
     /**
      * 初始化状态栏
@@ -133,7 +111,9 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         //加载歌词
         if (!(Common.song_playing.getId() == null))getLyric(Common.song_playing.getId());
 
-        if (Common.state_playing) imageView_playOrPause.setImageResource(R.drawable.logo_pause);
+        if (Common.state_playing){
+            imageView_playOrPause.setImageResource(R.drawable.logo_pause);
+        }
         else imageView_playOrPause.setImageResource(R.drawable.logo_play);
         textView_sumTime.setText(generateTime(Common.song_playing.getSunTime()));
         textView_nowTime.setText(generateTime(Common.song_playing.getNowTime()));
@@ -328,6 +308,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.imageView_playOrPause:
                 Toast.makeText(this,"播放/暂停",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this,(Common.state_playing).toString(),Toast.LENGTH_SHORT).show();
                 //发送本地广播播放
                 Intent intent_broadcast = new Intent("com.dongxun.lichunkai.cloudmusic.MUSIC_BROADCAST");
                 intent_broadcast.putExtra("ACTION","PLAY_PAUSE");
@@ -340,13 +321,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 }else {
                     //播放
                     imageView_playOrPause.setImageResource(R.drawable.logo_pause);
-                    Animer.AnimerSolver solver1  = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(),15000);
-
-// 模仿 ObjectAnimator 的构造
-                    Animer animer1 = new Animer(imageView_coverImg,solver1,Animer.ROTATION,0,360);
-
-                    animer1.start();
-                    handler.postDelayed(runnable, time1000);
                 }
                 break;
             case R.id.imageView_nextSong:
@@ -427,7 +401,11 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                     //更新UI
                     textView_sumTime.setText(generateTime(Common.song_playing.getSunTime()));
                     if (updateSeekbar) textView_nowTime.setText(generateTime(Common.song_playing.getNowTime()));
-                    if (Common.state_playing) imageView_playOrPause.setImageResource(R.drawable.logo_pause);
+
+                    if (Common.state_playing) {
+                        imageView_playOrPause.setImageResource(R.drawable.logo_pause);
+                    }
+
                     else imageView_playOrPause.setImageResource(R.drawable.logo_play);
                     seekBar.setMax(Common.song_playing.getSunTime());
                     if (updateSeekbar) seekBar.setProgress(Common.song_playing.getNowTime());
