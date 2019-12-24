@@ -72,7 +72,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private int time1000 = 7000;
     Handler handler = new Handler();
 
-
     //广播/接收器
     private LocalBroadcastManager localBroadcastManager;
     private TimeReceiver timeReceiver;
