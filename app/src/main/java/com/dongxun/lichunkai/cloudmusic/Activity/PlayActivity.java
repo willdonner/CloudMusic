@@ -514,12 +514,13 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                     //歌词滚动
                     //获取当前歌词
                     if (Common.song_playing.getLyricList() != null){
-                        if (Common.song_playing.getLyricList().size() - Common.lyricPosition_playing >= 3) {
-                            lyric_loop: for (int i=Common.lyricPosition_playing;i<Common.song_playing.getLyricList().size();i++){
-                                if (Common.song_playing.getLyricList().get(i).getTime() > Common.song_playing.getNowTime()){
-                                    if (i-1 >= 0 && i-1 < Common.song_playing.getLyricList().size()) textView_firstLyric.setText(Common.song_playing.getLyricList().get(i-1).getText());
-                                    textView_secondLyric.setText(Common.song_playing.getLyricList().get(i).getText());
-                                    if (i+1 >= 0 && i+1 < Common.song_playing.getLyricList().size()) textView_thirdLyric.setText(Common.song_playing.getLyricList().get(i+1).getText());
+                        List<Lyric> lyrics = Common.song_playing.getLyricList();
+                        if (lyrics.size() - Common.lyricPosition_playing >= 3) {
+                            lyric_loop: for (int i=Common.lyricPosition_playing;i<lyrics.size();i++){
+                                if (lyrics.get(i).getTime() > Common.song_playing.getNowTime()){
+                                    if (i-1 >= 0 && i-1 < lyrics.size()) textView_firstLyric.setText(lyrics.get(i-1).getText());
+                                    textView_secondLyric.setText(lyrics.get(i).getText());
+                                    if (i+1 >= 0 && i+1 < lyrics.size()) textView_thirdLyric.setText(lyrics.get(i+1).getText());
                                     Common.lyricPosition_playing = i;
                                     break lyric_loop;
                                 }
