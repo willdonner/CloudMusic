@@ -373,27 +373,27 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.imageView_playOrPause:
-                Toast.makeText(this, "播放/暂停", Toast.LENGTH_SHORT).show();
-
+                Toast.makeText(this,"播放/暂停",Toast.LENGTH_SHORT).show();
                 if (Common.song_playing.getId() != null) {
+                    //发送本地广播播放
+                    SendLocalBroadcast.playOrPause(this);
                     //更新UI
-                    if (Common.state_playing) {
+                    if (Common.state_playing){
                         //暂停
-                        imageView_playOrPause.setImageResource(R.drawable.logo_play);
-                        handler.removeCallbacks(runnable);
-                        animer1.cancel();
-                    } else {
+                    imageView_playOrPause.setImageResource(R.drawable.logo_play);
+                    handler.removeCallbacks(runnable);
+                    animer1.cancel();
+                    }else {
                         //播放
-                        imageView_playOrPause.setImageResource(R.drawable.logo_pause);
-//                    animer1.start();
-                        // 创建一个 Animer 解算器对象，采用了原生的插值动画类
-                        Animer.AnimerSolver solver1 = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(), 7000);
-
-                        // 模仿 ObjectAnimator 的构造
-                        Animer animer1 = new Animer(imageView_coverImg, solver1, Animer.ROTATION, 0, 360);
-
-                        animer1.start();
-                        handler.postDelayed(runnable, time1000);
+                    imageView_playOrPause.setImageResource(R.drawable.logo_pause);
+                    //                    animer1.start();
+                    // 创建一个 Animer 解算器对象，采用了原生的插值动画类
+                    Animer.AnimerSolver solver1  = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(),7000);
+                    
+                    // 模仿 ObjectAnimator 的构造
+                    Animer animer1 = new Animer(imageView_coverImg,solver1,Animer.ROTATION,0,360);
+                    animer1.start();
+                    handler.postDelayed(runnable, time1000);
                     }
                     //发送本地广播播放
                     SendLocalBroadcast.playOrPause(this);
