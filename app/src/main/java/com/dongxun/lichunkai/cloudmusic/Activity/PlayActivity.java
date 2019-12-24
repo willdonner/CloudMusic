@@ -375,8 +375,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.imageView_playOrPause:
                 Toast.makeText(this,"播放/暂停",Toast.LENGTH_SHORT).show();
                 if (Common.song_playing.getId() != null) {
-                    //发送本地广播播放
-                    SendLocalBroadcast.playOrPause(this);
                     //更新UI
                     if (Common.state_playing){
                         //暂停
