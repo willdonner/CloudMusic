@@ -15,7 +15,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/play"
-            android:paddingHorizontal="20dp"
             android:layout_marginTop="30dp"
             android:orientation="vertical">
 
@@ -26,7 +25,8 @@
                 android:layout_marginBottom="20dp"
                 android:background="#ffff"
                 android:orientation="horizontal"
-                android:padding="10dp">
+                android:padding="10dp"
+                android:layout_marginHorizontal="20dp">
 
                 <EditText
                     android:id="@+id/editText_search"
@@ -58,12 +58,64 @@
                     android:textSize="14sp" />
             </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView_result"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="#ffff"
+                android:paddingHorizontal="20dp">
 
-            </androidx.recyclerview.widget.RecyclerView>
+                <ImageView
+                    android:id="@+id/imageView_waiting"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:srcCompat="@drawable/logo_waiting"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="200dp"/>
+
+                <LinearLayout
+                    android:id="@+id/LinearLayout_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="10dp">
+
+                        <TextView
+                            android:id="@+id/textView_history"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:layout_weight="1"
+                            android:text="搜索历史"
+                            android:textColor="#000"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/imageView_deleteHistory"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            app:srcCompat="@drawable/logo_delete" />
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView_history"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView_result"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                </androidx.recyclerview.widget.RecyclerView>
+
+            </LinearLayout>
 
 
         </LinearLayout>

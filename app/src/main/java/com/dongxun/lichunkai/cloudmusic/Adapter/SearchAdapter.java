@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.dongxun.lichunkai.cloudmusic.Class.Song;
+import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.R;
 
 import java.util.List;
@@ -43,7 +43,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         mList = searchHistoryList;
     }
 
-    //第一步 定义接口（点击城市标签）
+    //第一步 定义接口（点击播放/菜单）
     public interface OnItemClickListener {
         void onClickPlay(int position);
         void onClickMenu(int position);

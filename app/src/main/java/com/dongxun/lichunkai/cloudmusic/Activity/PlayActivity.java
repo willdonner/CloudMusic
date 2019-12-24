@@ -3,7 +3,6 @@ package com.dongxun.lichunkai.cloudmusic.Activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,21 +10,18 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dongxun.lichunkai.cloudmusic.Class.Lyric;
+import com.dongxun.lichunkai.cloudmusic.Bean.Lyric;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
+import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.gyf.immersionbar.ImmersionBar;
-import com.martinrgb.animer.Animer;
-import com.martinrgb.animer.core.interpolator.AndroidNative.AccelerateDecelerateInterpolator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,14 +42,26 @@ import okhttp3.Response;
 
 public class PlayActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
+    private static String TAG = "PlayActivity";
+
+    private ImageView imageView_close;
     private TextView textView_name;
     private TextView textView_author;
-    private ImageView imageView_close;
+
     private ImageView imageView_coverImg;
+
+    private TextView textView_lastLyric;
+    private TextView textView_nowLyric;
+    private TextView textView_nextLyric;
+
     private SeekBar seekBar;
+    private TextView textView_nowTime;
+    private TextView textView_sumTime;
+
     private ImageView imageView_lastSong;
     private ImageView imageView_playOrPause;
     private ImageView imageView_nextSong;
+
     private ImageView imageView_like;
     private ImageView imageView_loop;
     private ImageView imageView_comments;
@@ -66,14 +74,12 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private int time1000 = 7000;
     Handler handler = new Handler();
 
-
-    //其他
+    //广播/接收器
     private LocalBroadcastManager localBroadcastManager;
     private TimeReceiver timeReceiver;
     private IntentFilter intentFilter;
 
-    private static String TAG = "PlayActivity";
-
+    //变量
     private Boolean updateSeekbar = true;//是否更新进度条，用户自行调整进度时使用
 
     Animer.AnimerSolver solver1  = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(),7000);
@@ -122,6 +128,17 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         ImmersionBar.with(this).init();
         getSupportActionBar().hide();
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+    }
+
+    /**
+     * 初始化本地广播接收器
+     */
+    private void initReceiver() {
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        intentFilter = new IntentFilter();
+        intentFilter.addAction("com.dongxun.lichunkai.cloudmusic.TIME_BROADCAST");
+        timeReceiver = new TimeReceiver();
+        localBroadcastManager.registerReceiver(timeReceiver,intentFilter);
     }
 
     /**
@@ -298,23 +315,31 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
      * 初始化组件
      */
     private void initView() {
-        textView_name = findViewById(R.id.textView_name);
-        textView_author = findViewById(R.id.textView_author);
         imageView_close = findViewById(R.id.imageView_close);
         imageView_close.setOnClickListener(this);
+        textView_name = findViewById(R.id.textView_name);
+        textView_author = findViewById(R.id.textView_author);
+
         imageView_coverImg = findViewById(R.id.imageView_coverImg);
-        textView_nowTime = findViewById(R.id.textView_nowTime);
-        textView_sumTime = findViewById(R.id.textView_sumTime);
+
+        textView_lastLyric = findViewById(R.id.textView_lastLyric);
+        textView_nowLyric  = findViewById(R.id.textView_nowLyric);
+        textView_nextLyric  = findViewById(R.id.textView_nextLyric);
+
         seekBar = findViewById(R.id.seekBar);
         seekBar.setMax(Common.song_playing.getSunTime());
         seekBar.setProgress(Common.song_playing.getNowTime());
         seekBar.setOnSeekBarChangeListener(this);
+        textView_nowTime = findViewById(R.id.textView_nowTime);
+        textView_sumTime = findViewById(R.id.textView_sumTime);
+
         imageView_lastSong = findViewById(R.id.imageView_lastSong);
         imageView_lastSong.setOnClickListener(this);
         imageView_playOrPause = findViewById(R.id.imageView_playOrPause);
         imageView_playOrPause.setOnClickListener(this);
         imageView_nextSong = findViewById(R.id.imageView_nextSong);
         imageView_nextSong.setOnClickListener(this);
+
         imageView_like = findViewById(R.id.imageView_like);
         imageView_like.setOnClickListener(this);
         imageView_loop = findViewById(R.id.imageView_loop);
@@ -323,11 +348,13 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         imageView_comments.setOnClickListener(this);
         imageView_list = findViewById(R.id.imageView_list);
         imageView_list.setOnClickListener(this);
-        textView_lastLyric = findViewById(R.id.textView_lastLyric);
-        textView_nowLyric  = findViewById(R.id.textView_nowLyric);
-        textView_nextLyric  = findViewById(R.id.textView_nextLyric);
+
     }
 
+    /**
+     * 点击事件
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -335,15 +362,14 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 finish();
                 break;
             case R.id.imageView_lastSong:
-                Toast.makeText(this,"上一曲",Toast.LENGTH_SHORT).show();
+                if (Common.songList.size() != 0) {
+                    SendLocalBroadcast.last(this);
+                }else {
+                    Toast.makeText(this,"歌单空空如也",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.imageView_playOrPause:
                 Toast.makeText(this,"播放/暂停",Toast.LENGTH_SHORT).show();
-                //发送本地广播播放
-                Intent intent_broadcast = new Intent("com.dongxun.lichunkai.cloudmusic.MUSIC_BROADCAST");
-                intent_broadcast.putExtra("ACTION","PLAY_PAUSE");
-                LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-                localBroadcastManager.sendBroadcast(intent_broadcast);
                 //更新UI
                 if (Common.state_playing){
                     //暂停
@@ -362,19 +388,44 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
                     animer1.start();
                     handler.postDelayed(runnable, time1000);
+                if (Common.song_playing.getId() != null) {
+                    //发送本地广播播放
+                    SendLocalBroadcast.playOrPause(this);
+                    //更新UI
+                    if (Common.state_playing){
+                        //暂停
+                        imageView_playOrPause.setImageResource(R.drawable.logo_play);
+                    }else {
+                        //播放
+                        imageView_playOrPause.setImageResource(R.drawable.logo_pause);
+                    }
+                }else {
+                    Toast.makeText(this,"当前暂无歌曲，快去选一首吧",Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.imageView_nextSong:
-                Toast.makeText(this,"下一曲",Toast.LENGTH_SHORT).show();
+                if (Common.songList.size() != 0) {
+                    SendLocalBroadcast.next(this);
+                }else {
+                    Toast.makeText(this,"歌单空空如也",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.imageView_like:
-                Toast.makeText(this,"收藏",Toast.LENGTH_SHORT).show();
+                if (Common.song_playing.getId() != null) {
+                    Toast.makeText(this,"收藏",Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(this,"当前暂无歌曲，快去选一首吧",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.imageView_loop:
                 Toast.makeText(this,"循环",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.imageView_comments:
-                Toast.makeText(this,"评论",Toast.LENGTH_SHORT).show();
+                if (Common.song_playing.getId() != null) {
+                    Toast.makeText(this,"评论",Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(this,"当前暂无歌曲，快去选一首吧",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.imageView_list:
                 Toast.makeText(this,"歌单",Toast.LENGTH_SHORT).show();
@@ -382,55 +433,55 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /**
-     * 初始化本地广播接收器
-     */
-    private void initReceiver() {
-        localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        intentFilter = new IntentFilter();
-        intentFilter.addAction("com.dongxun.lichunkai.cloudmusic.TIME_BROADCAST");
-        timeReceiver = new TimeReceiver();
-        localBroadcastManager.registerReceiver(timeReceiver,intentFilter);
-    }
 
+    /**
+     * 进度条监听
+     * @param seekBar
+     * @param i
+     * @param b
+     */
     @Override
     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-        switch (seekBar.getId()){
-            case R.id.seekBar:
-                if (!updateSeekbar)textView_nowTime.setText(generateTime(Long.valueOf(seekBar.getProgress())));
-                break;
+        if (Common.song_playing.getId() != null) {
+            switch (seekBar.getId()){
+                case R.id.seekBar:
+                    if (!updateSeekbar)textView_nowTime.setText(generateTime(Long.valueOf(seekBar.getProgress())));
+                    break;
+            }
         }
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        switch (seekBar.getId()){
-            case R.id.seekBar:
-                Log.d(TAG, "onStartTrackingTouch: 开始");
-                updateSeekbar = false;
-                break;
+        if (Common.song_playing.getId() != null) {
+            switch (seekBar.getId()){
+                case R.id.seekBar:
+                    Log.d(TAG, "onStartTrackingTouch: 开始");
+                    updateSeekbar = false;
+                    break;
+            }
         }
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        switch (seekBar.getId()){
-            case R.id.seekBar:
-                Log.d(TAG, "onStartTrackingTouch: 结束");
-                updateSeekbar = true;
-                //调整歌曲进度
-                Common.changeProgress = Integer.valueOf(seekBar.getProgress());
-                //发送广播
-                Intent intent_broadcast = new Intent("com.dongxun.lichunkai.cloudmusic.MUSIC_BROADCAST");
-                intent_broadcast.putExtra("ACTION","CHANGEPROGRESS");
-                LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-                localBroadcastManager.sendBroadcast(intent_broadcast);
-                break;
+        if (Common.song_playing.getId() != null) {
+            switch (seekBar.getId()){
+                case R.id.seekBar:
+                    Log.d(TAG, "onStartTrackingTouch: 结束");
+                    updateSeekbar = true;
+                    //调整歌曲进度
+                    Common.changeProgress = Integer.valueOf(seekBar.getProgress());
+                    //发送广播
+                    SendLocalBroadcast.changeProgress(this);
+                    break;
+            }
         }
+
     }
 
     /**
-     * 刷新时间接收器
+     * 本地广播接收器（刷新时间）
      */
     public class TimeReceiver extends BroadcastReceiver {
 
