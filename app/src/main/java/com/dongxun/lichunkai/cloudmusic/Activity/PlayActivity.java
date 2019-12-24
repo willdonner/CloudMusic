@@ -53,9 +53,9 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
     private ImageView imageView_coverImg;
 
-    private TextView textView_lastLyric;
-    private TextView textView_nowLyric;
-    private TextView textView_nextLyric;
+    private TextView textView_firstLyric;
+    private TextView textView_secondLyric;
+    private TextView textView_thirdLyric;
 
     private SeekBar seekBar;
     private TextView textView_nowTime;
@@ -325,9 +325,9 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
         imageView_coverImg = findViewById(R.id.imageView_coverImg);
 
-        textView_lastLyric = findViewById(R.id.textView_lastLyric);
-        textView_nowLyric = findViewById(R.id.textView_nowLyric);
-        textView_nextLyric = findViewById(R.id.textView_nextLyric);
+        textView_firstLyric = findViewById(R.id.textView_firstLyric);
+        textView_secondLyric = findViewById(R.id.textView_secondLyric);
+        textView_thirdLyric = findViewById(R.id.textView_thirdLyric);
 
         seekBar = findViewById(R.id.seekBar);
         seekBar.setMax(Common.song_playing.getSunTime());
@@ -464,6 +464,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                     updateSeekbar = true;
                     //调整歌曲进度
                     Common.changeProgress = Integer.valueOf(seekBar.getProgress());
+                    Common.lyricPosition_playing = 0;
                     //发送广播
                     SendLocalBroadcast.changeProgress(this);
                     break;
@@ -500,15 +501,32 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                     if (updateSeekbar)
                         textView_nowTime.setText(generateTime(Common.song_playing.getNowTime()));
                     if (updateSeekbar) seekBar.setProgress(Common.song_playing.getNowTime());
+                    //歌词回到最开始
+                    Common.lyricPosition_playing = 0;
+                    if (Common.song_playing.getLyricList() != null){
+                        textView_firstLyric.setText(Common.song_playing.getLyricList().get(0).getText());
+                        textView_secondLyric.setText(Common.song_playing.getLyricList().get(1).getText());
+                        textView_thirdLyric.setText(Common.song_playing.getLyricList().get(2).getText());
+                    }
+
                     break;
                 case "LYRIC":
                     //歌词滚动
-//                    Toast.makeText(context,"歌词滚动",Toast.LENGTH_SHORT).show();
-//                    if (Common.song_playing.getLyricList().size()>0){
-//                        textView_lastLyric.setText(Common.song_playing.getLyricList().get(Common.lyricPosition_playing-1).getText());
-//                        textView_nowLyric.setText(Common.song_playing.getLyricList().get(Common.lyricPosition_playing).getText());
-//                        textView_nextLyric.setText(Common.song_playing.getLyricList().get(Common.lyricPosition_playing+1).getText());
-//                    }
+                    //获取当前歌词
+                    if (Common.song_playing.getLyricList() != null){
+                        if (Common.song_playing.getLyricList().size() - Common.lyricPosition_playing >= 3) {
+                            lyric_loop: for (int i=Common.lyricPosition_playing;i<Common.song_playing.getLyricList().size();i++){
+                                if (Common.song_playing.getLyricList().get(i).getTime() > Common.song_playing.getNowTime()){
+                                    if (i-1 >= 0 && i-1 < Common.song_playing.getLyricList().size()) textView_firstLyric.setText(Common.song_playing.getLyricList().get(i-1).getText());
+                                    textView_secondLyric.setText(Common.song_playing.getLyricList().get(i).getText());
+                                    if (i+1 >= 0 && i+1 < Common.song_playing.getLyricList().size()) textView_thirdLyric.setText(Common.song_playing.getLyricList().get(i+1).getText());
+                                    Common.lyricPosition_playing = i;
+                                    break lyric_loop;
+                                }
+                            }
+                        }
+                    }
+
                     break;
             }
         }

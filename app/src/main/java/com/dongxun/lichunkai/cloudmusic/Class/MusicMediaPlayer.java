@@ -74,7 +74,7 @@ public class MusicMediaPlayer extends MediaPlayer {
             public void run() {
                 if (Common.state_playing){
                     Common.song_playing.setNowTime(mediaPlayer.getCurrentPosition());
-                    Log.e("TAG","没隔1秒执行一次操作" + Common.song_playing.getNowTime());
+//                    Log.e("TAG","时间：" + Common.song_playing.getNowTime());
                     //发送刷新时间广播
                     SendLocalBroadcast.refreshTime(context);
                 }
@@ -89,11 +89,12 @@ public class MusicMediaPlayer extends MediaPlayer {
             @Override
             public void run() {
                 if (Common.state_playing){
+//                    Log.e("TAG","歌词：" + Common.song_playing.getNowTime());
                     //发送刷新歌词广播
                     SendLocalBroadcast.refreshLyric(context);
                 }
             }
-        },0,1000);
+        },0,500);
     }
 
 

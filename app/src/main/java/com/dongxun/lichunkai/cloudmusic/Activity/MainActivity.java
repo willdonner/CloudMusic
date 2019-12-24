@@ -281,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             if (file1.exists()) {
                 //文件存在
-                Log.e("DOWLOAD", "文件已存在！");
+                Log.e("DOWLOAD", "mp3文件已存在！");
             }else {
                 URL url = new URL(downloadUrl);
                 //打开连接
@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 InputStream is = conn.getInputStream();
                 //获得长度
                 int contentLength = conn.getContentLength();
-                Log.e("DOWLOAD", "文件长度 = " + contentLength);
+                Log.e("DOWLOAD", "mp3文件长度 = " + contentLength);
                 //创建字节流
                 byte[] bs = new byte[1024];
                 int len;
@@ -300,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     os.write(bs, 0, len);
                 }
                 //完成后关闭流
-                Log.e("DOWLOAD", "文件不存在,下载成功！");
+                Log.e("DOWLOAD", "mp3文件不存在,下载成功！");
                 os.close();
                 is.close();
             }
@@ -336,6 +336,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case "PLAYNEW":
                     //停止当前播放
                     musicMediaPlayer.stopOption();
+                    Common.lyricPosition_playing = 0;
                     //获取歌曲信息并下载播放
                     getSongUrl();
                     //更新UI
@@ -378,7 +379,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Common.changeProgress = 0;
                     musicMediaPlayer.seekToOption();
                     Common.state_playing = false;
-
+                    Common.lyricPosition_playing = 0;
                     break;
             }
         }
