@@ -69,7 +69,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView imageView_loop;
     private ImageView imageView_comments;
     private ImageView imageView_list;
-    private int time1000 = 7000;
+    private int time1000 = 15000;
     Handler handler = new Handler();
 
     //广播/接收器
@@ -80,7 +80,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     //变量
     private Boolean updateSeekbar = true;//是否更新进度条，用户自行调整进度时使用
 
-    Animer.AnimerSolver solver1 = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(), 7000);
+    Animer.AnimerSolver solver1 = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(), 15000);
 
     // 模仿 ObjectAnimator 的构造
     private Animer animer1;
@@ -103,7 +103,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
             try {
 
                 // 创建一个 Animer 解算器对象，采用了原生的插值动画类
-                Animer.AnimerSolver solver1 = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(), 7000);
+                Animer.AnimerSolver solver1 = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(), 15000);
 
 // 模仿 ObjectAnimator 的构造
                 Animer animer1 = new Animer(imageView_coverImg, solver1, Animer.ROTATION, 0, 360);
@@ -156,9 +156,9 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         }
         //加载歌词
         if (!(Common.song_playing.getId() == null)) getLyric(Common.song_playing.getId());
-
         if (Common.state_playing) {
             imageView_playOrPause.setImageResource(R.drawable.logo_pause);
+
         } else imageView_playOrPause.setImageResource(R.drawable.logo_play);
         textView_sumTime.setText(generateTime(Common.song_playing.getSunTime()));
         textView_nowTime.setText(generateTime(Common.song_playing.getNowTime()));
@@ -384,12 +384,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                     }else {
                         //播放
                     imageView_playOrPause.setImageResource(R.drawable.logo_pause);
-                    //                    animer1.start();
-                    // 创建一个 Animer 解算器对象，采用了原生的插值动画类
-                    Animer.AnimerSolver solver1  = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(),7000);
-                    
-                    // 模仿 ObjectAnimator 的构造
-                    Animer animer1 = new Animer(imageView_coverImg,solver1,Animer.ROTATION,0,360);
                     animer1.start();
                     handler.postDelayed(runnable, time1000);
                     }
@@ -501,6 +495,8 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case "COMPLETE":
                     imageView_playOrPause.setImageResource(R.drawable.logo_play);
+                    handler.removeCallbacks(runnable);
+                    animer1.cancel();
                     if (updateSeekbar)
                         textView_nowTime.setText(generateTime(Common.song_playing.getNowTime()));
                     if (updateSeekbar) seekBar.setProgress(Common.song_playing.getNowTime());
