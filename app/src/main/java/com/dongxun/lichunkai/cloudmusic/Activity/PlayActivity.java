@@ -66,6 +66,13 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView imageView_loop;
     private ImageView imageView_comments;
     private ImageView imageView_list;
+    private TextView textView_nowTime;
+    private TextView textView_sumTime;
+    private TextView textView_lastLyric;
+    private TextView textView_nowLyric;
+    private TextView textView_nextLyric;
+    private int time1000 = 7000;
+    Handler handler = new Handler();
 
     //广播/接收器
     private LocalBroadcastManager localBroadcastManager;
@@ -74,6 +81,11 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
     //变量
     private Boolean updateSeekbar = true;//是否更新进度条，用户自行调整进度时使用
+
+    Animer.AnimerSolver solver1  = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(),7000);
+
+    // 模仿 ObjectAnimator 的构造
+    private Animer animer1;
 
 
 
@@ -84,8 +96,30 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
         initStateBar();
         initView();
+        animer1 =  new Animer(imageView_coverImg,solver1,Animer.ROTATION,0,360);
         initReceiver();
     }
+
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            try {
+
+                // 创建一个 Animer 解算器对象，采用了原生的插值动画类
+                Animer.AnimerSolver solver1  = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(),7000);
+
+// 模仿 ObjectAnimator 的构造
+                Animer animer1 = new Animer(imageView_coverImg,solver1,Animer.ROTATION,0,360);
+
+                animer1.start();
+
+                Log.i("1","1");
+                handler.postDelayed(this,time1000);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    };
 
     /**
      * 初始化状态栏
@@ -111,6 +145,8 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
      * 更新UI
      */
     private void refreshUI() {
+        animer1.start();
+       handler.postDelayed(runnable, time1000);
         textView_name.setText(Common.song_playing.getName());
         textView_author.setText(Common.song_playing.getArtist());
         if (Common.song_playing.getCover() != null){
@@ -334,6 +370,24 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.imageView_playOrPause:
                 Toast.makeText(this,"播放/暂停",Toast.LENGTH_SHORT).show();
+                //更新UI
+                if (Common.state_playing){
+                    //暂停
+                    imageView_playOrPause.setImageResource(R.drawable.logo_play);
+                    handler.removeCallbacks(runnable);
+                    animer1.cancel();
+                }else {
+                    //播放
+                    imageView_playOrPause.setImageResource(R.drawable.logo_pause);
+//                    animer1.start();
+                    // 创建一个 Animer 解算器对象，采用了原生的插值动画类
+                    Animer.AnimerSolver solver1  = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(),7000);
+
+// 模仿 ObjectAnimator 的构造
+                    Animer animer1 = new Animer(imageView_coverImg,solver1,Animer.ROTATION,0,360);
+
+                    animer1.start();
+                    handler.postDelayed(runnable, time1000);
                 if (Common.song_playing.getId() != null) {
                     //发送本地广播播放
                     SendLocalBroadcast.playOrPause(this);
@@ -455,7 +509,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case "LYRIC":
                     //歌词滚动
-                    Toast.makeText(context,"歌词滚动",Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context,"歌词滚动",Toast.LENGTH_SHORT).show();
 //                    if (Common.song_playing.getLyricList().size()>0){
 //                        textView_lastLyric.setText(Common.song_playing.getLyricList().get(Common.lyricPosition_playing-1).getText());
 //                        textView_nowLyric.setText(Common.song_playing.getLyricList().get(Common.lyricPosition_playing).getText());
