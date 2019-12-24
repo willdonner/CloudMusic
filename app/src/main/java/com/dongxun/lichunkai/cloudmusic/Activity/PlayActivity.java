@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.dongxun.lichunkai.cloudmusic.Bean.Lyric;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 import com.dongxun.lichunkai.cloudmusic.R;
+import com.dongxun.lichunkai.cloudmusic.Util.ToolHelper;
 import com.gyf.immersionbar.ImmersionBar;
 import com.martinrgb.animer.Animer;
 import com.martinrgb.animer.core.interpolator.AndroidNative.AccelerateDecelerateInterpolator;
@@ -29,8 +31,14 @@ import com.martinrgb.animer.core.interpolator.AndroidNative.AccelerateDecelerate
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -84,6 +92,14 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
     // 模仿 ObjectAnimator 的构造
     private Animer animer1;
+
+    private File sd = Environment.getExternalStorageDirectory();
+
+    private String path_cover=sd.getPath()+"/CloudMusic/cover";//封面文件夹
+
+    private String path_lyric=sd.getPath()+"/CloudMusic/lyric";//歌词文件夹
+
+    private String path_details=sd.getPath()+"/CloudMusic/details";//歌曲详情文件夹
 
 
     @Override
@@ -151,11 +167,58 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
             imageView_coverImg.setImageBitmap(Common.song_playing.getCover());
         } else {
             //加载封面
-            if (!(Common.song_playing.getCoverURL() == null))
-                getCoverImage(Common.song_playing.getCoverURL());
+            if (Common.song_playing.getCoverURL() != null){
+                //查看本地是否有封面图
+                String file = path_cover + "/"+ Common.song_playing.getId() +".jpg";
+                File coverFile = new File(file);
+                if (coverFile.exists()){
+                    Log.e(TAG, "refreshUI: 本地有歌曲封面");
+                    //读取文件内容
+                    Common.song_playing.setCover( ToolHelper.getLoacalBitmap(file));
+                    //更新UI
+                    imageView_coverImg.setImageBitmap(Common.song_playing.getCover());
+                }else {
+                    Log.e(TAG, "refreshUI: 本地没有歌曲封面");
+                    //获取封面图
+                    getCoverImage(Common.song_playing.getCoverURL());
+                }
+            }
         }
         //加载歌词
-        if (!(Common.song_playing.getId() == null)) getLyric(Common.song_playing.getId());
+        if (Common.song_playing.getId() != null) {
+            if (Common.song_playing.getLyricList() == null){
+                //查看本地是否有歌词
+                String file = path_lyric + "/"+ Common.song_playing.getId() +".txt";
+                File lyricFile = new File(file);
+                if (lyricFile.exists()){
+                    Log.e(TAG, "refreshUI: 本地有歌词文本");
+                    //读取文件内容
+                    String localLyric = null;
+                    try {
+                        localLyric = ToolHelper.readTxtFile(file);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //解析歌词
+                    final List<Lyric> lyricList = new ArrayList<>();
+                    String[] we = localLyric.split("\n");
+                    for (String x : we) {
+                        if (isInteger(x.substring(1, 3))) {
+                            String time = x.substring(x.indexOf("[") + 1, x.indexOf("]"));
+                            String text = x.substring(x.indexOf("]") + 1);
+                            Lyric lyric = new Lyric();
+                            lyric.setTime(toMillisecond(time));
+                            lyric.setText(text);
+                            if (text.trim().length() != 0) lyricList.add(lyric);
+                        }
+                    }
+                    Common.song_playing.setLyricList(lyricList);
+                }else {
+                    Log.e(TAG, "refreshUI: 本地没有歌词文本");
+                    getLyric(Common.song_playing.getId());
+                }
+            }
+        }
         if (Common.state_playing) {
             imageView_playOrPause.setImageResource(R.drawable.logo_pause);
 
@@ -207,6 +270,8 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                     bitmap = BitmapFactory.decodeStream(is);
                     //修改公共变量和更新UI
                     Common.song_playing.setCover(bitmap);
+                    //存储封面图
+                    ToolHelper.saveBitmap(bitmap,path_cover+"/"+ Common.song_playing.getId() +".jpg");
                     //切换主线程更新UI
                     imageView_coverImg.post(new Runnable() {
                         @Override
@@ -221,6 +286,9 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
             }
         }).start();
     }
+
+
+
 
     /**
      * 加载歌词
@@ -265,19 +333,19 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                                         if (text.trim().length() != 0) lyricList.add(lyric);
                                     }
                                 }
-
                                 Common.song_playing.setLyricList(lyricList);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        //显示歌词
-                                        Log.d(TAG, "run: ————————————————————————————————————");
-                                        for (Lyric lyric : lyricList) {
-                                            Log.d(TAG, "onResponse: " + lyric.getTime() + "：" + lyric.getText());
-                                        }
 
-                                    }
-                                });
+                                //显示歌词
+                                Log.d(TAG, "歌词: ————————————————————————————————————");
+                                for (Lyric lyric : lyricList) {
+                                    Log.d(TAG, "onResponse: " + lyric.getTime() + "：" + lyric.getText());
+                                }
+                                //存储歌词
+                                Log.d(TAG, "存储歌词: ————————————————————————————————————");
+
+                                ToolHelper.creatTxtFile(path_lyric,id);
+                                ToolHelper.writeTxtFile(path_lyric,id,lycirs.trim());
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
