@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -22,6 +23,8 @@ import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.gyf.immersionbar.ImmersionBar;
+import com.martinrgb.animer.Animer;
+import com.martinrgb.animer.core.interpolator.AndroidNative.AccelerateDecelerateInterpolator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,11 +69,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView imageView_loop;
     private ImageView imageView_comments;
     private ImageView imageView_list;
-    private TextView textView_nowTime;
-    private TextView textView_sumTime;
-    private TextView textView_lastLyric;
-    private TextView textView_nowLyric;
-    private TextView textView_nextLyric;
     private int time1000 = 7000;
     Handler handler = new Handler();
 
@@ -82,11 +80,10 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     //变量
     private Boolean updateSeekbar = true;//是否更新进度条，用户自行调整进度时使用
 
-    Animer.AnimerSolver solver1  = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(),7000);
+    Animer.AnimerSolver solver1 = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(), 7000);
 
     // 模仿 ObjectAnimator 的构造
     private Animer animer1;
-
 
 
     @Override
@@ -96,7 +93,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
         initStateBar();
         initView();
-        animer1 =  new Animer(imageView_coverImg,solver1,Animer.ROTATION,0,360);
+        animer1 = new Animer(imageView_coverImg, solver1, Animer.ROTATION, 0, 360);
         initReceiver();
     }
 
@@ -106,16 +103,16 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
             try {
 
                 // 创建一个 Animer 解算器对象，采用了原生的插值动画类
-                Animer.AnimerSolver solver1  = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(),7000);
+                Animer.AnimerSolver solver1 = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(), 7000);
 
 // 模仿 ObjectAnimator 的构造
-                Animer animer1 = new Animer(imageView_coverImg,solver1,Animer.ROTATION,0,360);
+                Animer animer1 = new Animer(imageView_coverImg, solver1, Animer.ROTATION, 0, 360);
 
                 animer1.start();
 
-                Log.i("1","1");
-                handler.postDelayed(this,time1000);
-            }catch (Exception e){
+                Log.i("1", "1");
+                handler.postDelayed(this, time1000);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -138,7 +135,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         intentFilter = new IntentFilter();
         intentFilter.addAction("com.dongxun.lichunkai.cloudmusic.TIME_BROADCAST");
         timeReceiver = new TimeReceiver();
-        localBroadcastManager.registerReceiver(timeReceiver,intentFilter);
+        localBroadcastManager.registerReceiver(timeReceiver, intentFilter);
     }
 
     /**
@@ -146,23 +143,23 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void refreshUI() {
         animer1.start();
-       handler.postDelayed(runnable, time1000);
+        handler.postDelayed(runnable, time1000);
         textView_name.setText(Common.song_playing.getName());
         textView_author.setText(Common.song_playing.getArtist());
-        if (Common.song_playing.getCover() != null){
+        if (Common.song_playing.getCover() != null) {
             //显示封面
             imageView_coverImg.setImageBitmap(Common.song_playing.getCover());
-        }else {
+        } else {
             //加载封面
-            if (!(Common.song_playing.getCoverURL() == null))getCoverImage(Common.song_playing.getCoverURL());
+            if (!(Common.song_playing.getCoverURL() == null))
+                getCoverImage(Common.song_playing.getCoverURL());
         }
         //加载歌词
-        if (!(Common.song_playing.getId() == null))getLyric(Common.song_playing.getId());
+        if (!(Common.song_playing.getId() == null)) getLyric(Common.song_playing.getId());
 
-        if (Common.state_playing){
+        if (Common.state_playing) {
             imageView_playOrPause.setImageResource(R.drawable.logo_pause);
-        }
-        else imageView_playOrPause.setImageResource(R.drawable.logo_play);
+        } else imageView_playOrPause.setImageResource(R.drawable.logo_play);
         textView_sumTime.setText(generateTime(Common.song_playing.getSunTime()));
         textView_nowTime.setText(generateTime(Common.song_playing.getNowTime()));
     }
@@ -170,6 +167,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * 将毫秒转时分秒
+     *
      * @param time
      * @return
      */
@@ -188,6 +186,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * 加载网络图片，获取网络图片的bitmap
+     *
      * @param url：网络图片的地址
      * @return
      */
@@ -225,17 +224,18 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * 加载歌词
+     *
      * @param id：歌曲ID
      */
     public void getLyric(final String id) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try{
+                try {
                     OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
                     //和风请求方式
                     Request request = new Request.Builder()
-                            .url("https://api.imjad.cn/cloudmusic/?type=lyric&id="+ id +"")
+                            .url("https://api.imjad.cn/cloudmusic/?type=lyric&id=" + id + "")
                             .build();//创建一个Request对象
                     //第三步构建Call对象
                     Call call = client.newCall(request);
@@ -244,24 +244,25 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onFailure(Call call, IOException e) {
                         }
+
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             final String responseData = response.body().string();//处理返回的数据
                             //解析歌词
                             try {
                                 String lycirs = new JSONObject(responseData).getJSONObject("lrc").getString("lyric");
-                                Log.d(TAG, "onResponse: "+lycirs.trim());
+                                Log.d(TAG, "onResponse: " + lycirs.trim());
 
                                 final List<Lyric> lyricList = new ArrayList<>();
                                 String[] we = lycirs.split("\n");
-                                for (String x:we){
-                                    if (isInteger(x.substring(1,3))) {
-                                        String time = x.substring(x.indexOf("[")+1,x.indexOf("]"));
-                                        String text = x.substring(x.indexOf("]")+1);
+                                for (String x : we) {
+                                    if (isInteger(x.substring(1, 3))) {
+                                        String time = x.substring(x.indexOf("[") + 1, x.indexOf("]"));
+                                        String text = x.substring(x.indexOf("]") + 1);
                                         Lyric lyric = new Lyric();
                                         lyric.setTime(toMillisecond(time));
                                         lyric.setText(text);
-                                        if (text.trim().length()!=0) lyricList.add(lyric);
+                                        if (text.trim().length() != 0) lyricList.add(lyric);
                                     }
                                 }
 
@@ -271,8 +272,8 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                                     public void run() {
                                         //显示歌词
                                         Log.d(TAG, "run: ————————————————————————————————————");
-                                        for (Lyric lyric:lyricList){
-                                            Log.d(TAG, "onResponse: "+lyric.getTime()+"："+lyric.getText());
+                                        for (Lyric lyric : lyricList) {
+                                            Log.d(TAG, "onResponse: " + lyric.getTime() + "：" + lyric.getText());
                                         }
 
                                     }
@@ -282,7 +283,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                             }
                         }
                     });
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -291,18 +292,20 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * 将歌词时间转换为毫秒
+     *
      * @param str
      * @return
      */
     public static int toMillisecond(String str) {
-        int minute = Integer.valueOf(str.substring(0,2));
-        int second = Integer.valueOf(str.substring(3,5));
+        int minute = Integer.valueOf(str.substring(0, 2));
+        int second = Integer.valueOf(str.substring(3, 5));
         int millisecond = Integer.valueOf(str.substring(6));
-        return minute*60*1000+second*1000+millisecond;
+        return minute * 60 * 1000 + second * 1000 + millisecond;
     }
 
     /**
      * 判断是否为数字
+     *
      * @param str
      * @return
      */
@@ -323,8 +326,8 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         imageView_coverImg = findViewById(R.id.imageView_coverImg);
 
         textView_lastLyric = findViewById(R.id.textView_lastLyric);
-        textView_nowLyric  = findViewById(R.id.textView_nowLyric);
-        textView_nextLyric  = findViewById(R.id.textView_nextLyric);
+        textView_nowLyric = findViewById(R.id.textView_nowLyric);
+        textView_nextLyric = findViewById(R.id.textView_nextLyric);
 
         seekBar = findViewById(R.id.seekBar);
         seekBar.setMax(Common.song_playing.getSunTime());
@@ -353,89 +356,85 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * 点击事件
+     *
      * @param view
      */
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.imageView_close:
                 finish();
                 break;
             case R.id.imageView_lastSong:
                 if (Common.songList.size() != 0) {
                     SendLocalBroadcast.last(this);
-                }else {
-                    Toast.makeText(this,"歌单空空如也",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "歌单空空如也", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.imageView_playOrPause:
-                Toast.makeText(this,"播放/暂停",Toast.LENGTH_SHORT).show();
-                //更新UI
-                if (Common.state_playing){
-                    //暂停
-                    imageView_playOrPause.setImageResource(R.drawable.logo_play);
-                    handler.removeCallbacks(runnable);
-                    animer1.cancel();
-                }else {
-                    //播放
-                    imageView_playOrPause.setImageResource(R.drawable.logo_pause);
-//                    animer1.start();
-                    // 创建一个 Animer 解算器对象，采用了原生的插值动画类
-                    Animer.AnimerSolver solver1  = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(),7000);
+                Toast.makeText(this, "播放/暂停", Toast.LENGTH_SHORT).show();
 
-// 模仿 ObjectAnimator 的构造
-                    Animer animer1 = new Animer(imageView_coverImg,solver1,Animer.ROTATION,0,360);
-
-                    animer1.start();
-                    handler.postDelayed(runnable, time1000);
                 if (Common.song_playing.getId() != null) {
-                    //发送本地广播播放
-                    SendLocalBroadcast.playOrPause(this);
                     //更新UI
-                    if (Common.state_playing){
+                    if (Common.state_playing) {
                         //暂停
                         imageView_playOrPause.setImageResource(R.drawable.logo_play);
-                    }else {
+                        handler.removeCallbacks(runnable);
+                        animer1.cancel();
+                    } else {
                         //播放
                         imageView_playOrPause.setImageResource(R.drawable.logo_pause);
+//                    animer1.start();
+                        // 创建一个 Animer 解算器对象，采用了原生的插值动画类
+                        Animer.AnimerSolver solver1 = Animer.interpolatorDroid(new AccelerateDecelerateInterpolator(), 7000);
+
+                        // 模仿 ObjectAnimator 的构造
+                        Animer animer1 = new Animer(imageView_coverImg, solver1, Animer.ROTATION, 0, 360);
+
+                        animer1.start();
+                        handler.postDelayed(runnable, time1000);
                     }
-                }else {
-                    Toast.makeText(this,"当前暂无歌曲，快去选一首吧",Toast.LENGTH_SHORT).show();
+                    //发送本地广播播放
+                    SendLocalBroadcast.playOrPause(this);
+                } else {
+                    Toast.makeText(this, "当前暂无歌曲，快去选一首吧", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.imageView_nextSong:
                 if (Common.songList.size() != 0) {
                     SendLocalBroadcast.next(this);
-                }else {
-                    Toast.makeText(this,"歌单空空如也",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "歌单空空如也", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.imageView_like:
                 if (Common.song_playing.getId() != null) {
-                    Toast.makeText(this,"收藏",Toast.LENGTH_SHORT).show();
-                }else {
-                    Toast.makeText(this,"当前暂无歌曲，快去选一首吧",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "收藏", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "当前暂无歌曲，快去选一首吧", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.imageView_loop:
-                Toast.makeText(this,"循环",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "循环", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.imageView_comments:
                 if (Common.song_playing.getId() != null) {
-                    Toast.makeText(this,"评论",Toast.LENGTH_SHORT).show();
-                }else {
-                    Toast.makeText(this,"当前暂无歌曲，快去选一首吧",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "评论", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "当前暂无歌曲，快去选一首吧", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.imageView_list:
-                Toast.makeText(this,"歌单",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "歌单", Toast.LENGTH_SHORT).show();
                 break;
+                }
         }
-    }
 
 
     /**
      * 进度条监听
+     *
      * @param seekBar
      * @param i
      * @param b
@@ -443,9 +442,10 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
         if (Common.song_playing.getId() != null) {
-            switch (seekBar.getId()){
+            switch (seekBar.getId()) {
                 case R.id.seekBar:
-                    if (!updateSeekbar)textView_nowTime.setText(generateTime(Long.valueOf(seekBar.getProgress())));
+                    if (!updateSeekbar)
+                        textView_nowTime.setText(generateTime(Long.valueOf(seekBar.getProgress())));
                     break;
             }
         }
@@ -454,7 +454,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
         if (Common.song_playing.getId() != null) {
-            switch (seekBar.getId()){
+            switch (seekBar.getId()) {
                 case R.id.seekBar:
                     Log.d(TAG, "onStartTrackingTouch: 开始");
                     updateSeekbar = false;
@@ -466,7 +466,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         if (Common.song_playing.getId() != null) {
-            switch (seekBar.getId()){
+            switch (seekBar.getId()) {
                 case R.id.seekBar:
                     Log.d(TAG, "onStartTrackingTouch: 结束");
                     updateSeekbar = true;
@@ -483,28 +483,28 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 本地广播接收器（刷新时间）
      */
-    public class TimeReceiver extends BroadcastReceiver {
+    class TimeReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getStringExtra("ACTION");
-            switch (action){
+            switch (action) {
                 case "REFRESH":
                     //更新UI
                     textView_sumTime.setText(generateTime(Common.song_playing.getSunTime()));
-                    if (updateSeekbar) textView_nowTime.setText(generateTime(Common.song_playing.getNowTime()));
+                    if (updateSeekbar)
+                        textView_nowTime.setText(generateTime(Common.song_playing.getNowTime()));
 
                     if (Common.state_playing) {
                         imageView_playOrPause.setImageResource(R.drawable.logo_pause);
-                    }
-
-                    else imageView_playOrPause.setImageResource(R.drawable.logo_play);
+                    } else imageView_playOrPause.setImageResource(R.drawable.logo_play);
                     seekBar.setMax(Common.song_playing.getSunTime());
                     if (updateSeekbar) seekBar.setProgress(Common.song_playing.getNowTime());
                     break;
                 case "COMPLETE":
                     imageView_playOrPause.setImageResource(R.drawable.logo_play);
-                    if (updateSeekbar) textView_nowTime.setText(generateTime(Common.song_playing.getNowTime()));
+                    if (updateSeekbar)
+                        textView_nowTime.setText(generateTime(Common.song_playing.getNowTime()));
                     if (updateSeekbar) seekBar.setProgress(Common.song_playing.getNowTime());
                     break;
                 case "LYRIC":
@@ -519,5 +519,5 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
-
 }
+
