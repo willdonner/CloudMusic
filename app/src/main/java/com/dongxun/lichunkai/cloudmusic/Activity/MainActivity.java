@@ -2,7 +2,6 @@ package com.dongxun.lichunkai.cloudmusic.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -12,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -22,9 +20,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.Class.MusicMediaPlayer;
-import com.dongxun.lichunkai.cloudmusic.Class.Song;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
+import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.dongxun.lichunkai.cloudmusic.Util.PermissionUtil;
 import com.dongxun.lichunkai.cloudmusic.Util.ToolHelper;
@@ -194,11 +193,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent_play);
                 break;
             case R.id.imageView_playOrPause:
-                //发送本地广播播放
-                Intent intent_broadcast = new Intent("com.dongxun.lichunkai.cloudmusic.MUSIC_BROADCAST");
-                intent_broadcast.putExtra("ACTION","PLAY_PAUSE");
-                LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-                localBroadcastManager.sendBroadcast(intent_broadcast);
+                if (Common.song_playing.getId() != null) {
+                    //发送本地广播播放
+                    SendLocalBroadcast.playOrPause(this);
+                }else {
+                    Toast.makeText(this,"当前暂无歌曲，快去选一首吧",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.imageView_list:
                 Toast.makeText(this,"歌单",Toast.LENGTH_SHORT).show();
@@ -357,25 +357,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case "LAST":
                     //上一曲
+                    Toast.makeText(context,"上一曲",Toast.LENGTH_SHORT).show();
                     break;
                 case "NEXT":
                     //下一曲
-                    break;
-                case "LIKE":
-                    //收藏
-                    break;
-                case "LOOP":
-                    //循环
-                    break;
-                case "COMMENTS":
-                    //评论
-                    break;
-                case "LIST":
-                    //歌曲列表
+                    Toast.makeText(context,"下一曲",Toast.LENGTH_SHORT).show();
                     break;
                 case "CHANGEPROGRESS":
-                    //歌曲列表
-                    Toast.makeText(context,"更改钢琴曲进度："+ Common.changeProgress,Toast.LENGTH_SHORT).show();
+                    //更改歌曲进度
+                    Toast.makeText(context,"更改歌曲进度："+ Common.changeProgress,Toast.LENGTH_SHORT).show();
                     musicMediaPlayer.seekToOption();
                     break;
                 case "COMPLETE":
