@@ -3,6 +3,8 @@ package com.dongxun.lichunkai.cloudmusic.Activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +16,10 @@ import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +27,7 @@ import android.widget.Toast;
 import com.dongxun.lichunkai.cloudmusic.Bean.Lyric;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
+import com.dongxun.lichunkai.cloudmusic.PopWindow.SongDetailsWindow;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.dongxun.lichunkai.cloudmusic.Util.ToolHelper;
 import com.gyf.immersionbar.ImmersionBar;
@@ -101,6 +107,8 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
     private String path_details=sd.getPath()+"/CloudMusic/details";//歌曲详情文件夹
 
+    private float windowAlpha = 1f;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,7 +146,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
      * 初始化状态栏
      */
     private void initStateBar() {
-        ImmersionBar.with(this).init();
+        ImmersionBar.with(PlayActivity.this).statusBarDarkFont(true).init();
         getSupportActionBar().hide();
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
     }
@@ -392,6 +400,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         textView_author = findViewById(R.id.textView_author);
 
         imageView_coverImg = findViewById(R.id.imageView_coverImg);
+        imageView_coverImg.setOnClickListener(this);
 
         textView_firstLyric = findViewById(R.id.textView_firstLyric);
         textView_secondLyric = findViewById(R.id.textView_secondLyric);
@@ -427,11 +436,18 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
      *
      * @param view
      */
+    @SuppressLint("ResourceAsColor")
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.imageView_close:
                 finish();
+                break;
+            case R.id.imageView_coverImg:
+                //弹出歌曲详情窗口
+
+                SongDetailsWindow songDetailsWindow = new SongDetailsWindow(this);
+                songDetailsWindow.show();
                 break;
             case R.id.imageView_lastSong:
                 if (Common.songList.size() != 0) {
@@ -490,7 +506,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
-
 
     /**
      * 进度条监听

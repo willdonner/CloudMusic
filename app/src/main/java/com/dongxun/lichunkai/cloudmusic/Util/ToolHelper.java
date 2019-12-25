@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
 import android.util.Log;
+import android.view.WindowManager;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -281,6 +282,5 @@ public class ToolHelper {
         }
         Log.i("tag", "saveBitmap success: " + filePic.getAbsolutePath());
     }
-
 
 }
