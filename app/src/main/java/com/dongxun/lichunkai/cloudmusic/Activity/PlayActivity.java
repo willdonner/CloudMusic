@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.dongxun.lichunkai.cloudmusic.Bean.Lyric;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
+import com.dongxun.lichunkai.cloudmusic.PopWindow.ListWindow;
 import com.dongxun.lichunkai.cloudmusic.PopWindow.SongDetailsWindow;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.dongxun.lichunkai.cloudmusic.Util.ToolHelper;
@@ -503,6 +504,8 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.imageView_list:
                 Toast.makeText(this, "歌单", Toast.LENGTH_SHORT).show();
+                ListWindow listWindow = new ListWindow(this);
+                listWindow.show();
                 break;
         }
     }
