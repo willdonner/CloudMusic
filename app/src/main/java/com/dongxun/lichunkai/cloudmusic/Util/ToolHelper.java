@@ -14,6 +14,7 @@ import android.view.WindowManager;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 
 import java.io.BufferedReader;
@@ -283,7 +284,16 @@ public class ToolHelper {
         Log.i("tag", "saveBitmap success: " + filePic.getAbsolutePath());
     }
 
-
-
+    /**
+     * 获取当前歌曲位置
+     * @return
+     */
+    public static int getSongListPosition() {
+        int nowPosition = 0;
+        for (Song song:Common.songList){
+            if (song.getId().equals(Common.song_playing.getId())) nowPosition = Common.songList.indexOf(song);
+        }
+        return nowPosition;
+    }
 
 }
