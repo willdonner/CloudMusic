@@ -235,6 +235,13 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         } else imageView_playOrPause.setImageResource(R.drawable.logo_play);
         textView_sumTime.setText(generateTime(Common.song_playing.getSunTime()));
         textView_nowTime.setText(generateTime(Common.song_playing.getNowTime()));
+
+        //更新循环
+        switch (Common.loopType_playing){
+            case 0: imageView_loop.setImageResource(R.drawable.logo_loop_random);break;
+            case 1: imageView_loop.setImageResource(R.drawable.logo_loop_single);break;
+            case 2: imageView_loop.setImageResource(R.drawable.logo_loop_list);break;
+        }
     }
 
 

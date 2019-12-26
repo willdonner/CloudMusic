@@ -24,6 +24,8 @@ import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.Class.MusicMediaPlayer;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
+import com.dongxun.lichunkai.cloudmusic.PopWindow.ListWindow;
+import com.dongxun.lichunkai.cloudmusic.PopWindow.SongDetailsWindow;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.dongxun.lichunkai.cloudmusic.Util.PermissionUtil;
 import com.dongxun.lichunkai.cloudmusic.Util.ToolHelper;
@@ -202,6 +204,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.imageView_list:
                 Toast.makeText(this,"歌单",Toast.LENGTH_SHORT).show();
+                //弹出歌曲详情窗口
+                ListWindow listWindow = new ListWindow(this);
+                listWindow.show();
                 break;
         }
 
@@ -318,6 +323,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onResume() {
+        //更新封面
+        if (Common.song_playing.getName() != null) imageView_head.setImageBitmap(Common.song_playing.getCover());
         //更新歌曲显示
         textView_name.setText(Common.song_playing.getName() == null?"暂无歌曲":Common.song_playing.getName());
         super.onResume();
