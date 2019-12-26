@@ -366,10 +366,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case "LAST":
                     //上一曲
                     Toast.makeText(context,"上一曲",Toast.LENGTH_SHORT).show();
+                    for (Song song:Common.songList){
+                        Log.e(TAG, "当前歌单歌曲: "+song.getName());
+                    }
+                    //更改公共变量
+                    int nowPosition1 = 0;
+                    for (Song song:Common.songList){
+                        if (song.getId().equals(Common.song_playing.getId())) nowPosition1 = Common.songList.indexOf(song);
+                    }
+                    Common.song_playing = Common.songList.get((nowPosition1-1 < 0)?Common.songList.size()-1:nowPosition1-1);
+                    //发送本地广播播放
+                    SendLocalBroadcast.playNew(context);
+                    SendLocalBroadcast.refreshCover(context);
                     break;
                 case "NEXT":
                     //下一曲
                     Toast.makeText(context,"下一曲",Toast.LENGTH_SHORT).show();
+                    for (Song song:Common.songList){
+                        Log.e(TAG, "当前歌单歌曲: "+song.getName());
+                    }
+                    //更改公共变量
+                    int nowPosition = 0;
+                    for (Song song:Common.songList){
+                        if (song.getId().equals(Common.song_playing.getId())) nowPosition = Common.songList.indexOf(song);
+                    }
+                    Common.song_playing = Common.songList.get((nowPosition+1>Common.songList.size()-1)?0:nowPosition+1);
+                    //发送本地广播播放
+                    SendLocalBroadcast.playNew(context);
+                    SendLocalBroadcast.refreshCover(context);
                     break;
                 case "CHANGEPROGRESS":
                     //更改歌曲进度

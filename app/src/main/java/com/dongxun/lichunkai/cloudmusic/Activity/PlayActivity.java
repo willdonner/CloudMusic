@@ -630,6 +630,9 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                         case 2: imageView_loop.setImageResource(R.drawable.logo_loop_list);break;
                     }
                     break;
+                case "COVER":
+                    refreshUI();
+                    break;
             }
         }
     }

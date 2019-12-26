@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.dongxun.lichunkai.cloudmusic.Activity.PlayActivity;
+import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.gyf.immersionbar.ImmersionBar;
@@ -106,7 +108,12 @@ public class SongDetailsWindow extends PopupWindow implements View.OnClickListen
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.LinearLayout_addToList:
-                Toast.makeText(mContext,"添加到歌单",Toast.LENGTH_SHORT).show();
+                //添加到当前歌单
+                Common.songList.add(Common.song_playing);
+                Toast.makeText(mContext,"添加成功",Toast.LENGTH_SHORT).show();
+                for (Song song:Common.songList){
+                    Log.e(TAG, "当前歌单歌曲: "+song.getName());
+                }
                 break;
             case R.id.LinearLayout_altist:
                 Toast.makeText(mContext,"歌手",Toast.LENGTH_SHORT).show();

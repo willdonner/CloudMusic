@@ -112,4 +112,14 @@ public class SendLocalBroadcast {
         localBroadcastManager = LocalBroadcastManager.getInstance(context);
         localBroadcastManager.sendBroadcast(intent);
     }
+
+    /**
+     * 刷新封面
+     */
+    public static void refreshCover(Context context) {
+        intent = new Intent("com.dongxun.lichunkai.cloudmusic.TIME_BROADCAST");
+        intent.putExtra("ACTION","COVER");
+        localBroadcastManager = LocalBroadcastManager.getInstance(context);
+        localBroadcastManager.sendBroadcast(intent);
+    }
 }
