@@ -21,6 +21,6 @@ public class Common {
     //当前歌单
     public static List<Song> songList = new ArrayList<>();
     //播放设置
-    public static int Playing_loopType = 0; //循环方式
+    public static int loopType_playing = 0; //循环方式
     public static String[] loopType = {"随机播放","单曲循环","列表循环"};//循环方式集合
 }

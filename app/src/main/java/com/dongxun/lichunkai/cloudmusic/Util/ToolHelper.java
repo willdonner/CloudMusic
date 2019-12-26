@@ -283,4 +283,7 @@ public class ToolHelper {
         Log.i("tag", "saveBitmap success: " + filePic.getAbsolutePath());
     }
 
+
+
+
 }

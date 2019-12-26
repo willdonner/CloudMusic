@@ -2,8 +2,11 @@ package com.dongxun.lichunkai.cloudmusic.PopWindow;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +17,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,6 +45,10 @@ public class ListWindow extends PopupWindow implements View.OnClickListener {
 
     private SongListAdapter songListAdapter;
     private LinearLayoutManager layoutManager;
+    private ImageView imageView_deleteAll;
+    private TextView textView_like;
+    private TextView textView_loop;
+    private ImageView imageView_loop;
 
     private List<Song> songList = new ArrayList<>();
 
@@ -72,21 +80,9 @@ public class ListWindow extends PopupWindow implements View.OnClickListener {
         initView();
         refreshUI();
         setAdapter();
-
-
-
     }
 
     private void setAdapter() {
-
-
-        Song song = new Song();
-        song.setName("趁你还年轻");
-        song.setArtist("华晨宇");
-        for (int i=0;i<10;i++){
-            songList.add(song);
-        }
-
         layoutManager = new LinearLayoutManager(mContext);
         recyclerView_song.setLayoutManager(layoutManager);
         songListAdapter = new SongListAdapter(songList);
@@ -95,13 +91,17 @@ public class ListWindow extends PopupWindow implements View.OnClickListener {
             @Override
             public void onClickPlay(int position) {
                 //播放
-                Toast.makeText(mContext,"播放",Toast.LENGTH_SHORT).show();
+                Song song = songList.get(position);
+                Toast.makeText(mContext,"播放"+song.getName(),Toast.LENGTH_SHORT).show();
             }
-
             @Override
             public void onClickDelete(int position) {
                 //删除
-                Toast.makeText(mContext,"删除",Toast.LENGTH_SHORT).show();
+                Song song = songList.get(position);
+                Toast.makeText(mContext,"删除"+song.getName(),Toast.LENGTH_SHORT).show();
+                songList.remove(position);
+                //刷新
+                songListAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -111,7 +111,13 @@ public class ListWindow extends PopupWindow implements View.OnClickListener {
      * 更新UI
      */
     private void refreshUI() {
-
+        //循环方式
+        textView_loop.setText(Common.loopType[Common.loopType_playing]);
+        switch (Common.loopType_playing){
+            case 0: imageView_loop.setImageResource(R.drawable.logo_white_loop_random);break;
+            case 1: imageView_loop.setImageResource(R.drawable.logo_white_loop_single);break;
+            case 2: imageView_loop.setImageResource(R.drawable.logo_white_loop_list);break;
+        }
     }
 
     /**
@@ -119,6 +125,13 @@ public class ListWindow extends PopupWindow implements View.OnClickListener {
      */
     private void initView() {
         recyclerView_song = mMenuView.findViewById(R.id.recyclerView_song);
+        imageView_deleteAll = mMenuView.findViewById(R.id.imageView_deleteAll);
+        imageView_deleteAll.setOnClickListener(this);
+        textView_loop = mMenuView.findViewById(R.id.textView_loop);
+        textView_loop.setOnClickListener(this);
+        textView_like = mMenuView.findViewById(R.id.textView_like);
+        textView_like.setOnClickListener(this);
+        imageView_loop = mMenuView.findViewById(R.id.imageView_loop);
     }
 
     /**
@@ -132,9 +145,41 @@ public class ListWindow extends PopupWindow implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-//            case R.id.content1:
-//                dismiss();
-//                break;
+            case R.id.textView_loop:
+                //循环方式
+                Toast.makeText(mContext,"循环方式",Toast.LENGTH_SHORT).show();
+                //当前循环
+                Log.e(TAG, "onClick: "+Common.loopType[Common.loopType_playing]);
+                //更改循环
+                Common.loopType_playing = Common.loopType_playing + 1 > 2?0:Common.loopType_playing+1;
+                Log.e(TAG, "onClick: "+Common.loopType[Common.loopType_playing]);
+                //更新UI
+                textView_loop.setText(Common.loopType[Common.loopType_playing]);
+                switch (Common.loopType_playing){
+                    case 0: imageView_loop.setImageResource(R.drawable.logo_white_loop_random);break;
+                    case 1: imageView_loop.setImageResource(R.drawable.logo_white_loop_single);break;
+                    case 2: imageView_loop.setImageResource(R.drawable.logo_white_loop_list);break;
+                }
+                break;
+            case R.id.textView_like:
+                //收藏全部
+                Toast.makeText(mContext,"收藏全部",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.imageView_deleteAll:
+                //删除歌单全部歌曲
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle("提示");
+                builder.setMessage("移除歌单所有歌曲？");
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        songList.removeAll(songList);
+                        songListAdapter.notifyDataSetChanged();
+                    }
+                });
+                builder.setNegativeButton("取消",null);
+                builder.show();
+                break;
         }
     }
 
