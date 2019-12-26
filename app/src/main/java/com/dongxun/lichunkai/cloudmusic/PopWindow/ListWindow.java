@@ -158,8 +158,10 @@ public class ListWindow extends PopupWindow implements View.OnClickListener {
                 switch (Common.loopType_playing){
                     case 0: imageView_loop.setImageResource(R.drawable.logo_white_loop_random);break;
                     case 1: imageView_loop.setImageResource(R.drawable.logo_white_loop_single);break;
-                    case 2: imageView_loop.setImageResource(R.drawable.logo_white_loop_list);break;
+                    case 2: imageView_loop.setImageResource(R.drawable.logo_white_loop);break;
                 }
+                //发送广播
+                SendLocalBroadcast.refreshLoop(mContext);
                 break;
             case R.id.textView_like:
                 //收藏全部

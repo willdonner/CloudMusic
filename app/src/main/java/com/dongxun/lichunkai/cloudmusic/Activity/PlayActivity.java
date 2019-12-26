@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -614,6 +615,13 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
 
+                    break;
+                case "LOOP":
+                    switch (Common.loopType_playing){
+                        case 0: imageView_loop.setImageResource(R.drawable.logo_loop_random);break;
+                        case 1: imageView_loop.setImageResource(R.drawable.logo_loop_single);break;
+                        case 2: imageView_loop.setImageResource(R.drawable.logo_loop_list);break;
+                    }
                     break;
             }
         }

@@ -102,4 +102,14 @@ public class SendLocalBroadcast {
         localBroadcastManager = LocalBroadcastManager.getInstance(context);
         localBroadcastManager.sendBroadcast(intent);
     }
+
+    /**
+     * 刷新循环方式（时间控制）
+     */
+    public static void refreshLoop(Context context) {
+        intent = new Intent("com.dongxun.lichunkai.cloudmusic.TIME_BROADCAST");
+        intent.putExtra("ACTION","LOOP");
+        localBroadcastManager = LocalBroadcastManager.getInstance(context);
+        localBroadcastManager.sendBroadcast(intent);
+    }
 }
