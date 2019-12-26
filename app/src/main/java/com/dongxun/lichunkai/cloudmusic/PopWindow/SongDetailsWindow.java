@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -33,18 +34,11 @@ public class SongDetailsWindow extends PopupWindow implements View.OnClickListen
     private Context mContext;
     private View mMenuView;
 
-    private TextView content1;
-    private TextView textView_author;
-    private ImageView imageView_close;
-    private ImageView imageView_coverImg;
-    private SeekBar seekBar;
-    private ImageView imageView_lastSong;
-    private ImageView imageView_playOrPause;
-    private ImageView imageView_nextSong;
-    private ImageView imageView_like;
-    private ImageView imageView_loop;
-    private ImageView imageView_comments;
-    private ImageView imageView_list;
+    private LinearLayout LinearLayout_addToList;
+    private LinearLayout LinearLayout_altist;
+    private LinearLayout LinearLayout_album;
+    private LinearLayout LinearLayout_similar;
+    private LinearLayout LinearLayout_video;
 
     private LocalBroadcastManager mLocalBroadcastManager; //创建本地广播管理器类变量
 
@@ -75,15 +69,6 @@ public class SongDetailsWindow extends PopupWindow implements View.OnClickListen
         initView();
         refreshUI();
 
-
-
-    }
-
-    @Override
-    public void dismiss() {
-        //还原状态栏样式
-        ImmersionBar.with((Activity) mContext).statusBarColor(R.color.white).init();
-        super.dismiss();
     }
 
     /**
@@ -97,6 +82,16 @@ public class SongDetailsWindow extends PopupWindow implements View.OnClickListen
      * 初始化组件
      */
     private void initView() {
+        LinearLayout_addToList = mMenuView.findViewById(R.id.LinearLayout_addToList);
+        LinearLayout_addToList.setOnClickListener(this);
+        LinearLayout_altist = mMenuView.findViewById(R.id.LinearLayout_altist);
+        LinearLayout_altist.setOnClickListener(this);
+        LinearLayout_album = mMenuView.findViewById(R.id.LinearLayout_album);
+        LinearLayout_album.setOnClickListener(this);
+        LinearLayout_similar = mMenuView.findViewById(R.id.LinearLayout_similar);
+        LinearLayout_similar.setOnClickListener(this);
+        LinearLayout_video = mMenuView.findViewById(R.id.LinearLayout_video);
+        LinearLayout_video.setOnClickListener(this);
     }
 
     /**
@@ -110,9 +105,22 @@ public class SongDetailsWindow extends PopupWindow implements View.OnClickListen
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-//            case R.id.content1:
-//                dismiss();
-//                break;
+            case R.id.LinearLayout_addToList:
+                Toast.makeText(mContext,"添加到歌单",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.LinearLayout_altist:
+                Toast.makeText(mContext,"歌手",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.LinearLayout_album:
+                Toast.makeText(mContext,"专辑",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.LinearLayout_similar:
+                Toast.makeText(mContext,"相似推荐",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.LinearLayout_video:
+                Toast.makeText(mContext,"查看视频",Toast.LENGTH_SHORT).show();
+                break;
         }
     }
+
 }

@@ -446,7 +446,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.imageView_coverImg:
                 //弹出歌曲详情窗口
-
                 SongDetailsWindow songDetailsWindow = new SongDetailsWindow(this);
                 songDetailsWindow.show();
                 break;
@@ -509,6 +508,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+
 
     /**
      * 进度条监听

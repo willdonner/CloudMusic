@@ -38,6 +38,7 @@
                 android:id="@+id/textView15"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:text="邓紫棋"
                 android:textColor="#efefef" />
         </LinearLayout>
@@ -57,6 +58,7 @@
         android:paddingLeft="20dp">
 
         <LinearLayout
+            android:id="@+id/LinearLayout_addToList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -93,6 +95,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/LinearLayout_altist"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -129,6 +132,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/LinearLayout_album"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -165,6 +169,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/LinearLayout_similar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -201,6 +206,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/LinearLayout_video"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">

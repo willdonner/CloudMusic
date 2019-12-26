@@ -2,6 +2,7 @@ package com.dongxun.lichunkai.cloudmusic.PopWindow;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -11,11 +12,24 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.dongxun.lichunkai.cloudmusic.Activity.PlayActivity;
+import com.dongxun.lichunkai.cloudmusic.Activity.SearchActivity;
+import com.dongxun.lichunkai.cloudmusic.Adapter.SearchAdapter;
+import com.dongxun.lichunkai.cloudmusic.Adapter.SongListAdapter;
+import com.dongxun.lichunkai.cloudmusic.Bean.Song;
+import com.dongxun.lichunkai.cloudmusic.Common.Common;
+import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.gyf.immersionbar.ImmersionBar;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ListWindow extends PopupWindow implements View.OnClickListener {
 
@@ -23,20 +37,13 @@ public class ListWindow extends PopupWindow implements View.OnClickListener {
     private Context mContext;
     private View mMenuView;
 
-    private TextView content1;
-    private TextView textView_author;
-    private ImageView imageView_close;
-    private ImageView imageView_coverImg;
-    private SeekBar seekBar;
-    private ImageView imageView_lastSong;
-    private ImageView imageView_playOrPause;
-    private ImageView imageView_nextSong;
-    private ImageView imageView_like;
-    private ImageView imageView_loop;
-    private ImageView imageView_comments;
-    private ImageView imageView_list;
+    private RecyclerView recyclerView_song;
 
-    private LocalBroadcastManager mLocalBroadcastManager; //创建本地广播管理器类变量
+    private SongListAdapter songListAdapter;
+    private LinearLayoutManager layoutManager;
+
+    private List<Song> songList = new ArrayList<>();
+
 
     public ListWindow(final Context context) {
         super(context);
@@ -64,17 +71,41 @@ public class ListWindow extends PopupWindow implements View.OnClickListener {
 
         initView();
         refreshUI();
+        setAdapter();
 
 
 
     }
 
-    @Override
-    public void dismiss() {
-        //还原状态栏样式
-        ImmersionBar.with((Activity) mContext).statusBarColor(R.color.white).init();
-        super.dismiss();
+    private void setAdapter() {
+
+
+        Song song = new Song();
+        song.setName("趁你还年轻");
+        song.setArtist("华晨宇");
+        for (int i=0;i<10;i++){
+            songList.add(song);
+        }
+
+        layoutManager = new LinearLayoutManager(mContext);
+        recyclerView_song.setLayoutManager(layoutManager);
+        songListAdapter = new SongListAdapter(songList);
+        recyclerView_song.setAdapter(songListAdapter);
+        songListAdapter.setOnItemClickListener(new SongListAdapter.OnItemClickListener() {
+            @Override
+            public void onClickPlay(int position) {
+                //播放
+                Toast.makeText(mContext,"播放",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onClickDelete(int position) {
+                //删除
+                Toast.makeText(mContext,"删除",Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
 
     /**
      * 更新UI
@@ -87,6 +118,7 @@ public class ListWindow extends PopupWindow implements View.OnClickListener {
      * 初始化组件
      */
     private void initView() {
+        recyclerView_song = mMenuView.findViewById(R.id.recyclerView_song);
     }
 
     /**
@@ -105,4 +137,5 @@ public class ListWindow extends PopupWindow implements View.OnClickListener {
 //                break;
         }
     }
+
 }
