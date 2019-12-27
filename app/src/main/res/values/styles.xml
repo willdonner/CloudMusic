@@ -23,7 +23,7 @@
 
     <style name="LunchTheme" parent="Theme.AppCompat">
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowFullscreen">true</item>
+<!--        <item name="android:windowFullscreen">true</item>-->
         <!--下面这句如果你加上觉得好看就加，不好看就不加咯-->
         <!--<item name="android:navigationBarColor">@color/transparent</item>-->
         <item name="android:statusBarColor">@android:color/transparent</item>
