@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dongxun.lichunkai.cloudmusic.Dialog.permissionDialog;
 import com.dongxun.lichunkai.cloudmusic.R;
 
 import static android.os.SystemClock.sleep;
@@ -89,10 +90,25 @@ public class LunchActivity extends AppCompatActivity implements Animation.Animat
                         @Override
                         public void run() {
                             // 这里可以睡几秒钟，如果要放广告的话
-                            sleep(1000);
+                            sleep(500);
                             //权限申请
-
-
+                            new permissionDialog(LunchActivity.this).builder().setTitle("云音乐权限申请")
+                                    .setMsg("云音乐需要获取存储空间和设备信息权限，以保证歌曲正常播放下载以及您的帐号安全。")
+                                    .setCancelable(false)
+                                    .setPositiveButton("授权", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            //授权
+                                            Toast.makeText(LunchActivity.this,"授权",Toast.LENGTH_SHORT).show();
+                                            
+                                        }
+                                    }).setNegativeButton("取消", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            //退出
+                                            finish();
+                                        }
+                                    }).show();
                         }
                     });
                 }

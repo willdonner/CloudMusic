@@ -1,61 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/lLayout_bg"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layout_marginHorizontal="40dp"
     android:background="@drawable/back_radius_loginwindow">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:src="@drawable/img_permission"
+        android:background="@drawable/back_radius_permissiondialog"/>
+
+    <TextView
+        android:id="@+id/txt_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textColor="#333333"
+        android:textStyle="bold"
+        android:text="标题"/>
+
+    <TextView
+        android:id="@+id/txt_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:textSize="14sp"
+        android:textColor="#999999"
+        android:text="内容"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="10dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:padding="10dp">
+
+        <Button
+            android:id="@+id/btn_neg"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="5dp"
+            android:gravity="center"
+            android:textColor="#fe3a3b"
+            android:textSize="16sp"
+            android:text="取消"/>
 
         <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            app:srcCompat="@drawable/img_permission" />
+            android:id="@+id/img_line"
+            android:layout_width="0.5dp"
+            android:layout_height="43dp"/>
 
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="20dp"
+        <Button
+            android:id="@+id/btn_pos"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="5dp"
             android:gravity="center"
+            android:textColor="#ffff"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#000"
-            android:text="云音乐权限申请" />
-
-        <TextView
-            android:id="@+id/textView11"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:text="云音乐需要获取存储空间和设备信息权限，以保证歌曲正常播放下载以及您的帐号安全。 " />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:padding="10dp">
-
-            <Button
-                android:id="@+id/button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="取消" />
-
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginLeft="10dp"
-                android:text="授权" />
-        </LinearLayout>
+            android:text="确定"/>
     </LinearLayout>
+
 </LinearLayout>
