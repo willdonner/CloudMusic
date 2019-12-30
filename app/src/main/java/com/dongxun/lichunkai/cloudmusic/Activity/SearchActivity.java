@@ -340,11 +340,13 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                 JSONObject songInfo = songs.getJSONObject(i);
                 String name = songInfo.getString("name");
                 String id = songInfo.getString("id");
+                String albumid = songInfo.getJSONObject("album").getString("id");
                 String artist = songInfo.getJSONArray("artists").getJSONObject(0).getString("name");
                 String coverURL = songInfo.getJSONArray("artists").getJSONObject(0).getString("img1v1Url");
 
                 Song song = new Song();
                 song.setId(id);
+                song.setalbumId(albumid);
                 song.setName(name);
                 song.setArtist(artist);
                 song.setCoverURL(coverURL);
