@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.dongxun.lichunkai.cloudmusic.R;
 
-public class permissionDialog {
+public class PermissionDialog {
     private Context context;
     private Dialog dialog;
     private LinearLayout lLayout_bg;
@@ -29,14 +29,14 @@ public class permissionDialog {
     private boolean showPosBtn = false;
     private boolean showNegBtn = false;
 
-    public permissionDialog(Context context) {
+    public PermissionDialog(Context context) {
         this.context = context;
         WindowManager windowManager = (WindowManager) context
                 .getSystemService(Context.WINDOW_SERVICE);
         display = windowManager.getDefaultDisplay();
     }
 
-    public permissionDialog builder() {
+    public PermissionDialog builder() {
         // 获取Dialog布局
         View view = LayoutInflater.from(context).inflate(
                 R.layout.dialog_permission, null);
@@ -65,7 +65,7 @@ public class permissionDialog {
         return this;
     }
 
-    public permissionDialog setTitle(String title) {
+    public PermissionDialog setTitle(String title) {
         showTitle = true;
         if ("".equals(title)) {
             txt_title.setText("标题");
@@ -75,7 +75,7 @@ public class permissionDialog {
         return this;
     }
 
-    public permissionDialog setMsg(String msg) {
+    public PermissionDialog setMsg(String msg) {
         showMsg = true;
         if ("".equals(msg)) {
             txt_msg.setText("内容");
@@ -85,12 +85,12 @@ public class permissionDialog {
         return this;
     }
 
-    public permissionDialog setCancelable(boolean cancel) {
+    public PermissionDialog setCancelable(boolean cancel) {
         dialog.setCancelable(cancel);
         return this;
     }
 
-    public permissionDialog setPositiveButton(String text,
+    public PermissionDialog setPositiveButton(String text,
                                               final View.OnClickListener listener) {
         showPosBtn = true;
         if ("".equals(text)) {
@@ -108,7 +108,7 @@ public class permissionDialog {
         return this;
     }
 
-    public permissionDialog setNegativeButton(String text,
+    public PermissionDialog setNegativeButton(String text,
                                               final View.OnClickListener listener) {
         showNegBtn = true;
         if ("".equals(text)) {
