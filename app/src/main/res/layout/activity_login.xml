@@ -28,7 +28,7 @@
                 app:srcCompat="@drawable/logo_back" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/textView_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -42,7 +42,8 @@
             android:id="@+id/LinearLayout_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingHorizontal="10dp">
 
             <TextView
                 android:id="@+id/textView5"
@@ -76,7 +77,7 @@
                     android:background="@null"
                     android:ems="10"
                     android:hint="请输入手机号"
-                    android:inputType="textPersonName"
+                    android:inputType="number"
                     android:textColorHint="#d9d9d9" />
             </LinearLayout>
 
@@ -102,17 +103,17 @@
         <LinearLayout
             android:id="@+id/LinearLayout_password"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:paddingHorizontal="10dp">
 
             <TextView
                 android:id="@+id/textView11"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
-                android:textColor="#999999"
                 android:text="输入密码以登录账号"
+                android:textColor="#999999"
                 android:textSize="14sp" />
 
             <LinearLayout
@@ -159,5 +160,166 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/LinearLayout_checkPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="验证码已发送至"
+                android:textColor="#000"
+                android:textSize="16sp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:id="@+id/textView12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+86"
+                    android:textColor="#999999"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/textView_phone"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:text="123****8925"
+                    android:textColor="#999999"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/textView_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="60s"
+                    android:textColor="#999999"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="30dp"
+                android:layout_marginHorizontal="30dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginHorizontal="20dp">
+
+                    <EditText
+                        android:id="@+id/editText_checkCode1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:ems="10"
+                        android:inputType="number" />
+
+                    <TextView
+                        android:id="@+id/textView_checkCodeLine1"
+                        android:layout_width="match_parent"
+                        android:layout_height="2sp"
+                        android:layout_marginTop="6dp"
+                        android:layout_weight="1"
+                        android:background="#e6e6e6" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginHorizontal="20dp">
+
+                    <EditText
+                        android:id="@+id/editText_checkCode2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:ems="10"
+                        android:inputType="number" />
+
+                    <TextView
+                        android:id="@+id/textView_checkCodeLine2"
+                        android:layout_width="match_parent"
+                        android:layout_height="2sp"
+                        android:layout_marginTop="6dp"
+                        android:layout_weight="1"
+                        android:background="#e6e6e6" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginHorizontal="20dp">
+
+                    <EditText
+                        android:id="@+id/editText_checkCode3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:ems="10"
+                        android:inputType="number" />
+
+                    <TextView
+                        android:id="@+id/textView_checkCodeLine3"
+                        android:layout_width="match_parent"
+                        android:layout_height="2sp"
+                        android:layout_marginTop="6dp"
+                        android:layout_weight="1"
+                        android:background="#e6e6e6" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginHorizontal="20dp">
+
+                    <EditText
+                        android:id="@+id/editText_checkCode4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:inputType="number" />
+
+                    <TextView
+                        android:id="@+id/textView_checkCodeLine4"
+                        android:layout_width="match_parent"
+                        android:layout_height="2sp"
+                        android:layout_marginTop="6dp"
+                        android:layout_weight="1"
+                        android:background="#e6e6e6" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

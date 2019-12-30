@@ -21,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dongxun.lichunkai.cloudmusic.Bean.Song;
+import com.dongxun.lichunkai.cloudmusic.Class.ActivityCollector;
+import com.dongxun.lichunkai.cloudmusic.Class.BaseActivity;
 import com.dongxun.lichunkai.cloudmusic.Class.MusicMediaPlayer;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
@@ -49,7 +51,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private String TAG = "MainActivity";
     private ImageView imageView_search;
@@ -73,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ActivityCollector.removeOther(this);
         initStateBar();
         initView();
         initReceiver();

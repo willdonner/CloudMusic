@@ -17,7 +17,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dongxun.lichunkai.cloudmusic.Dialog.permissionDialog;
+import com.dongxun.lichunkai.cloudmusic.Class.BaseActivity;
+import com.dongxun.lichunkai.cloudmusic.Dialog.PermissionDialog;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.dongxun.lichunkai.cloudmusic.Util.PermissionUtil;
 import com.gyf.immersionbar.BarHide;
@@ -25,7 +26,7 @@ import com.gyf.immersionbar.ImmersionBar;
 
 import static android.os.SystemClock.sleep;
 
-public class LunchActivity extends AppCompatActivity implements Animation.AnimationListener, View.OnClickListener {
+public class LunchActivity extends BaseActivity implements Animation.AnimationListener, View.OnClickListener {
 
     private ImageView imageView_logo;
     private TextView textView_name;
@@ -174,7 +175,7 @@ public class LunchActivity extends AppCompatActivity implements Animation.Animat
                         //权限申请
                         if (ContextCompat.checkSelfPermission(LunchActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                                 != PackageManager.PERMISSION_GRANTED){
-                            new permissionDialog(LunchActivity.this).builder().setTitle("云音乐权限申请")
+                            new PermissionDialog(LunchActivity.this).builder().setTitle("云音乐权限申请")
                                     .setMsg("云音乐需要获取存储空间和设备信息权限，以保证歌曲正常播放下载以及您的帐号安全。")
                                     .setCancelable(false)
                                     .setPositiveButton("授权", new View.OnClickListener() {
