@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dongxun.lichunkai.cloudmusic.Bean.Lyric;
+import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 import com.dongxun.lichunkai.cloudmusic.PopWindow.ListWindow;
@@ -36,6 +37,7 @@ import com.gyf.immersionbar.ImmersionBar;
 import com.martinrgb.animer.Animer;
 import com.martinrgb.animer.core.interpolator.AndroidNative.AccelerateDecelerateInterpolator;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -58,6 +60,8 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import static com.dongxun.lichunkai.cloudmusic.Common.Common.songList;
 
 public class PlayActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
@@ -119,6 +123,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
 
         initStateBar();
         initView();
+        getalbum(Common.song_playing.getalbumId());
         animer1 = new Animer(imageView_coverImg, solver1, Animer.ROTATION, 0, 360);
         initReceiver();
     }
@@ -170,6 +175,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     private void refreshUI() {
         animer1.start();
         handler.postDelayed(runnable, time1000);
+
         textView_name.setText(Common.song_playing.getName());
         textView_author.setText(Common.song_playing.getArtist());
         if (Common.song_playing.getCover() != null) {
@@ -262,6 +268,65 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         refreshUI();
         super.onResume();
+    }
+
+    /**
+     * 通过获取专辑💽得到封面图
+     */
+    private void getalbum(final String albumid) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
+                    //和风请求方式
+                    Request request = new Request.Builder()
+                            .url("http://www.willdonner.top:3000/album?id="+ albumid +"")
+                            .build();//创建一个Request对象
+                    //第三步构建Call对象
+                    Call call = client.newCall(request);
+                    //第四步:异步get请求
+                    call.enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                        }
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            final String responseData = response.body().string();//处理返回的数据
+                            try {
+                                parseJSON(responseData);//解析JSON
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * 解析JSON
+     * @param responseData JSON字符串
+     */
+    private void parseJSON(String responseData) throws JSONException {
+        JSONObject response = new JSONObject(responseData);
+        String code = response.getString("code");
+        if (code.equals("200")){
+            JSONArray songs = response.getJSONArray("songs");
+            for (int i=0;i<1;i++){
+                JSONObject songInfo = songs.getJSONObject(i);
+                String coverURL = songInfo.getJSONObject("al").getString("picUrl");
+                getCoverImage(coverURL);
+                Song song = new Song();
+                song.setCoverURL(coverURL);
+                songList.add(song);
+            }
+        }else {
+            //显示错误信息
+        }
     }
 
     /**
@@ -458,7 +523,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 songDetailsWindow.show();
                 break;
             case R.id.imageView_lastSong:
-                if (Common.songList.size() != 0) {
+                if (songList.size() != 0) {
                     SendLocalBroadcast.last(this);
                 } else {
                     Toast.makeText(this, "歌单空空如也", Toast.LENGTH_SHORT).show();
@@ -486,7 +551,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.imageView_nextSong:
-                if (Common.songList.size() != 0) {
+                if (songList.size() != 0) {
                     SendLocalBroadcast.next(this);
                 } else {
                     Toast.makeText(this, "歌单空空如也", Toast.LENGTH_SHORT).show();

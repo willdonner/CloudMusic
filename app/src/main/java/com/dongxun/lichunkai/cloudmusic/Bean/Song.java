@@ -7,6 +7,7 @@ import java.util.List;
 public class Song {
     private String name;//歌曲名
     private String id;//歌曲ID
+    private String albumId;//专辑Id
     private String artist;//艺术家
     private Bitmap cover;//封面图Bitmap
     private String coverURL;//封面图URL
@@ -78,6 +79,14 @@ public class Song {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getalbumId() {
+        return albumId;
+    }
+
+    public void setalbumId(String albumId) {
+        this.albumId = albumId;
     }
 
     public String getArtist() {
