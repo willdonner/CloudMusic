@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dongxun.lichunkai.cloudmusic.Class.BaseActivity;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 import com.dongxun.lichunkai.cloudmusic.PopWindow.LoginWindow;
@@ -38,7 +39,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
     private String TAG = "LoginActivity";
 
@@ -90,8 +91,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         LinearLayout_account = findViewById(R.id.LinearLayout_account);
         LinearLayout_password = findViewById(R.id.LinearLayout_password);
         LinearLayout_checkPhone = findViewById(R.id.LinearLayout_checkPhone);
-        LinearLayout_password.setVisibility(View.GONE);
-        LinearLayout_checkPhone.setVisibility(View.GONE);
         editText_password = findViewById(R.id.editText_password);
         editText_account = findViewById(R.id.editText_account);
         button_login = findViewById(R.id.button_login);
@@ -99,6 +98,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         textView_title = findViewById(R.id.textView_title);
         textView_phone = findViewById(R.id.textView_phone);
         textView_time = findViewById(R.id.textView_time);
+
+        changeLayoutDisplay(LinearLayout_account);
     }
 
     /**
@@ -136,11 +137,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         //已注册
 //                                        String nickname = new JSONObject(responseData).getString("nickname");   //昵称
 //                                        Boolean hasPassword = new JSONObject(responseData).getBoolean("hasPassword");   //是否有密码
-                                        //跳转密码页
+                                        //显示密码页
                                         changeLayoutDisplay(LinearLayout_password);
+
                                     }else {
                                         //未注册（发送验证码->设置密码->登录）
-
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(LoginActivity.this,"该号码未被注册，请去找个注册过的！",Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                        //修改UI
+                                        button_next.setText("下一步");
+                                        //弹出软键盘
+                                        showInput(editText_account);
                                     }
                                 }
                             } catch (JSONException e) {
@@ -154,7 +165,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }).start();
     }
-
 
     /**
      * 登录
@@ -193,7 +203,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     startActivity(intent);
                                 }else {
                                     //密码错误
-                                    Toast.makeText(LoginActivity.this,"密码错误！",Toast.LENGTH_SHORT).show();
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(LoginActivity.this,"密码错误！",Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -268,6 +283,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     /**
+     * 显示键盘
+     *
+     * @param et 输入焦点
+     */
+    public void showInput(final EditText et) {
+        et.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        imm.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    /**
      * 更改布局显示
      * @param linearLayout 传入需要显示的布局
      */
@@ -287,12 +313,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         LinearLayout_account.setVisibility(View.GONE);
                         LinearLayout_password.setVisibility(View.VISIBLE);
                         LinearLayout_checkPhone.setVisibility(View.GONE);
+                        //弹出输入法
+                        showInput(editText_password);
                         break;
                     case R.id.LinearLayout_checkPhone:
                         //验证码
                         LinearLayout_account.setVisibility(View.GONE);
                         LinearLayout_password.setVisibility(View.GONE);
                         LinearLayout_checkPhone.setVisibility(View.VISIBLE);
+                        //弹出输入法
+//                        showInput(editText_password);
                         break;
                     default:
                         break;

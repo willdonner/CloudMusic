@@ -17,17 +17,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dongxun.lichunkai.cloudmusic.Class.BaseActivity;
 import com.dongxun.lichunkai.cloudmusic.Dialog.PermissionDialog;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.dongxun.lichunkai.cloudmusic.Util.PermissionUtil;
 import com.gyf.immersionbar.BarHide;
 import com.gyf.immersionbar.ImmersionBar;
 
-import okhttp3.internal.Util;
-
 import static android.os.SystemClock.sleep;
 
-public class LunchActivity extends AppCompatActivity implements Animation.AnimationListener, View.OnClickListener {
+public class LunchActivity extends BaseActivity implements Animation.AnimationListener, View.OnClickListener {
 
     private ImageView imageView_logo;
     private TextView textView_name;
