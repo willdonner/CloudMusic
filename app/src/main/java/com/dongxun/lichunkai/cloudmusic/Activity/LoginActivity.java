@@ -187,7 +187,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 String code = newResponse.getString("code");
                                 if (code.equals("200")){
                                     //密码正确
-
+                                    Common.loginJSONOString = responseData;
+                                    //跳转主页
+                                    Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                                    startActivity(intent);
                                 }else {
                                     //密码错误
                                     Toast.makeText(LoginActivity.this,"密码错误！",Toast.LENGTH_SHORT).show();
