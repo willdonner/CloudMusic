@@ -2,11 +2,12 @@ package com.dongxun.lichunkai.cloudmusic.Class;
 
 import android.app.Activity;
 
-import com.dongxun.lichunkai.cloudmusic.Activity.MainActivity;
-
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 活动管理
+ */
 public class ActivityCollector {
 
     public static List<Activity> activities = new ArrayList<>();

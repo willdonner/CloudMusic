@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -39,7 +41,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener, TextWatcher {
 
     private String TAG = "LoginActivity";
 
@@ -48,12 +50,21 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private LinearLayout LinearLayout_account;
     private LinearLayout LinearLayout_password;
     private LinearLayout LinearLayout_checkPhone;
+    private LinearLayout LinearLayout_forgetPassword;
     private EditText editText_password;
     private EditText editText_account;
     private Button button_login;
     private TextView textView_title;
     private TextView textView_phone;
     private TextView textView_time;
+    private TextView textView_forgetPassword;
+    private Button button_forgetPwdNext;
+    private EditText editText_forgetPassword;
+    private EditText editText_checkCode;
+    private TextView textView_checkCode1;
+    private TextView textView_checkCode2;
+    private TextView textView_checkCode3;
+    private TextView textView_checkCode4;
 
     private String account;
     private String password;
@@ -61,6 +72,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     //验证码倒计时
     private Timer timer;
     private int time = 5;
+
+    //账号信息
+    private String nickName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +105,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         LinearLayout_account = findViewById(R.id.LinearLayout_account);
         LinearLayout_password = findViewById(R.id.LinearLayout_password);
         LinearLayout_checkPhone = findViewById(R.id.LinearLayout_checkPhone);
+        LinearLayout_forgetPassword = findViewById(R.id.LinearLayout_forgetPassword);
         editText_password = findViewById(R.id.editText_password);
         editText_account = findViewById(R.id.editText_account);
         button_login = findViewById(R.id.button_login);
@@ -98,7 +113,20 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         textView_title = findViewById(R.id.textView_title);
         textView_phone = findViewById(R.id.textView_phone);
         textView_time = findViewById(R.id.textView_time);
+        textView_forgetPassword = findViewById(R.id.textView_forgetPassword);
+        textView_forgetPassword.setOnClickListener(this);
+        button_forgetPwdNext = findViewById(R.id.button_forgetPwdNext);
+        button_forgetPwdNext.setOnClickListener(this);
+        editText_forgetPassword = findViewById(R.id.editText_forgetPassword);
 
+        textView_checkCode1 = findViewById(R.id.textView_checkCode1);
+        textView_checkCode2 = findViewById(R.id.textView_checkCode2);
+        textView_checkCode3 = findViewById(R.id.textView_checkCode3);
+        textView_checkCode4 = findViewById(R.id.textView_checkCode4);
+
+        editText_checkCode = findViewById(R.id.editText_checkCode);
+        editText_checkCode.addTextChangedListener(this);
+        //布局显示
         changeLayoutDisplay(LinearLayout_account);
     }
 
@@ -135,7 +163,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                     String exist = new JSONObject(responseData).getString("exist"); //是否被注册
                                     if (exist.equals("1")){
                                         //已注册
-//                                        String nickname = new JSONObject(responseData).getString("nickname");   //昵称
+                                        nickName = new JSONObject(responseData).getString("nickname");   //昵称
 //                                        Boolean hasPassword = new JSONObject(responseData).getBoolean("hasPassword");   //是否有密码
                                         //显示密码页
                                         changeLayoutDisplay(LinearLayout_password);
@@ -222,6 +250,115 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }).start();
     }
 
+
+    /**
+     * 发送验证码
+     * @param phone
+     */
+    private void sendCheckCode(final String phone) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
+                    Request request = new Request.Builder()
+                            .url("http://www.willdonner.top:3000/captcha/sent?phone="+  phone +"")
+                            .build();
+                    Call call = client.newCall(request);
+                    call.enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                        }
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            final String responseData = response.body().string();//处理返回的数据
+                            Log.e(TAG, "onResponse: "+responseData);
+                            //{"code":200}
+                            try {
+                                JSONObject newResponse = new JSONObject(responseData);
+                                String code = newResponse.getString("code");
+                                if (code.equals("200")){
+                                    //发送成功
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(LoginActivity.this,"验证码已发送！",Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }else {
+                                    //发送失败
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(LoginActivity.this,"验证码发送失败！",Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * 修改密码/注册
+     * @param phone 电话号码
+     * @param checkCode 验证码
+     * @param password  密码
+     * @param nickname  昵称
+     */
+    private void changePassword(final String phone, final String checkCode, final String password, final String nickname) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
+                    Request request = new Request.Builder()
+                            .url("http://www.willdonner.top:3000/register/cellphone?phone="+ phone +"&password="+ password +"&captcha="+ checkCode +"")
+                            .build();
+                    Call call = client.newCall(request);
+                    call.enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                        }
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            final String responseData = response.body().string();//处理返回的数据
+                            Log.e(TAG, "onResponse: "+responseData);
+//                            //{"code":200}
+//                            try {
+//                                JSONObject newResponse = new JSONObject(responseData);
+//                                String code = newResponse.getString("code");
+//                                if (code.equals("200")){
+//                                    //发送成功
+//                                    Toast.makeText(LoginActivity.this,"验证码已发送！",Toast.LENGTH_SHORT).show();
+//                                }else {
+//                                    //发送失败
+//                                    runOnUiThread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            Toast.makeText(LoginActivity.this,"验证码发送失败！",Toast.LENGTH_SHORT).show();
+//                                        }
+//                                    });
+//                                }
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+                        }
+                    });
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
     /**
      * 点击事件
      * @param v
@@ -268,6 +405,25 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     loginWithPhone(account,password);
                 }
                 break;
+            case R.id.textView_forgetPassword:
+                //忘记密码
+                textView_title.setText("忘记密码");
+                changeLayoutDisplay(LinearLayout_forgetPassword);
+                showInput(editText_forgetPassword);
+                break;
+            case R.id.button_forgetPwdNext:
+                //忘记密码模块，下一步
+                //密码要求：不少于6位
+                String newPwd = editText_forgetPassword.getText().toString();
+                if (newPwd.length() >= 6) {
+                    textView_title.setText("手机号验证");
+                    changeLayoutDisplay(LinearLayout_checkPhone);
+                    //发送验证码
+                    sendCheckCode(account);
+                }else {
+                    Toast.makeText(this,"新密码不少于6位！",Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
     }
 
@@ -307,12 +463,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         LinearLayout_account.setVisibility(View.VISIBLE);
                         LinearLayout_password.setVisibility(View.GONE);
                         LinearLayout_checkPhone.setVisibility(View.GONE);
+                        LinearLayout_forgetPassword.setVisibility(View.GONE);
                         break;
                     case R.id.LinearLayout_password:
                         //密码
                         LinearLayout_account.setVisibility(View.GONE);
                         LinearLayout_password.setVisibility(View.VISIBLE);
                         LinearLayout_checkPhone.setVisibility(View.GONE);
+                        LinearLayout_forgetPassword.setVisibility(View.GONE);
                         //弹出输入法
                         showInput(editText_password);
                         break;
@@ -321,8 +479,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         LinearLayout_account.setVisibility(View.GONE);
                         LinearLayout_password.setVisibility(View.GONE);
                         LinearLayout_checkPhone.setVisibility(View.VISIBLE);
+                        LinearLayout_forgetPassword.setVisibility(View.GONE);
+                        //弹出输入法(第一个输入框)
+                        showInput(editText_checkCode);
+                        break;
+                    case R.id.LinearLayout_forgetPassword:
+                        //忘记密码
+                        LinearLayout_account.setVisibility(View.GONE);
+                        LinearLayout_password.setVisibility(View.GONE);
+                        LinearLayout_checkPhone.setVisibility(View.GONE);
+                        LinearLayout_forgetPassword.setVisibility(View.VISIBLE);
                         //弹出输入法
-//                        showInput(editText_password);
+                        showInput(editText_password);
                         break;
                     default:
                         break;
@@ -342,5 +510,44 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }else {
             super.onBackPressed();
         }
+    }
+
+    /**
+     * 输入框监听
+     * @param s
+     * @param start
+     * @param count
+     * @param after
+     */
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    }
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        Log.e(TAG, "afterTextChanged: "+s.toString());
+        String code = s.toString().substring(s.toString().length()-1);
+        if (textView_checkCode1.getText().length() == 0){
+            textView_checkCode1.setText(code);
+            return;
+        }
+        if (textView_checkCode2.getText().length() == 0){
+            textView_checkCode2.setText(code);
+            return;
+        }
+        if (textView_checkCode3.getText().length() == 0){
+            textView_checkCode3.setText(code);
+            return;
+        }
+        if (textView_checkCode4.getText().length() == 0){
+            textView_checkCode4.setText(code);
+            Log.e(TAG, "onTextChanged: "+textView_checkCode1.getText()+textView_checkCode2.getText()+textView_checkCode3.getText()+textView_checkCode4.getText());
+            String checkCode = textView_checkCode1.getText().toString()+textView_checkCode2.getText()+textView_checkCode3.getText()+textView_checkCode4.getText();
+            //修改密码
+            changePassword(editText_account.getText().toString().trim(),checkCode,editText_forgetPassword.getText().toString().trim(),nickName);
+            return;
+        }
+    }
+    @Override
+    public void afterTextChanged(Editable s) {
     }
 }
