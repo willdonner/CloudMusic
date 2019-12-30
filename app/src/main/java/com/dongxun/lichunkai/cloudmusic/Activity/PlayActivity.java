@@ -320,9 +320,9 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                     OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
                     //和风请求方式
                     Request request = new Request.Builder()
-                            .url("https://api.imjad.cn/cloudmusic/?type=lyric&id=" + id + "")
+                            .url("http://www.willdonner.top:3000/lyric?id=" + id + "")
                             .build();//创建一个Request对象
-                    //第三步构建Call对象
+                    //第三步构建Call对象http://www.willdonner.top:3000/lyric?id=" + id + "
                     Call call = client.newCall(request);
                     //第四步:异步get请求
                     call.enqueue(new Callback() {

@@ -300,7 +300,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                     OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
                     //和风请求方式
                     Request request = new Request.Builder()
-                            .url("https://api.imjad.cn/cloudmusic/?type=search&s="+ keyWord +"")
+                            .url("http://www.willdonner.top:3000/search?keywords="+ keyWord +"")
                             .build();//创建一个Request对象
                     //第三步构建Call对象
                     Call call = client.newCall(request);
@@ -340,8 +340,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                 JSONObject songInfo = songs.getJSONObject(i);
                 String name = songInfo.getString("name");
                 String id = songInfo.getString("id");
-                String artist = songInfo.getJSONArray("ar").getJSONObject(0).getString("name");
-                String coverURL = songInfo.getJSONObject("al").getString("picUrl");
+                String artist = songInfo.getJSONArray("artists").getJSONObject(0).getString("name");
+                String coverURL = songInfo.getJSONArray("artists").getJSONObject(0).getString("img1v1Url");
 
                 Song song = new Song();
                 song.setId(id);
