@@ -419,6 +419,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      */
     @Override
     protected void onDestroy() {
+        Log.e(TAG, "onDestroy: 退出应用");
         //退出播放器
         musicMediaPlayer.exitOption();
         super.onDestroy();
@@ -431,4 +432,5 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onBackPressed() {
         moveTaskToBack(true);
     }
+
 }

@@ -22,6 +22,7 @@ import com.dongxun.lichunkai.cloudmusic.Class.BaseActivity;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.dongxun.lichunkai.cloudmusic.Util.PhoneFormatCheckUtils;
+import com.dongxun.lichunkai.cloudmusic.Util.ToolHelper;
 import com.gyf.immersionbar.ImmersionBar;
 
 import org.json.JSONException;
@@ -36,6 +37,10 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.getAccount;
+import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.saveAccount;
+import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.showToast;
 
 /**
  * 登录页
@@ -133,8 +138,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         textView_checkCode4.setOnClickListener(this);
         editText_checkCode = findViewById(R.id.editText_checkCode);
         editText_checkCode.addTextChangedListener(this);
+
         //布局显示
         changeLayoutDisplay(LinearLayout_account);
+        if (getAccount(this).length()!=0){
+            //读取历史账号
+            editText_account.setText(getAccount(this));
+        }else {
+            //弹出键盘
+            showInput(editText_account);
+        }
     }
 
     /**
@@ -235,6 +248,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                                 JSONObject newResponse = new JSONObject(responseData);
                                 String code = newResponse.getString("code");
                                 if (code.equals("200")){
+                                    //保存此次登录账号
+                                    saveAccount(LoginActivity.this,account);
                                     //密码正确
                                     Common.loginJSONOString = responseData;
                                     //跳转主页
@@ -245,7 +260,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(LoginActivity.this,"密码错误！",Toast.LENGTH_SHORT).show();
+                                            showToast(LoginActivity.this,"用户名或密码错误");
                                             button_login.setText("登录");
                                             showInput(editText_password);
                                         }
@@ -286,8 +301,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             isRequesting = false;
-                            //停止倒计时
-                            timer.cancel();
                             final String responseData = response.body().string();//处理返回的数据
                             Log.e(TAG, "onResponse: "+responseData);
                             //{"code":200}
@@ -419,26 +432,25 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 //验证电话号码
                 account = editText_account.getText().toString().trim();
                 if (PhoneFormatCheckUtils.isPhoneLegal(account)){
-                    Log.e("TAG", "onClick: "+account );
-                    Toast.makeText(this,"验证号码是否被注册！",Toast.LENGTH_SHORT).show();
+//                    Log.e("TAG", "onClick: "+account );
+//                    Toast.makeText(this,"验证号码是否被注册！",Toast.LENGTH_SHORT).show();
                     //关闭输入法
                     hideInput();
                     //等待
                     button_next.setText("稍等...");
-
                     //发起号码验证请求
                     checkPhoneRegister(account);
                 }else {
-                 Toast.makeText(this,"请输入正确的手机号！",Toast.LENGTH_SHORT).show();
+                    showToast(this,"请输入11位数的手机号");
                 }
                 break;
             case R.id.button_login:
                 if (isRequesting) return;
                 //登录
                 if (editText_password.getText().toString().trim().equals("")){
-                    Toast.makeText(this,"请填写密码！",Toast.LENGTH_SHORT).show();
+                    showToast(this,"请输入密码");
                 }else {
-                    Toast.makeText(this,"登录！",Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(this,"登录！",Toast.LENGTH_SHORT).show();
                     button_login.setText("登录中...");
                     hideInput();
                     //发起登录请求
@@ -466,7 +478,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     //倒计时
                     countDown();
                 }else {
-                    Toast.makeText(this,"新密码不少于6位！",Toast.LENGTH_SHORT).show();
+                    showToast(LoginActivity.this,"密码应不少于6位");
                 }
                 break;
             case R.id.textView_checkCode1: case R.id.textView_checkCode2:case R.id.textView_checkCode3:case R.id.textView_checkCode4:
@@ -649,6 +661,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             //修改密码
             changePassword(editText_account.getText().toString().trim(),checkCode,editText_forgetPassword.getText().toString().trim());
             hideInput();
+            timer.cancel();
         }
     }
     @Override
