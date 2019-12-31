@@ -4,6 +4,9 @@ import android.graphics.Bitmap;
 
 import java.util.List;
 
+/**
+ * 歌曲类
+ */
 public class Song {
     private String name;//歌曲名
     private String id;//歌曲ID

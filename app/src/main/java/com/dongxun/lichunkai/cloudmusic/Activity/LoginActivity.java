@@ -1,7 +1,5 @@
 package com.dongxun.lichunkai.cloudmusic.Activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -22,14 +20,10 @@ import android.widget.Toast;
 
 import com.dongxun.lichunkai.cloudmusic.Class.BaseActivity;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
-import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
-import com.dongxun.lichunkai.cloudmusic.PopWindow.LoginWindow;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.dongxun.lichunkai.cloudmusic.Util.PhoneFormatCheckUtils;
-import com.dongxun.lichunkai.cloudmusic.Util.ToolHelper;
 import com.gyf.immersionbar.ImmersionBar;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,6 +37,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * 登录页
+ */
 public class LoginActivity extends BaseActivity implements View.OnClickListener, TextWatcher {
 
     private String TAG = "LoginActivity";

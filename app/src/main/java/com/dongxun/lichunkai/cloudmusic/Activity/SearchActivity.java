@@ -49,6 +49,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * 歌曲搜索页
+ */
 public class SearchActivity extends AppCompatActivity implements View.OnClickListener {
 
 

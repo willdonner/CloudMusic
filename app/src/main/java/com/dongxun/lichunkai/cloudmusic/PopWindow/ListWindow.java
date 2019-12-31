@@ -35,6 +35,9 @@ import com.gyf.immersionbar.ImmersionBar;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 歌单popWindow
+ */
 public class ListWindow extends PopupWindow implements View.OnClickListener {
 
     private String TAG = "ShareMenu";

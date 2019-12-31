@@ -14,6 +14,9 @@ import android.widget.TextView;
 
 import com.dongxun.lichunkai.cloudmusic.R;
 
+/**
+ * 权限申请Dialog
+ */
 public class PermissionDialog {
     private Context context;
     private Dialog dialog;

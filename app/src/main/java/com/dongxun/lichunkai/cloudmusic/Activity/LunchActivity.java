@@ -26,6 +26,9 @@ import com.gyf.immersionbar.ImmersionBar;
 
 import static android.os.SystemClock.sleep;
 
+/**
+ * 启动页
+ */
 public class LunchActivity extends BaseActivity implements Animation.AnimationListener, View.OnClickListener {
 
     private ImageView imageView_logo;
