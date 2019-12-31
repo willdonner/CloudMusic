@@ -212,7 +212,7 @@ public class LunchActivity extends BaseActivity implements Animation.AnimationLi
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.button_phoneLogin:
-                Intent intent = new Intent(LunchActivity.this,MainActivity.class);
+                Intent intent = new Intent(LunchActivity.this,LoginActivity.class);
                 startActivity(intent);
                 break;
         }
