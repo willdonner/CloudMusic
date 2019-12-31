@@ -71,7 +71,7 @@ public class LunchActivity extends BaseActivity implements Animation.AnimationLi
         alphaAnimation_hide.setDuration(500);//多长时间完成这个动作
         alphaAnimation_hide.setAnimationListener(this);
         //logo平移动画
-        translateAnimation_logo = new TranslateAnimation(0,0, 0, -500);//前两个参数是设置x轴的起止位置，后两个参数设置y轴的起止位置
+        translateAnimation_logo = new TranslateAnimation(0,0, 0, -400);//前两个参数是设置x轴的起止位置，后两个参数设置y轴的起止位置
         translateAnimation_logo.setDuration(500);
         translateAnimation_logo.setFillAfter(true);
         //登录模块透明度（显示）

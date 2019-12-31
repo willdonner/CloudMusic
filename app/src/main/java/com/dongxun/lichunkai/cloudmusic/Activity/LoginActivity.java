@@ -235,6 +235,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                                         @Override
                                         public void run() {
                                             Toast.makeText(LoginActivity.this,"密码错误！",Toast.LENGTH_SHORT).show();
+                                            button_login.setText("登录");
+                                            showInput(editText_password);
                                         }
                                     });
                                 }
@@ -307,13 +309,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     }
 
     /**
-     * 修改密码/注册
+     * 修改密码/注册(注册需要nickname参数)
      * @param phone 电话号码
      * @param checkCode 验证码
      * @param password  密码
-     * @param nickname  昵称
      */
-    private void changePassword(final String phone, final String checkCode, final String password, final String nickname) {
+    private void changePassword(final String phone, final String checkCode, final String password) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -399,6 +400,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 }else {
                     Toast.makeText(this,"登录！",Toast.LENGTH_SHORT).show();
                     button_login.setText("登录中...");
+                    hideInput();
                     //发起登录请求
                     account = editText_account.getText().toString().trim();
                     password = editText_password.getText().toString().trim();
@@ -419,7 +421,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     textView_title.setText("手机号验证");
                     changeLayoutDisplay(LinearLayout_checkPhone);
                     //发送验证码
-                    sendCheckCode(account);
+                    textView_phone.setText(account.replace(account.substring(3,7),"****"));
+//                    sendCheckCode(account);
                 }else {
                     Toast.makeText(this,"新密码不少于6位！",Toast.LENGTH_SHORT).show();
                 }
@@ -524,27 +527,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     }
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        Log.e(TAG, "afterTextChanged: "+s.toString());
-        String code = s.toString().substring(s.toString().length()-1);
-        if (textView_checkCode1.getText().length() == 0){
-            textView_checkCode1.setText(code);
-            return;
-        }
-        if (textView_checkCode2.getText().length() == 0){
-            textView_checkCode2.setText(code);
-            return;
-        }
-        if (textView_checkCode3.getText().length() == 0){
-            textView_checkCode3.setText(code);
-            return;
-        }
-        if (textView_checkCode4.getText().length() == 0){
-            textView_checkCode4.setText(code);
-            Log.e(TAG, "onTextChanged: "+textView_checkCode1.getText()+textView_checkCode2.getText()+textView_checkCode3.getText()+textView_checkCode4.getText());
-            String checkCode = textView_checkCode1.getText().toString()+textView_checkCode2.getText()+textView_checkCode3.getText()+textView_checkCode4.getText();
+        String checkCode = s.toString();
+        String code1 = checkCode.length()>=1?checkCode.substring(0,1):"";
+        String code2 = checkCode.length()>=2?checkCode.substring(1,2):"";
+        String code3 = checkCode.length()>=3?checkCode.substring(2,3):"";
+        String code4 = checkCode.length()>=4?checkCode.substring(3,4):"";
+        textView_checkCode1.setText(code1);
+        textView_checkCode2.setText(code2);
+        textView_checkCode3.setText(code3);
+        textView_checkCode4.setText(code4);
+        if (checkCode.length() == 4) {
             //修改密码
-            changePassword(editText_account.getText().toString().trim(),checkCode,editText_forgetPassword.getText().toString().trim(),nickName);
-            return;
+            changePassword(editText_account.getText().toString().trim(),checkCode,editText_forgetPassword.getText().toString().trim());
+            hideInput();
         }
     }
     @Override
