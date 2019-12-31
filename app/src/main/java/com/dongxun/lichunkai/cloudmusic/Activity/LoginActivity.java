@@ -2,6 +2,8 @@ package com.dongxun.lichunkai.cloudmusic.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -287,6 +289,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             isRequesting = false;
+                            //停止倒计时
+                            timer.cancel();
                             final String responseData = response.body().string();//处理返回的数据
                             Log.e(TAG, "onResponse: "+responseData);
                             //{"code":200}
@@ -323,7 +327,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     }
 
     /**
-     * 修改密码/注册(注册需要nickname参数)
+     * 修改密码/注册(注册需要nickname参数)，返回参数和登录一致
      * @param phone 电话号码
      * @param checkCode 验证码
      * @param password  密码
@@ -347,26 +351,33 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                         public void onResponse(Call call, Response response) throws IOException {
                             isRequesting = false;
                             final String responseData = response.body().string();//处理返回的数据
+                            copy(responseData);
                             Log.e(TAG, "onResponse: "+responseData);
-//                            //{"code":200}
-//                            try {
-//                                JSONObject newResponse = new JSONObject(responseData);
-//                                String code = newResponse.getString("code");
-//                                if (code.equals("200")){
-//                                    //发送成功
-//                                    Toast.makeText(LoginActivity.this,"验证码已发送！",Toast.LENGTH_SHORT).show();
-//                                }else {
-//                                    //发送失败
-//                                    runOnUiThread(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            Toast.makeText(LoginActivity.this,"验证码发送失败！",Toast.LENGTH_SHORT).show();
-//                                        }
-//                                    });
-//                                }
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
+                            //处理JSON
+                            //{"msg":"密码错误","code":502,"message":"密码错误"}
+                            //{"loginType":1,"code":200,"account":{"id":371561497,"userName":"1_15559655397","type":1,"status":0,"whitelistAuthority":0,"createTime":1480681277427,"salt":"[B@2de8bbf4","tokenVersion":3,"ban":0,"baoyueVersion":0,"donateVersion":0,"vipType":0,"viptypeVersion":0,"anonimousUser":false},"token":"09f4336e5ab6314a852ac627bc1698687e588a7c819d66d69465c79d6a63433a39ce82f58c69adffc872c7103b0c250525dbaa2522b3e31a","profile":{"userId":371561497,"vipType":0,"gender":0,"accountStatus":0,"avatarImgId":109951163812537760,"birthday":631123200000,"nickname":"木子不是楷","city":530100,"userType":0,"backgroundImgId":2002210674180203,"province":530000,"defaultAvatar":false,"avatarUrl":"https://p3.music.126.net/7vjHrzwzx0TShFOeSQAZVA==/109951163812537760.jpg","djStatus":0,"experts":{},"mutual":false,"remarkName":null,"expertTags":null,"authStatus":0,"detailDescription":"","followed":false,"backgroundUrl":"http://p2.music.126.net/bmA_ablsXpq3Tk9HlEg9sA==/2002210674180203.jpg","avatarImgIdStr":"109951163812537760","backgroundImgIdStr":"2002210674180203","description":"","signature":"","authority":0,"avatarImgId_str":"109951163812537760","followeds":0,"follows":7,"eventCount":1,"playlistCount":3,"playlistBeSubscribedCount":0},"bindings":[{"userId":371561497,"tokenJsonStr":"{\"countrycode\":\"\",\"cellphone\":\"15559655397\",\"hasPassword\":true}","bindingTime":1480681311099,"expiresIn":2147483647,"expired":false,"refreshTime":1480681311,"url":"","id":2930400000,"type":1},{"userId":371561497,"tokenJsonStr":"{\"access_token\":\"27A398785CE42F8A7868246A20FE9608\",\"openid\":\"D4997CAD716FCDE61F8E99ED52C1DDF2\",\"query_authority_cost\":98,\"nickname\":\"木子不是楷\",\"partnerType\":\"0\",\"expires_in\":7776000,\"login_cost\":111,\"authority_cost\":5482}","bindingTime":1480681277433,"expiresIn":7776000,"expired":false,"refreshTime":1577518661,"url":"","id":2930400001,"type":5},{"userId":371561497,"tokenJsonStr":"{\"uid\":\"4403a91540ef1236a96460a1f011efbf\"}","bindingTime":1482153980097,"expiresIn":2147483647,"expired":false,"refreshTime":1482153980,"url":"","id":2938801690,"type":11}]}
+                            try {
+                                JSONObject newResponse = new JSONObject(responseData);
+                                String code = newResponse.getString("code");
+                                if (code.equals("200")){
+                                    //密码正确
+                                    Common.loginJSONOString = responseData;
+                                    //跳转主页
+                                    Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                                    startActivity(intent);
+                                }else {
+                                    //密码修改错误
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(LoginActivity.this,"密码修改出错！",Toast.LENGTH_SHORT).show();
+                                            changeLayoutDisplay(LinearLayout_forgetPassword);
+                                        }
+                                    });
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
                 }catch (Exception e){
@@ -374,6 +385,26 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 }
             }
         }).start();
+    }
+
+    /**
+     * 复制内容到剪切板
+     *
+     * @param copyStr
+     * @return
+     */
+    private boolean copy(String copyStr) {
+        try {
+            //获取剪贴板管理器
+            ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            // 创建普通字符型ClipData
+            ClipData mClipData = ClipData.newPlainText("Label", copyStr);
+            // 将ClipData内容放到系统剪贴板里。
+            cm.setPrimaryClip(mClipData);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
