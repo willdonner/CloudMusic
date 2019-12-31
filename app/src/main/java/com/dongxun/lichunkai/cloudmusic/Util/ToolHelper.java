@@ -3,6 +3,7 @@ package com.dongxun.lichunkai.cloudmusic.Util;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
@@ -11,11 +12,16 @@ import android.net.NetworkInfo;
 import android.os.Environment;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.dongxun.lichunkai.cloudmusic.Activity.LoginActivity;
 import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,6 +36,13 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Collections;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * 小工具帮助类
@@ -296,4 +309,35 @@ public class ToolHelper {
         return nowPosition;
     }
 
+    /**
+     * 提示信息
+     * @param context
+     * @param msg
+     */
+    public static void showToast(Context context,String msg){
+        Toast toast=Toast.makeText(context,msg,Toast.LENGTH_LONG);
+        toast.setText(msg);
+        toast.show();
+    }
+
+    /**
+     * 保存登录账号
+     * @param account
+     */
+    public static void saveAccount(Context context,String account) {
+        SharedPreferences.Editor editor = context.getSharedPreferences("data",Context.MODE_PRIVATE).edit();
+        editor.putString("account",account);
+        editor.apply();
+    }
+
+    /**
+     * 读取登录账号
+     * @param context
+     * @return
+     */
+    public static String getAccount(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences("data",Context.MODE_PRIVATE);
+        String account = preferences.getString("account","");
+        return account;
+    }
 }

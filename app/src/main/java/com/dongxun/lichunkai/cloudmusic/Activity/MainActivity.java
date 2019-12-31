@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -11,15 +12,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dongxun.lichunkai.cloudmusic.Adapter.MainPagerAdapter;
 import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.Class.ActivityCollector;
 import com.dongxun.lichunkai.cloudmusic.Class.BaseActivity;
@@ -44,6 +48,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -73,6 +79,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private ImageView imageView_list;
     private ImageView imageView_head;
 
+    //viewpager相关
+    private View view_my, view_find, view_video;
+    private ViewPager viewPager;  //对应的viewPager
+    private List<View> viewList;//view数组
+
+    //顶部标题
+    private TextView textView_my;
+    private TextView textView_find;
+    private TextView textView_county;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,9 +97,100 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ActivityCollector.removeOther(this);
         initStateBar();
         initView();
+        setViewpager();
         initReceiver();
         getPermission();
 
+    }
+
+    /**
+     * 设置Viewpager
+     */
+    private void setViewpager() {
+        LayoutInflater inflater=getLayoutInflater();
+        view_my = inflater.inflate(R.layout.viewpager_my, null);
+        view_find = inflater.inflate(R.layout.viewpager_find,null);
+        view_video = inflater.inflate(R.layout.viewpager_video, null);
+
+        viewList = new ArrayList<View>();// 将要分页显示的View装入数组中
+        viewList.add(view_my);
+        viewList.add(view_find);
+        viewList.add(view_video);
+
+        //设置PagerAdapter
+        MainPagerAdapter mainPagerAdapter = new MainPagerAdapter(viewList,this);
+        viewPager.setAdapter(mainPagerAdapter);
+        //监听
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            /**
+             * 页面滑动状态停止前一直调用
+             *
+             * @param position 当前点击滑动页面的位置
+             * @param positionOffset 当前页面偏移的百分比
+             * @param positionOffsetPixels 当前页面偏移的像素位置
+             */
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//                Log.e("vp", "滑动中=====position:" + position + "   positionOffset:" + positionOffset + "   positionOffsetPixels:" + positionOffsetPixels);
+            }
+
+            /**
+             * 滑动后显示的页面和滑动前不同，调用
+             *
+             * @param position 选中显示页面的位置
+             */
+            @Override
+            public void onPageSelected(int position) {
+                Log.e(TAG, "显示页改变=====postion:" + position);
+                switch (position){
+                    case 0:
+                        textView_find.setTextColor(Color.parseColor("#808080"));
+                        textView_find.setTextSize(16f);
+
+                        textView_my.setTextColor(Color.parseColor("#000000"));
+                        textView_my.setTextSize(20f);
+                        break;
+                    case 1:
+                        textView_my.setTextColor(Color.parseColor("#808080"));
+                        textView_my.setTextSize(16f);
+                        textView_county.setTextColor(Color.parseColor("#808080"));
+                        textView_county.setTextSize(16f);
+
+                        textView_find.setTextColor(Color.parseColor("#000000"));
+                        textView_find.setTextSize(20f);
+                        break;
+                    case 2:
+                        textView_find.setTextColor(Color.parseColor("#808080"));
+                        textView_find.setTextSize(16f);
+
+                        textView_county.setTextColor(Color.parseColor("#000000"));
+                        textView_county.setTextSize(20f);
+                        break;
+                }
+            }
+
+            /**
+             * 页面状态改变时调用
+             * @param state 当前页面的状态
+             *              SCROLL_STATE_IDLE：空闲状态
+             *              SCROLL_STATE_DRAGGING：滑动状态
+             *              SCROLL_STATE_SETTLING：滑动后滑翔的状态
+             */
+            @Override
+            public void onPageScrollStateChanged(int state) {
+//                switch (state) {
+//                    case ViewPager.SCROLL_STATE_IDLE:
+//                        Log.e("vp", "状态改变=====SCROLL_STATE_IDLE====静止状态");
+//                        break;
+//                    case ViewPager.SCROLL_STATE_DRAGGING:
+//                        Log.e("vp", "状态改变=====SCROLL_STATE_DRAGGING==滑动状态");
+//                        break;
+//                    case ViewPager.SCROLL_STATE_SETTLING:
+//                        Log.e("vp", "状态改变=====SCROLL_STATE_SETTLING==滑翔状态");
+//                        break;
+//                }
+            }
+        });
     }
 
     /**
@@ -161,6 +268,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         imageView_playOrPause.setOnClickListener(this);
         imageView_list = findViewById(R.id.imageView_list);
         imageView_list.setOnClickListener(this);
+        //顶部标题
+        textView_my = findViewById(R.id.textView_my);
+        textView_find = findViewById(R.id.textView_find);
+        textView_county = findViewById(R.id.textView_county);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
 
     }
 
@@ -419,6 +531,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      */
     @Override
     protected void onDestroy() {
+        Log.e(TAG, "onDestroy: 退出应用");
         //退出播放器
         musicMediaPlayer.exitOption();
         super.onDestroy();
@@ -431,4 +544,5 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onBackPressed() {
         moveTaskToBack(true);
     }
+
 }
