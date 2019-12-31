@@ -334,6 +334,37 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * 获取歌曲URL
      */
     public void getSongUrl(){
+
+
+//        WebView webView = new WebView(this);
+//        webView.loadUrl("https://music.163.com/song/media/outer/url?id="+Common.song_playing.getId());
+//        webView.getSettings().setJavaScriptEnabled(true);
+//        webView.setWebViewClient(new WebViewClient(){
+//            //页面加载开始
+//            @Override
+//            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+//                super.onPageStarted(view, url, favicon);
+//            }
+//            //页面加载完成
+//            @Override
+//            public void onPageFinished(WebView view, String url) {
+//                super.onPageFinished(view, url);
+//                String realUrl = url;
+////                下载歌曲
+//                if (realUrl.equals("")){
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            Toast.makeText(MainActivity.this,"这首歌需要会员，暂时无法收听...",Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
+//                }else {
+//                    download(Common.song_playing.getId(),"https://m10.music.126.net/20191231172727/c9b45f1eef8709544c50ed6139744866/ymusic/ca48/f458/f958/09860a10c0235357fe1fccbb128f3e28.mp3");
+//                }
+////这个realUrl即为重定向之后的地址
+//            }
+//        });
+
         new Thread(new Runnable() {
             @Override
             public void run() {
