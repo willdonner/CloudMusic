@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
+/**
+ * 音频多媒体类
+ */
 public class MusicMediaPlayer extends MediaPlayer {
 
     private static String TAG = "MusicMediaPlayer";

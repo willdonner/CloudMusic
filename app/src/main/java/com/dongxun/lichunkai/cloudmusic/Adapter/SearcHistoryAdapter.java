@@ -15,7 +15,7 @@ import com.dongxun.lichunkai.cloudmusic.R;
 import java.util.List;
 
 /**
- * 搜索历史适配器
+ * 搜索历史RecyclerView适配器
  */
 public class SearcHistoryAdapter extends RecyclerView.Adapter<SearcHistoryAdapter.ViewHolder> {
 

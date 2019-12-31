@@ -51,6 +51,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * 播放器主页
+ */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private String TAG = "MainActivity";

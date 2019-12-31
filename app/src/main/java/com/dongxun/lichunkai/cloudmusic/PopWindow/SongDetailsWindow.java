@@ -30,6 +30,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * 歌曲详情popWindow
+ */
 public class SongDetailsWindow extends PopupWindow implements View.OnClickListener {
 
     private String TAG = "ShareMenu";

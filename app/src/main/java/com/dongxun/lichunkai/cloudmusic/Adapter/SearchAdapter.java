@@ -15,7 +15,7 @@ import com.dongxun.lichunkai.cloudmusic.R;
 import java.util.List;
 
 /**
- * 搜索适配器
+ * 搜索歌曲RecyclerView适配器
  */
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
 

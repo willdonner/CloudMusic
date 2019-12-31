@@ -63,6 +63,9 @@ import okhttp3.Response;
 
 import static com.dongxun.lichunkai.cloudmusic.Common.Common.songList;
 
+/**
+ * 播放控制页
+ */
 public class PlayActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private static String TAG = "PlayActivity";

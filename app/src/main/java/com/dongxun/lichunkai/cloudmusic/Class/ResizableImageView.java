@@ -6,6 +6,9 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
+/**
+ * 宽度铺满ImageView
+ */
 @SuppressLint("AppCompatCustomView")
 public class ResizableImageView extends ImageView {
 

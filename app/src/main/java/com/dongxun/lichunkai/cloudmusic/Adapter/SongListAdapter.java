@@ -16,7 +16,7 @@ import com.dongxun.lichunkai.cloudmusic.R;
 import java.util.List;
 
 /**
- * 搜索适配器
+ * 歌单RecyclerView适配器
  */
 public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.ViewHolder> {
 

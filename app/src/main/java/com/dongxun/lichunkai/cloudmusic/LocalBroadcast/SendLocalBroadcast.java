@@ -6,7 +6,7 @@ import android.content.Intent;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 /**
- * 发送本地广播
+ * 发送本地广播管理器
  */
 public class SendLocalBroadcast {
 

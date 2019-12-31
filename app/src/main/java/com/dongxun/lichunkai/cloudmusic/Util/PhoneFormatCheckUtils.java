@@ -5,6 +5,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+/**
+ * 电话号码格式判断工具
+ */
 public class PhoneFormatCheckUtils {
 
     /**
