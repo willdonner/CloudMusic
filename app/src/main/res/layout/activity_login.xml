@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffff"
     tools:context=".Activity.LoginActivity">
 
     <ScrollView
@@ -168,7 +169,7 @@
             <LinearLayout
                 android:id="@+id/LinearLayout_checkPhone"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:paddingHorizontal="10dp">
 
@@ -215,6 +216,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/LinearLayout_checkCode"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="30dp"

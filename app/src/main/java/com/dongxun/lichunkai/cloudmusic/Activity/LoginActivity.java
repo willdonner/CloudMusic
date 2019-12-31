@@ -68,10 +68,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     private String account;
     private String password;
+    private String newPassword;
 
     //验证码倒计时
     private Timer timer;
-    private int time = 5;
+    private int time = 60;
+
+    //请求状态
+    private Boolean isRequesting = false;
 
     //账号信息
     private String nickName = "";
@@ -113,6 +117,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         textView_title = findViewById(R.id.textView_title);
         textView_phone = findViewById(R.id.textView_phone);
         textView_time = findViewById(R.id.textView_time);
+        textView_time.setOnClickListener(this);
         textView_forgetPassword = findViewById(R.id.textView_forgetPassword);
         textView_forgetPassword.setOnClickListener(this);
         button_forgetPwdNext = findViewById(R.id.button_forgetPwdNext);
@@ -120,10 +125,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         editText_forgetPassword = findViewById(R.id.editText_forgetPassword);
 
         textView_checkCode1 = findViewById(R.id.textView_checkCode1);
+        textView_checkCode1.setOnClickListener(this);
         textView_checkCode2 = findViewById(R.id.textView_checkCode2);
+        textView_checkCode2.setOnClickListener(this);
         textView_checkCode3 = findViewById(R.id.textView_checkCode3);
+        textView_checkCode3.setOnClickListener(this);
         textView_checkCode4 = findViewById(R.id.textView_checkCode4);
-
+        textView_checkCode4.setOnClickListener(this);
         editText_checkCode = findViewById(R.id.editText_checkCode);
         editText_checkCode.addTextChangedListener(this);
         //布局显示
@@ -136,6 +144,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      * @return
      */
     private void checkPhoneRegister(final String phone) {
+        isRequesting = true;
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -151,6 +160,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                         }
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
+                            isRequesting = false;
                             final String responseData = response.body().string();//处理返回的数据
                             Log.e(TAG, "onResponse: "+responseData);
                             //处理JSON
@@ -200,6 +210,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      * @param password 密码
      */
     private void loginWithPhone(final String phone, final String password) {
+        isRequesting = true;
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -215,6 +226,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                         }
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
+                            isRequesting = false;
                             final String responseData = response.body().string();//处理返回的数据
                             Log.e(TAG, "onResponse: "+responseData);
                             //处理JSON
@@ -258,6 +270,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      * @param phone
      */
     private void sendCheckCode(final String phone) {
+        isRequesting = true;
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -273,6 +286,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                         }
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
+                            isRequesting = false;
                             final String responseData = response.body().string();//处理返回的数据
                             Log.e(TAG, "onResponse: "+responseData);
                             //{"code":200}
@@ -315,6 +329,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      * @param password  密码
      */
     private void changePassword(final String phone, final String checkCode, final String password) {
+        isRequesting = true;
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -330,6 +345,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                         }
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
+                            isRequesting = false;
                             final String responseData = response.body().string();//处理返回的数据
                             Log.e(TAG, "onResponse: "+responseData);
 //                            //{"code":200}
@@ -368,16 +384,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.imageView_back:
-                if (LinearLayout_account.getVisibility() == View.GONE) {
-                    //显示账号布局
-                    changeLayoutDisplay(LinearLayout_account);
-                    editText_account.setText(account);
-                    button_next.setText("下一步");
-                    password = "";
-                    return;
-                }else finish();
+                backManager();
                 break;
             case R.id.button_next:
+                if (isRequesting) return;
                 //验证电话号码
                 account = editText_account.getText().toString().trim();
                 if (PhoneFormatCheckUtils.isPhoneLegal(account)){
@@ -387,6 +397,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     hideInput();
                     //等待
                     button_next.setText("稍等...");
+
                     //发起号码验证请求
                     checkPhoneRegister(account);
                 }else {
@@ -394,6 +405,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 }
                 break;
             case R.id.button_login:
+                if (isRequesting) return;
                 //登录
                 if (editText_password.getText().toString().trim().equals("")){
                     Toast.makeText(this,"请填写密码！",Toast.LENGTH_SHORT).show();
@@ -409,25 +421,69 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 break;
             case R.id.textView_forgetPassword:
                 //忘记密码
-                textView_title.setText("忘记密码");
+                password = editText_password.getText().toString();
                 changeLayoutDisplay(LinearLayout_forgetPassword);
                 showInput(editText_forgetPassword);
                 break;
             case R.id.button_forgetPwdNext:
+                if (isRequesting) return;
                 //忘记密码模块，下一步
                 //密码要求：不少于6位
-                String newPwd = editText_forgetPassword.getText().toString();
-                if (newPwd.length() >= 6) {
-                    textView_title.setText("手机号验证");
+                newPassword = editText_forgetPassword.getText().toString();
+                if (newPassword.length() >= 6) {
                     changeLayoutDisplay(LinearLayout_checkPhone);
                     //发送验证码
                     textView_phone.setText(account.replace(account.substring(3,7),"****"));
-//                    sendCheckCode(account);
+                    sendCheckCode(account);
+                    //倒计时
+                    countDown();
                 }else {
                     Toast.makeText(this,"新密码不少于6位！",Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case R.id.textView_checkCode1: case R.id.textView_checkCode2:case R.id.textView_checkCode3:case R.id.textView_checkCode4:
+                //弹出输入框
+                showInput(editText_checkCode);
+                break;
+            case R.id.textView_time:
+                //重新发送验证码
+                sendCheckCode(account);
+                countDown();
+                break;
         }
+    }
+
+    /**
+     * 倒计时
+     */
+    private void countDown() {
+        textView_time.setTextColor(Color.parseColor("#cccccc"));
+        time = 60;
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (time>=1){
+                    Log.e(TAG, "run: "+time);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            textView_time.setText(time+"s");
+                        }
+                    });
+                    time--;
+                }else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            cancel();
+                            textView_time.setText("重新发送");
+                            textView_time.setTextColor(Color.parseColor("#5f7a98"));
+                        }
+                    });
+                }
+            }
+        },0,1000);
     }
 
     /**
@@ -463,6 +519,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 switch (linearLayout.getId()){
                     case R.id.LinearLayout_account:
                         //账号
+                        textView_title.setText("手机号登录");
                         LinearLayout_account.setVisibility(View.VISIBLE);
                         LinearLayout_password.setVisibility(View.GONE);
                         LinearLayout_checkPhone.setVisibility(View.GONE);
@@ -470,6 +527,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                         break;
                     case R.id.LinearLayout_password:
                         //密码
+                        textView_title.setText("手机号登录");
                         LinearLayout_account.setVisibility(View.GONE);
                         LinearLayout_password.setVisibility(View.VISIBLE);
                         LinearLayout_checkPhone.setVisibility(View.GONE);
@@ -479,6 +537,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                         break;
                     case R.id.LinearLayout_checkPhone:
                         //验证码
+                        textView_title.setText("手机号验证");
                         LinearLayout_account.setVisibility(View.GONE);
                         LinearLayout_password.setVisibility(View.GONE);
                         LinearLayout_checkPhone.setVisibility(View.VISIBLE);
@@ -488,6 +547,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                         break;
                     case R.id.LinearLayout_forgetPassword:
                         //忘记密码
+                        textView_title.setText("忘记密码");
                         LinearLayout_account.setVisibility(View.GONE);
                         LinearLayout_password.setVisibility(View.GONE);
                         LinearLayout_checkPhone.setVisibility(View.GONE);
@@ -502,17 +562,38 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        if (LinearLayout_account.getVisibility() == View.GONE) {
-            changeLayoutDisplay(LinearLayout_account);
+    /**
+     * 返回键管理器
+     */
+    private void backManager() {
+        if (LinearLayout_account.getVisibility() == View.VISIBLE) {
+            //账号页返回启动页
+            super.onBackPressed();
+        }else if (LinearLayout_password.getVisibility() == View.VISIBLE){
+            //密码页返回账号页
+            password = "";
             editText_account.setText(account);
             button_next.setText("下一步");
-            password = "";
-            return;
-        }else {
-            super.onBackPressed();
+            changeLayoutDisplay(LinearLayout_account);
+        }else if (LinearLayout_checkPhone.getVisibility() == View.VISIBLE){
+            //验证码页返回忘记密码页
+            textView_checkCode1.setText("");
+            textView_checkCode2.setText("");
+            textView_checkCode3.setText("");
+            textView_checkCode4.setText("");
+            editText_forgetPassword.setText("");
+            changeLayoutDisplay(LinearLayout_forgetPassword);
+        }else if (LinearLayout_forgetPassword.getVisibility() == View.VISIBLE){
+            //忘记密码页返回密码页
+            newPassword = "";
+            changeLayoutDisplay(LinearLayout_password);
         }
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        backManager();
     }
 
     /**
