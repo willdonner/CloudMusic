@@ -48,7 +48,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_gravity="center"
-                    android:text="昵称"
+                    android:text="房东的猫"
                     android:textColor="#ffff"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -70,7 +70,7 @@
                         android:id="@+id/imageView4"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        app:srcCompat="@drawable/logo_white_like" />
+                        app:srcCompat="@drawable/logo_local" />
 
                     <TextView
                         android:id="@+id/textView13"
@@ -94,7 +94,7 @@
                         android:id="@+id/imageView5"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        app:srcCompat="@drawable/logo_white_like" />
+                        app:srcCompat="@drawable/logo_diantai" />
 
                     <TextView
                         android:id="@+id/textView14"
@@ -142,7 +142,7 @@
                         android:id="@+id/imageView7"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        app:srcCompat="@drawable/logo_white_like" />
+                        app:srcCompat="@drawable/logo_newsong" />
 
                     <TextView
                         android:id="@+id/textView16"
@@ -164,7 +164,20 @@
             android:orientation="vertical"
             android:layout_marginTop="20dp"
             android:background="@drawable/back_radius_my"
-            android:layout_below="@+id/LinearLayout_top"></LinearLayout>
+            android:layout_below="@+id/LinearLayout_top"
+            android:paddingTop="20dp"
+            android:paddingHorizontal="20dp">
+
+            <TextView
+                android:id="@+id/textView17"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#323232"
+                android:text="我的音乐" />
+
+        </LinearLayout>
 
 
     </RelativeLayout>
