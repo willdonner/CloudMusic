@@ -7,17 +7,23 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -68,6 +74,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private String TAG = "MainActivity";
     private ImageView imageView_search;
+    private Activity Context;
 
     //其他
     private LocalBroadcastManager localBroadcastManager;
@@ -108,6 +115,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+        StrictMode.setThreadPolicy(policy);
 
         ActivityCollector.removeOther(this);
         initStateBar();
@@ -412,56 +422,88 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * 获取歌曲URL
      */
     public void getSongUrl(){
-        new Thread(new Runnable() {
+        WebView webView = new WebView(this);
+        webView.loadUrl("https://music.163.com/song/media/outer/url?id="+Common.song_playing.getId());
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.setWebViewClient(new WebViewClient(){
+            //页面加载开始
             @Override
-            public void run() {
-                try{
-                    OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
-                    //和风请求方式
-                    Request request = new Request.Builder()
-                            .url("https://api.imjad.cn/cloudmusic/?type=song&id="+ Common.song_playing.getId() +"&br=320000")
-                            .build();//创建一个Request对象
-                    //第三步构建Call对象
-                    Call call = client.newCall(request);
-                    //第四步:异步get请求
-                    call.enqueue(new Callback() {
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+            }
+            //页面加载完成
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                String realUrl = url;
+//                download(Common.song_playing.getId(),realUrl);
+//                Toast.makeText(Context,realUrl,Toast.LENGTH_SHORT).show();
+//                下载歌曲
+                if (realUrl.equals("")){
+                    runOnUiThread(new Runnable() {
                         @Override
-                        public void onFailure(Call call, IOException e) {
-                        }
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            final String responseData = response.body().string();//处理返回的数据
-                            try {
-                                //解析JSON
-                                JSONObject object = new JSONObject(responseData);
-                                String code = object.getString("code");
-                                if (code.equals("200")){
-                                    JSONArray data = object.getJSONArray("data");
-                                    String downloadUrl = data.getJSONObject(0).getString("url");
-                                    //下载歌曲
-                                    if (downloadUrl.equals("")){
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Toast.makeText(MainActivity.this,"这首歌需要会员，暂时无法收听...",Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                                    }else {
-                                        download(Common.song_playing.getId(),downloadUrl);
-                                    }
-                                }else {
-                                    //错误
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                        public void run() {
+                            Toast.makeText(MainActivity.this,"这首歌需要会员，暂时无法收听...",Toast.LENGTH_SHORT).show();
                         }
                     });
-                }catch (Exception e){
-                    e.printStackTrace();
+                }else {
+                    //这个realUrl即为重定向之后的地址
+                  download(Common.song_playing.getId(),realUrl);
                 }
+
             }
-        }).start();
+        });
+
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try{
+//                    OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
+//                    //和风请求方式
+//                    Request request = new Request.Builder()
+//                            .url("http://45.32.132.229:3000/song/url?id="+ Common.song_playing.getId())
+//                            .build();//创建一个Request对象
+//                    //第三步构建Call对象
+//                    Call call = client.newCall(request);
+//                    //第四步:异步get请求
+//                    call.enqueue(new Callback() {
+//                        @Override
+//                        public void onFailure(Call call, IOException e) {
+//                        }
+//                        @Override
+//                        public void onResponse(Call call, Response response) throws IOException {
+//                            final String responseData = response.body().string();//处理返回的数据
+//                            try {
+//                                //解析JSON
+//                                JSONObject object = new JSONObject(responseData);
+//                                String code = object.getString("code");
+//                                if (code.equals("200")){
+//                                    JSONArray data = object.getJSONArray("data");
+//                                    String downloadUrl = data.getJSONObject(0).getString("url");
+//                                    //下载歌曲
+//                                    if (downloadUrl.equals("")){
+//                                        runOnUiThread(new Runnable() {
+//                                            @Override
+//                                            public void run() {
+//                                                Toast.makeText(MainActivity.this,"这首歌需要会员，暂时无法收听...",Toast.LENGTH_SHORT).show();
+//                                            }
+//                                        });
+//                                    }else {
+//                                        download(Common.song_playing.getId(),downloadUrl);
+//                                    }
+//                                }else {
+//                                    //错误
+//                                }
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    });
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
     }
 
     /**
@@ -469,50 +511,59 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * @param downloadUrl   下载的文件地址
      * @return
      */
-    private void download(String songID, final String downloadUrl) {
-        try {
-            //创建文件夹
-            String dirName = "";
-            //下载后的文件名
-            //设置下载位置和名称
-            dirName = Environment.getExternalStorageDirectory() + "/CloudMusic/mp3/";
-            final String fileName = dirName + songID + ".mp3";
+    private void download(final String songID, final String downloadUrl) {
+        Thread thread = new Thread(new Runnable() {
 
-            File file1 = new File(fileName);
+            @Override
+            public void run() {
+                try {
+                    //创建文件夹
+                    String dirName = "";
+                    //下载后的文件名
+                    //设置下载位置和名称
+                    dirName = Environment.getExternalStorageDirectory() + "/CloudMusic/mp3/";
+                    final String fileName = dirName + songID + ".mp3";
 
-            if (file1.exists()) {
-                //文件存在
-                Log.e("DOWLOAD", "mp3文件已存在！");
-            }else {
-                URL url = new URL(downloadUrl);
-                //打开连接
-                URLConnection conn = url.openConnection();
-                //打开输入流
-                InputStream is = conn.getInputStream();
-                //获得长度
-                int contentLength = conn.getContentLength();
-                Log.e("DOWLOAD", "mp3文件长度 = " + contentLength);
-                //创建字节流
-                byte[] bs = new byte[1024];
-                int len;
-                OutputStream os = new FileOutputStream(fileName);
-                //写数据
-                while ((len = is.read(bs)) != -1) {
-                    os.write(bs, 0, len);
+                    File file1 = new File(fileName);
+
+                    if (file1.exists()) {
+                        //文件存在
+                        Log.e("DOWLOAD", "mp3文件已存在！");
+                    }else {
+                        URL url = new URL(downloadUrl);
+                        //打开连接
+                        URLConnection conn = url.openConnection();
+                        //打开输入流
+                        InputStream is = conn.getInputStream();
+                        //获得长度
+                        int contentLength = conn.getContentLength();
+                        Log.e("DOWLOAD", "mp3文件长度 = " + contentLength);
+                        //创建字节流
+                        byte[] bs = new byte[1024];
+                        int len;
+                        OutputStream os = new FileOutputStream(fileName);
+                        //写数据
+                        while ((len = is.read(bs)) != -1) {
+                            os.write(bs, 0, len);
+                        }
+                        //完成后关闭流
+                        Log.e("DOWLOAD", "mp3文件不存在,下载成功！");
+                        os.close();
+                        is.close();
+                    }
+                    //显示时间
+                    Common.song_playing.setSunTime(ToolHelper.getAudioFileVoiceTime(fileName));
+                    //播放
+                    musicMediaPlayer.initMediaPlayer(Context);
+                    musicMediaPlayer.startOption();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                //完成后关闭流
-                Log.e("DOWLOAD", "mp3文件不存在,下载成功！");
-                os.close();
-                is.close();
             }
-            //显示时间
-            Common.song_playing.setSunTime(ToolHelper.getAudioFileVoiceTime(fileName));
-            //播放
-            musicMediaPlayer.initMediaPlayer(this);
-            musicMediaPlayer.startOption();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        });
+
+        thread.start();
+
     }
 
 
