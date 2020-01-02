@@ -1,6 +1,7 @@
 package com.dongxun.lichunkai.cloudmusic.Common;
 
 import com.dongxun.lichunkai.cloudmusic.Bean.Song;
+import com.dongxun.lichunkai.cloudmusic.Bean.User;
 
 import org.json.JSONObject;
 
@@ -28,5 +29,8 @@ public class Common {
 
     //登录JSON（包含账号信息及其token等）
     public static String loginJSONOString = "";
+
+    //用户信息
+    public static User user = new User();
 
 }

@@ -378,17 +378,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.textView_my:
-
+                //切换viewPager
+                viewPager.setCurrentItem(0);
                 break;
-
             case R.id.textView_find:
-
+                //切换viewPager
+                viewPager.setCurrentItem(1);
                 break;
-
             case R.id.textView_county:
-
+                //切换viewPager
+                viewPager.setCurrentItem(2);
                 break;
-
 
             case R.id.LinearLayout_myInfo:
                 showToast(this,"我的信息");
