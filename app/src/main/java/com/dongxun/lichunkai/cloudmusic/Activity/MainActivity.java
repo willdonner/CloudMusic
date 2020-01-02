@@ -36,6 +36,7 @@ import com.dongxun.lichunkai.cloudmusic.Class.ActivityCollector;
 import com.dongxun.lichunkai.cloudmusic.Class.BaseActivity;
 import com.dongxun.lichunkai.cloudmusic.Class.CircleImageView;
 import com.dongxun.lichunkai.cloudmusic.Class.MusicMediaPlayer;
+import com.dongxun.lichunkai.cloudmusic.Class.ResizableImageView;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 import com.dongxun.lichunkai.cloudmusic.PopWindow.ListWindow;
@@ -65,6 +66,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.openImage;
 import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.showToast;
 
 /**
@@ -110,6 +112,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private LinearLayout LinearLayout_new;//关注新歌
     private RelativeLayout RelativeLayout_like;//我喜欢的音乐
     private RelativeLayout RelativeLayout_personalFM;//私人FM
+    private ResizableImageView ResizableImageView_background;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +128,90 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setViewpager();
         initReceiver();
         getPermission();
+        updateUI();
+
+    }
+
+    /**
+     * 更新用户数据
+     */
+    private void updateUI() {
+        textView_nickName.setText(Common.user.getNickname());
+        if (Common.user.getAvatarUrl_bitmap() == null){
+            //下载头像
+            downloadImg(Common.user.getUserId(),Common.user.getAvatarUrl(),"Avatar");
+        }else {
+            CircleImageView_head.setImageBitmap(Common.user.getAvatarUrl_bitmap());
+        }
+        if (Common.user.getBackgroundUrl_bitmap() == null){
+            //下载背景
+            downloadImg(Common.user.getUserId(),Common.user.getBackgroundUrl(),"Background");
+        }else {
+            ResizableImageView_background.setImageBitmap(Common.user.getBackgroundUrl_bitmap());
+        }
+    }
+
+    /**
+     * 下载具体操作
+     * @param downloadUrl   下载的文件地址
+     * @return
+     */
+    private void downloadImg(final String songID, final String downloadUrl, final String type) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //创建文件夹
+                    String dirName = "";
+                    //下载后的文件名
+                    //设置下载位置和名称
+                    dirName = Environment.getExternalStorageDirectory() + "/CloudMusic/user/";
+                    final String fileName = type.equals("Avatar")?dirName + songID + "Avatar.jpg":dirName + songID + "Background.jpg";
+
+                    File file1 = new File(fileName);
+
+                    if (file1.exists()) {
+                        //文件存在
+                        Log.e("DOWLOAD", "jpg文件已存在！");
+                    }else {
+                        URL url = new URL(downloadUrl);
+                        //打开连接
+                        URLConnection conn = url.openConnection();
+                        //打开输入流
+                        InputStream is = conn.getInputStream();
+                        //获得长度
+                        int contentLength = conn.getContentLength();
+                        Log.e("DOWLOAD", "jpg文件长度 = " + contentLength);
+                        //创建字节流
+                        byte[] bs = new byte[1024];
+                        int len;
+                        OutputStream os = new FileOutputStream(fileName);
+                        //写数据
+                        while ((len = is.read(bs)) != -1) {
+                            os.write(bs, 0, len);
+                        }
+                        //完成后关闭流
+                        Log.e("DOWLOAD", "jpg文件不存在,下载成功！");
+                        os.close();
+                        is.close();
+                    }
+                    //更改Common.user
+                    if (type.equals("Avatar")){
+                        //头像
+                        Common.user.setAvatarUrl_bitmap(openImage(fileName));
+                        CircleImageView_head.setImageBitmap(Common.user.getAvatarUrl_bitmap());
+                    }else {
+                        //背景
+                        Common.user.setBackgroundUrl_bitmap(openImage(fileName));
+                        ResizableImageView_background.setImageBitmap(Common.user.getBackgroundUrl_bitmap());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
 
     }
 
@@ -247,6 +334,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         File file_details=new File(path_details);
         if(!file_details.exists())
             file_details.mkdir();
+        //创建用户文件夹
+        String path_user=sd.getPath()+"/CloudMusic/user";
+        File file_user=new File(path_user);
+        if(!file_user.exists())
+            file_user.mkdir();
     }
 
 
@@ -324,6 +416,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         RelativeLayout_like.setOnClickListener(this);
         RelativeLayout_personalFM = view_my.findViewById(R.id.RelativeLayout_personalFM);//私人FM
         RelativeLayout_personalFM.setOnClickListener(this);
+        ResizableImageView_background = view_my.findViewById(R.id.ResizableImageView_background);//背景图
     }
 
     /**
@@ -393,7 +486,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.LinearLayout_myInfo:
                 showToast(this,"我的信息");
                 //弹出个人信息
-
                 break;
             case R.id.LinearLayout_local:
                 showToast(this,"本地音乐");

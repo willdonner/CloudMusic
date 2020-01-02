@@ -1,5 +1,7 @@
 package com.dongxun.lichunkai.cloudmusic.Bean;
 
+import android.graphics.Bitmap;
+
 /**
  * 用户信息类
  */
@@ -12,6 +14,24 @@ public class User {
     private String province;//省份
     private String avatarUrl;//头像Url
     private String backgroundUrl;//背景图Url
+    private Bitmap avatarUrl_bitmap;//头像
+    private Bitmap backgroundUrl_bitmap;//背景图
+
+    public Bitmap getAvatarUrl_bitmap() {
+        return avatarUrl_bitmap;
+    }
+
+    public void setAvatarUrl_bitmap(Bitmap avatarUrl_bitmap) {
+        this.avatarUrl_bitmap = avatarUrl_bitmap;
+    }
+
+    public Bitmap getBackgroundUrl_bitmap() {
+        return backgroundUrl_bitmap;
+    }
+
+    public void setBackgroundUrl_bitmap(Bitmap backgroundUrl_bitmap) {
+        this.backgroundUrl_bitmap = backgroundUrl_bitmap;
+    }
 
     public String getUserId() {
         return userId;

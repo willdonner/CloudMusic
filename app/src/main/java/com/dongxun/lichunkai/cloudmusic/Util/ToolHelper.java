@@ -23,6 +23,7 @@ import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -295,6 +296,25 @@ public class ToolHelper {
             return;
         }
         Log.i("tag", "saveBitmap success: " + filePic.getAbsolutePath());
+    }
+
+    /**
+     * 将本地图片转成Bitmap
+     * @param path 已有图片的路径
+     * @return
+     */
+    public static Bitmap openImage(String path){
+        Bitmap bitmap = null;
+        try {
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(path));
+            bitmap = BitmapFactory.decodeStream(bis);
+            bis.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 
     /**

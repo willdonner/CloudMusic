@@ -262,7 +262,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                                     String city = profile.getString("city");//城市
                                     String province = profile.getString("province");//省份
                                     String avatarUrl = profile.getString("avatarUrl");//头像Url
-                                    String backgroundUrl = profile.getJSONObject("experts").getString("backgroundUrl");//背景图Url
+                                    String backgroundUrl = profile.getString("backgroundUrl");//背景图Url
 
                                     Common.user.setUserId(userId);
                                     Common.user.setGender(gender);
