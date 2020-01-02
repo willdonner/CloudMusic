@@ -142,25 +142,29 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void onPageSelected(int position) {
                 Log.e(TAG, "显示页改变=====postion:" + position);
+                //设置标题样式
                 switch (position){
                     case 0:
-                        textView_find.setTextColor(Color.parseColor("#808080"));
+                        textView_find.setTextColor(Color.parseColor("#dfdfdf"));
                         textView_find.setTextSize(16f);
 
-                        textView_my.setTextColor(Color.parseColor("#000000"));
+                        textView_my.setTextColor(Color.parseColor("#ffffff"));
                         textView_my.setTextSize(20f);
+                        //切换搜索图标
+                        imageView_search.setImageResource(R.drawable.logo_white_search);
                         break;
                     case 1:
-                        textView_my.setTextColor(Color.parseColor("#808080"));
+                        textView_my.setTextColor(Color.parseColor("#dfdfdf"));
                         textView_my.setTextSize(16f);
-                        textView_county.setTextColor(Color.parseColor("#808080"));
+                        imageView_search.setImageResource(R.drawable.logo_search);
+                        textView_county.setTextColor(Color.parseColor("#dfdfdf"));
                         textView_county.setTextSize(16f);
 
                         textView_find.setTextColor(Color.parseColor("#000000"));
                         textView_find.setTextSize(20f);
                         break;
                     case 2:
-                        textView_find.setTextColor(Color.parseColor("#808080"));
+                        textView_find.setTextColor(Color.parseColor("#dfdfdf"));
                         textView_find.setTextSize(16f);
 
                         textView_county.setTextColor(Color.parseColor("#000000"));
