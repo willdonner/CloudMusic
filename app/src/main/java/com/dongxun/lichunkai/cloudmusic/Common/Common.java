@@ -30,7 +30,7 @@ public class Common {
     //登录JSON（包含账号信息及其token等）
     public static String loginJSONOString = "";
 
-    //用户信息
+    //当前用户信息
     public static User user = new User();
 
 }
