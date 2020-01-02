@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dongxun.lichunkai.cloudmusic.Bean.User;
 import com.dongxun.lichunkai.cloudmusic.Class.BaseActivity;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.R;
@@ -248,10 +249,30 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                                 JSONObject newResponse = new JSONObject(responseData);
                                 String code = newResponse.getString("code");
                                 if (code.equals("200")){
+                                    //密码正确
                                     //保存此次登录账号
                                     saveAccount(LoginActivity.this,account);
-                                    //密码正确
                                     Common.loginJSONOString = responseData;
+                                    //解析信息
+                                    JSONObject profile = newResponse.getJSONObject("profile");
+                                    String userId = profile.getString("userId");//用户ID
+                                    String gender = profile.getString("gender");//性别
+                                    String birthday = profile.getString("birthday");//生日
+                                    String nickname = profile.getString("nickname");//昵称
+                                    String city = profile.getString("city");//城市
+                                    String province = profile.getString("province");//省份
+                                    String avatarUrl = profile.getString("avatarUrl");//头像Url
+                                    String backgroundUrl = profile.getString("backgroundUrl");//背景图Url
+
+                                    Common.user.setUserId(userId);
+                                    Common.user.setGender(gender);
+                                    Common.user.setBirthday(birthday);
+                                    Common.user.setNickname(nickname);
+                                    Common.user.setCity(city);
+                                    Common.user.setProvince(province);
+                                    Common.user.setAvatarUrl(avatarUrl);
+                                    Common.user.setBackgroundUrl(backgroundUrl);
+
                                     //跳转主页
                                     Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                                     startActivity(intent);

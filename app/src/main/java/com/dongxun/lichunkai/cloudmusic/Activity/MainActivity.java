@@ -26,6 +26,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +34,9 @@ import com.dongxun.lichunkai.cloudmusic.Adapter.MainPagerAdapter;
 import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.Class.ActivityCollector;
 import com.dongxun.lichunkai.cloudmusic.Class.BaseActivity;
+import com.dongxun.lichunkai.cloudmusic.Class.CircleImageView;
 import com.dongxun.lichunkai.cloudmusic.Class.MusicMediaPlayer;
+import com.dongxun.lichunkai.cloudmusic.Class.ResizableImageView;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 import com.dongxun.lichunkai.cloudmusic.PopWindow.ListWindow;
@@ -62,6 +65,9 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.openImage;
+import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.showToast;
 
 /**
  * 播放器主页
@@ -96,6 +102,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private TextView textView_find;
     private TextView textView_county;
 
+    //viewpager_my组件
+    private LinearLayout LinearLayout_myInfo;//我的信息
+    private CircleImageView CircleImageView_head;//头像
+    private TextView textView_nickName;//昵称
+    private LinearLayout LinearLayout_local;//本地音乐
+    private LinearLayout LinearLayout_diantai;//我的电台
+    private LinearLayout LinearLayout_like;//收藏
+    private LinearLayout LinearLayout_new;//关注新歌
+    private RelativeLayout RelativeLayout_like;//我喜欢的音乐
+    private RelativeLayout RelativeLayout_personalFM;//私人FM
+    private ResizableImageView ResizableImageView_background;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,13 +121,97 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
         StrictMode.setThreadPolicy(policy);
-        getPermission();
         ActivityCollector.removeOther(this);
         initStateBar();
         initView();
         setViewpager();
         initReceiver();
 
+        getPermission();
+        updateUI();
+
+    }
+
+    /**
+     * 更新用户数据
+     */
+    private void updateUI() {
+        textView_nickName.setText(Common.user.getNickname());
+        if (Common.user.getAvatarUrl_bitmap() == null){
+            //下载头像
+            downloadImg(Common.user.getUserId(),Common.user.getAvatarUrl(),"Avatar");
+        }else {
+            CircleImageView_head.setImageBitmap(Common.user.getAvatarUrl_bitmap());
+        }
+        if (Common.user.getBackgroundUrl_bitmap() == null){
+            //下载背景
+            downloadImg(Common.user.getUserId(),Common.user.getBackgroundUrl(),"Background");
+        }else {
+            ResizableImageView_background.setImageBitmap(Common.user.getBackgroundUrl_bitmap());
+        }
+    }
+
+    /**
+     * 下载具体操作
+     * @param downloadUrl   下载的文件地址
+     * @return
+     */
+    private void downloadImg(final String songID, final String downloadUrl, final String type) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //创建文件夹
+                    String dirName = "";
+                    //下载后的文件名
+                    //设置下载位置和名称
+                    dirName = Environment.getExternalStorageDirectory() + "/CloudMusic/user/";
+                    final String fileName = type.equals("Avatar")?dirName + songID + "Avatar.jpg":dirName + songID + "Background.jpg";
+
+                    File file1 = new File(fileName);
+
+                    if (file1.exists()) {
+                        //文件存在
+                        Log.e("DOWLOAD", "jpg文件已存在！");
+                    }else {
+                        URL url = new URL(downloadUrl);
+                        //打开连接
+                        URLConnection conn = url.openConnection();
+                        //打开输入流
+                        InputStream is = conn.getInputStream();
+                        //获得长度
+                        int contentLength = conn.getContentLength();
+                        Log.e("DOWLOAD", "jpg文件长度 = " + contentLength);
+                        //创建字节流
+                        byte[] bs = new byte[1024];
+                        int len;
+                        OutputStream os = new FileOutputStream(fileName);
+                        //写数据
+                        while ((len = is.read(bs)) != -1) {
+                            os.write(bs, 0, len);
+                        }
+                        //完成后关闭流
+                        Log.e("DOWLOAD", "jpg文件不存在,下载成功！");
+                        os.close();
+                        is.close();
+                    }
+                    //更改Common.user
+                    if (type.equals("Avatar")){
+                        //头像
+                        Common.user.setAvatarUrl_bitmap(openImage(fileName));
+                        CircleImageView_head.setImageBitmap(Common.user.getAvatarUrl_bitmap());
+                    }else {
+                        //背景
+                        Common.user.setBackgroundUrl_bitmap(openImage(fileName));
+                        ResizableImageView_background.setImageBitmap(Common.user.getBackgroundUrl_bitmap());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
 
     }
 
@@ -117,11 +219,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * 设置Viewpager
      */
     private void setViewpager() {
-        LayoutInflater inflater=getLayoutInflater();
-        view_my = inflater.inflate(R.layout.viewpager_my, null);
-        view_find = inflater.inflate(R.layout.viewpager_find,null);
-        view_video = inflater.inflate(R.layout.viewpager_video, null);
-
         viewList = new ArrayList<View>();// 将要分页显示的View装入数组中
         viewList.add(view_my);
         viewList.add(view_find);
@@ -237,6 +334,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         File file_details=new File(path_details);
         if(!file_details.exists())
             file_details.mkdir();
+        //创建用户文件夹
+        String path_user=sd.getPath()+"/CloudMusic/user";
+        File file_user=new File(path_user);
+        if(!file_user.exists())
+            file_user.mkdir();
     }
 
 
@@ -284,10 +386,37 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         imageView_list.setOnClickListener(this);
         //顶部标题
         textView_my = findViewById(R.id.textView_my);
+        textView_my.setOnClickListener(this);
         textView_find = findViewById(R.id.textView_find);
+        textView_find.setOnClickListener(this);
         textView_county = findViewById(R.id.textView_county);
+        textView_county.setOnClickListener(this);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
 
+        //实例化view
+        LayoutInflater inflater=getLayoutInflater();
+        view_my = inflater.inflate(R.layout.viewpager_my, null);
+        view_find = inflater.inflate(R.layout.viewpager_find,null);
+        view_video = inflater.inflate(R.layout.viewpager_video, null);
+
+        //viewpager_my组件
+        LinearLayout_myInfo = view_my.findViewById(R.id.LinearLayout_myInfo);//我的信息
+        LinearLayout_myInfo.setOnClickListener(this);
+        CircleImageView_head = view_my.findViewById(R.id.CircleImageView_head);//头像
+        textView_nickName = view_my.findViewById(R.id.textView_nickName);//昵称
+        LinearLayout_local = view_my.findViewById(R.id.LinearLayout_local);//本地音乐
+        LinearLayout_local.setOnClickListener(this);
+        LinearLayout_diantai = view_my.findViewById(R.id.LinearLayout_diantai);//我的电台
+        LinearLayout_diantai.setOnClickListener(this);
+        LinearLayout_like = view_my.findViewById(R.id.LinearLayout_like);//我的收藏
+        LinearLayout_like.setOnClickListener(this);
+        LinearLayout_new = view_my.findViewById(R.id.LinearLayout_new);//关注新歌
+        LinearLayout_new.setOnClickListener(this);
+        RelativeLayout_like = view_my.findViewById(R.id.RelativeLayout_like);//我喜欢的音乐
+        RelativeLayout_like.setOnClickListener(this);
+        RelativeLayout_personalFM = view_my.findViewById(R.id.RelativeLayout_personalFM);//私人FM
+        RelativeLayout_personalFM.setOnClickListener(this);
+        ResizableImageView_background = view_my.findViewById(R.id.ResizableImageView_background);//背景图
     }
 
     /**
@@ -339,6 +468,42 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //弹出歌曲详情窗口
                 ListWindow listWindow = new ListWindow(this);
                 listWindow.show();
+                break;
+
+            case R.id.textView_my:
+                //切换viewPager
+                viewPager.setCurrentItem(0);
+                break;
+            case R.id.textView_find:
+                //切换viewPager
+                viewPager.setCurrentItem(1);
+                break;
+            case R.id.textView_county:
+                //切换viewPager
+                viewPager.setCurrentItem(2);
+                break;
+
+            case R.id.LinearLayout_myInfo:
+                showToast(this,"我的信息");
+                //弹出个人信息
+                break;
+            case R.id.LinearLayout_local:
+                showToast(this,"本地音乐");
+                break;
+            case R.id.LinearLayout_diantai:
+                showToast(this,"我的电台");
+                break;
+            case R.id.LinearLayout_like:
+                showToast(this,"我的收藏");
+                break;
+            case R.id.LinearLayout_new:
+                showToast(this,"关注新歌");
+                break;
+            case R.id.RelativeLayout_like:
+                showToast(this,"我喜欢的音乐");
+                break;
+            case R.id.RelativeLayout_personalFM:
+                showToast(this,"私人FM");
                 break;
         }
 
