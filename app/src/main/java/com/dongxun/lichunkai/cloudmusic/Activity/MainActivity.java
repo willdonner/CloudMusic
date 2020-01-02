@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import com.dongxun.lichunkai.cloudmusic.Adapter.MainPagerAdapter;
 import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.Class.ActivityCollector;
 import com.dongxun.lichunkai.cloudmusic.Class.BaseActivity;
+import com.dongxun.lichunkai.cloudmusic.Class.CircleImageView;
 import com.dongxun.lichunkai.cloudmusic.Class.MusicMediaPlayer;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
@@ -56,6 +58,8 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.showToast;
 
 /**
  * 播放器主页
@@ -89,6 +93,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private TextView textView_find;
     private TextView textView_county;
 
+    //viewpager_my组件
+    private LinearLayout LinearLayout_myInfo;//我的信息
+    private CircleImageView CircleImageView_head;//头像
+    private TextView textView_nickName;//昵称
+    private LinearLayout LinearLayout_local;//本地音乐
+    private LinearLayout LinearLayout_diantai;//我的电台
+    private LinearLayout LinearLayout_like;//收藏
+    private LinearLayout LinearLayout_new;//关注新歌
+    private RelativeLayout RelativeLayout_like;//我喜欢的音乐
+    private RelativeLayout RelativeLayout_personalFM;//私人FM
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,11 +122,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * 设置Viewpager
      */
     private void setViewpager() {
-        LayoutInflater inflater=getLayoutInflater();
-        view_my = inflater.inflate(R.layout.viewpager_my, null);
-        view_find = inflater.inflate(R.layout.viewpager_find,null);
-        view_video = inflater.inflate(R.layout.viewpager_video, null);
-
         viewList = new ArrayList<View>();// 将要分页显示的View装入数组中
         viewList.add(view_my);
         viewList.add(view_find);
@@ -274,10 +284,36 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         imageView_list.setOnClickListener(this);
         //顶部标题
         textView_my = findViewById(R.id.textView_my);
+        textView_my.setOnClickListener(this);
         textView_find = findViewById(R.id.textView_find);
+        textView_find.setOnClickListener(this);
         textView_county = findViewById(R.id.textView_county);
+        textView_county.setOnClickListener(this);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
 
+        //实例化view
+        LayoutInflater inflater=getLayoutInflater();
+        view_my = inflater.inflate(R.layout.viewpager_my, null);
+        view_find = inflater.inflate(R.layout.viewpager_find,null);
+        view_video = inflater.inflate(R.layout.viewpager_video, null);
+
+        //viewpager_my组件
+        LinearLayout_myInfo = view_my.findViewById(R.id.LinearLayout_myInfo);//我的信息
+        LinearLayout_myInfo.setOnClickListener(this);
+        CircleImageView_head = view_my.findViewById(R.id.CircleImageView_head);//头像
+        textView_nickName = view_my.findViewById(R.id.textView_nickName);//昵称
+        LinearLayout_local = view_my.findViewById(R.id.LinearLayout_local);//本地音乐
+        LinearLayout_local.setOnClickListener(this);
+        LinearLayout_diantai = view_my.findViewById(R.id.LinearLayout_diantai);//我的电台
+        LinearLayout_diantai.setOnClickListener(this);
+        LinearLayout_like = view_my.findViewById(R.id.LinearLayout_like);//我的收藏
+        LinearLayout_like.setOnClickListener(this);
+        LinearLayout_new = view_my.findViewById(R.id.LinearLayout_new);//关注新歌
+        LinearLayout_new.setOnClickListener(this);
+        RelativeLayout_like = view_my.findViewById(R.id.RelativeLayout_like);//我喜欢的音乐
+        RelativeLayout_like.setOnClickListener(this);
+        RelativeLayout_personalFM = view_my.findViewById(R.id.RelativeLayout_personalFM);//私人FM
+        RelativeLayout_personalFM.setOnClickListener(this);
     }
 
     /**
@@ -329,6 +365,44 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //弹出歌曲详情窗口
                 ListWindow listWindow = new ListWindow(this);
                 listWindow.show();
+                break;
+
+            case R.id.textView_my:
+
+                break;
+
+            case R.id.textView_find:
+
+                break;
+
+            case R.id.textView_county:
+
+                break;
+
+
+            case R.id.LinearLayout_myInfo:
+                showToast(this,"我的信息");
+                //跳转个人信息页
+                Intent intent_myInfo = new Intent(MainActivity.this,MyInfoActivity.class);
+                startActivity(intent_myInfo);
+                break;
+            case R.id.LinearLayout_local:
+                showToast(this,"本地音乐");
+                break;
+            case R.id.LinearLayout_diantai:
+                showToast(this,"我的电台");
+                break;
+            case R.id.LinearLayout_like:
+                showToast(this,"我的收藏");
+                break;
+            case R.id.LinearLayout_new:
+                showToast(this,"关注新歌");
+                break;
+            case R.id.RelativeLayout_like:
+                showToast(this,"我喜欢的音乐");
+                break;
+            case R.id.RelativeLayout_personalFM:
+                showToast(this,"私人FM");
                 break;
         }
 
