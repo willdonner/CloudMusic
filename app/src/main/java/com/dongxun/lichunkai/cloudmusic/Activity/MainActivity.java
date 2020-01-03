@@ -121,12 +121,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
         StrictMode.setThreadPolicy(policy);
-
         ActivityCollector.removeOther(this);
         initStateBar();
         initView();
         setViewpager();
         initReceiver();
+
         getPermission();
         updateUI();
 
@@ -527,8 +527,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 String realUrl = url;
-//                download(Common.song_playing.getId(),realUrl);
-//                Toast.makeText(Context,realUrl,Toast.LENGTH_SHORT).show();
 //                下载歌曲
                 if (realUrl.equals("")){
                     runOnUiThread(new Runnable() {

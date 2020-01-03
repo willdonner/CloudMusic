@@ -4,6 +4,8 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -85,13 +87,29 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     //账号信息
     private String nickName = "";
 
-    @Override
+    //记住账号SharePreferences对象
+    private SharedPreferences sp;
+
+  @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
         initStateBar();
-        initView();
+        sp = getSharedPreferences("Login",Context.MODE_PRIVATE);
+        account = sp.getString("Account","");
+        password = sp.getString("Password","");
+        if(sp==null){
+            initView();
+        }
+        else{
+            // 判断是否刚注销
+            if (sp.getBoolean("LoginBool", false)) {
+                loginWithPhone(account,password);
+            } else {
+                initView();
+            }
+        }
     }
 
     /**
@@ -273,9 +291,20 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                                     Common.user.setAvatarUrl(avatarUrl);
                                     Common.user.setBackgroundUrl(backgroundUrl);
 
+                                    sp = getSharedPreferences("Login",Context.MODE_PRIVATE);
+                                    if (sp.getBoolean("LoginBool", true)) {
+                                        Editor editor = sp.edit();
+                                        editor.putString("Account",editText_account.getText().toString());
+                                        editor.putString("Password",editText_password.getText().toString());
+                                        editor.putBoolean("LoginBool",true);
+                                        editor.commit();
+                                    }
+
+
                                     //跳转主页
                                     Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                                     startActivity(intent);
+                                    finish();
                                 }else {
                                     //密码错误
                                     runOnUiThread(new Runnable() {
