@@ -122,9 +122,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     //view_find组件
     private Banner banner;
-    private List banner_imgs=new ArrayList<>();//banner图
-    private List banner_titles =new ArrayList<>();//banner标题
-    private List banner_url =new ArrayList<>();//banner URL
+    private List banner_imgs = new ArrayList<>();//banner图
+    private List banner_titles = new ArrayList<>();//banner标题
+    private List banner_url = new ArrayList<>();//banner URL
+    private List banner_targetType = new ArrayList<>();//banner内容类型
+    private ArrayList<Song> banner_song = new ArrayList<>();//banner对应歌曲
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,12 +178,29 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                                         String pic = banners.getJSONObject(i).getString("pic");//banner图地址
                                         String typeTitle = banners.getJSONObject(i).getString("typeTitle");//banner 标题
                                         String url = banners.getJSONObject(i).getString("url");//banner URL
+                                        String targetType = banners.getJSONObject(i).getString("targetType");//banner内容类型
                                         Log.e(TAG, "onResponse: "+pic);
                                         Log.e(TAG, "onResponse: "+typeTitle);
                                         Log.e(TAG, "onResponse: "+url);
                                         banner_titles.add(typeTitle);
                                         banner_url.add(url);
                                         banner_imgs.add(pic);
+                                        banner_targetType.add(targetType);
+                                        //新歌首发/独家（播放音频）
+                                        if (targetType.equals("1")){
+                                            String id = banners.getJSONObject(i).getJSONObject("song").getString("id");//歌曲id
+                                            String name = banners.getJSONObject(i).getJSONObject("song").getString("name");//歌名
+                                            String artis = banners.getJSONObject(i).getJSONObject("song").getJSONArray("ar").getJSONObject(0).getString("name");//艺术家
+
+                                            Song song = new Song();
+                                            song.setId(id);
+                                            song.setName(name);
+                                            song.setArtist(artis);
+
+                                            banner_song.add(song);
+                                        }else {
+                                            banner_song.add(null);
+                                        }
                                     }
                                     SendLocalBroadcast.refreshBanner(MainActivity.this);
                                 }else {
@@ -241,7 +260,33 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     public void OnBannerClick(int position) {
         Log.i("tag", "你点了第"+position+"张轮播图");
         //根据banner信息进行具体动作
-
+        String targetType = banner_targetType.get(position).toString();//banner内容类型
+        String title = banner_titles.get(position).toString();//banner 标题
+        switch (targetType){
+            case "1004":
+                //MV首发(播放MV)
+                showToast(this,title);
+                break;
+            case "1":
+                //新歌首发/独家（播放音频）
+                showToast(this,title);
+                //更改公共变量
+                Common.song_playing = banner_song.get(position);
+                //发送本地广播播放
+                SendLocalBroadcast.playNew(this);
+                //跳转(带参数，说明是播放新歌曲)
+                Intent intent = new Intent(this,PlayActivity.class);
+                startActivity(intent);
+                break;
+            case "1009":
+                //独家电台
+                showToast(this,title);
+                break;
+            case "3000":
+                //独家策划（打开URL）
+                showToast(this,title);
+                break;
+        }
     }
 
     /**
@@ -782,7 +827,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     protected void onResume() {
         //更新封面
-        if (Common.song_playing.getName() != null) imageView_head.setImageBitmap(Common.song_playing.getCover());
+        if (Common.song_playing.getCover() != null) imageView_head.setImageBitmap(Common.song_playing.getCover());
         //更新歌曲显示
         textView_name.setText(Common.song_playing.getName() == null?"暂无歌曲":Common.song_playing.getName());
         super.onResume();

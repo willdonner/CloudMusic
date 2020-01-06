@@ -5,14 +5,14 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="420px"
+        android:layout_height="match_parent"
         android:layout_marginTop="80dp"
         android:orientation="vertical">
 
         <com.youth.banner.Banner
             android:id="@+id/banner"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="420px"
             android:paddingHorizontal="10dp"/>
     </LinearLayout>
 </LinearLayout>
