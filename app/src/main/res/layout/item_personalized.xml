@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/RelativeLayout_personalized"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_margin="4dp">
+
+        <com.dongxun.lichunkai.cloudmusic.Class.RoundImageView
+            android:id="@+id/imageView_cover"
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:src="@drawable/img" />
+
+        <TextView
+            android:id="@+id/textView_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView_cover"
+            android:layout_marginTop="4dp"
+            android:textSize="12sp"
+            android:text="这是歌单名"
+            android:textColor="#000000"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="2dp"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="12sp"
+                android:layout_height="12sp"
+                app:srcCompat="@drawable/logo_mini_play" />
+
+            <TextView
+                android:id="@+id/textView_playCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="100万"
+                android:textColor="#ffffff"/>
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

@@ -56,7 +56,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
 
     private static final String TAG = "SearchActivity";
-    private List<Song> songList = new ArrayList<>();//搜索结果
+    private ArrayList<Song> songList = new ArrayList<>();//搜索结果
     private ArrayList<String> searchHistory = new ArrayList<>();//搜索历史
 
     private EditText editText_search;

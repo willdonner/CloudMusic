@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,7 +40,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         }
     }
 
-    public SearchAdapter(List<Song> searchHistoryList) {
+    public SearchAdapter(ArrayList<Song> searchHistoryList) {
         mList = searchHistoryList;
     }
 

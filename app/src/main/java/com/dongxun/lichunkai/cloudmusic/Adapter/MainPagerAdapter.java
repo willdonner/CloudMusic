@@ -8,6 +8,9 @@ import androidx.viewpager.widget.ViewPager;
 
 import java.util.List;
 
+/**
+ * 主页的view Pager适配器
+ */
 public class MainPagerAdapter extends PagerAdapter {
 
     private List<View> views;

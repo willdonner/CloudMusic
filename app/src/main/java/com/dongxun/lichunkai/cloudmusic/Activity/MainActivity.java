@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
@@ -22,6 +25,7 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
@@ -32,7 +36,11 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.dongxun.lichunkai.cloudmusic.Adapter.MainPagerAdapter;
+import com.dongxun.lichunkai.cloudmusic.Adapter.PersonalizedAdapter;
+import com.dongxun.lichunkai.cloudmusic.Adapter.SearcHistoryAdapter;
+import com.dongxun.lichunkai.cloudmusic.Adapter.SearchAdapter;
 import com.dongxun.lichunkai.cloudmusic.Bean.Song;
+import com.dongxun.lichunkai.cloudmusic.Bean.SongSheet;
 import com.dongxun.lichunkai.cloudmusic.Class.ActivityCollector;
 import com.dongxun.lichunkai.cloudmusic.Class.BaseActivity;
 import com.dongxun.lichunkai.cloudmusic.Class.CircleImageView;
@@ -72,6 +80,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static com.dongxun.lichunkai.cloudmusic.Common.Common.songList;
 import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.openImage;
 import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.showToast;
 
@@ -131,6 +140,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private LinearLayout LinearLayout_songList;//歌单
     private LinearLayout LinearLayout_rankingList;//排行榜
     private LinearLayout LinearLayout_radioStation;//电台
+    private RecyclerView recyclerView_personalized;//推荐歌单recyclerView
+    private ArrayList<SongSheet> songSheets = new ArrayList<>();//推荐歌单
+    private PersonalizedAdapter personalizedAdapter;
+    private StaggeredGridLayoutManager staggeredGridLayoutManager_personalized;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,6 +161,90 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         getPermission();
         updateUI();
         getBanner();
+        getPersonalized();
+        setPersonalizedAdapter();
+    }
+
+    /**
+     * 设置Personalized适配器（瀑布流布局）
+     */
+    private void setPersonalizedAdapter() {
+        staggeredGridLayoutManager_personalized = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
+        recyclerView_personalized.setLayoutManager(staggeredGridLayoutManager_personalized);
+        personalizedAdapter = new PersonalizedAdapter(songSheets);
+        recyclerView_personalized.setAdapter(personalizedAdapter);
+        personalizedAdapter.setOnItemClickListener(new PersonalizedAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(int position) {
+                //点击歌单
+                showToast(MainActivity.this,songSheets.get(position).getName());
+            }
+        });
+    }
+
+    /**
+     * 获取推荐歌单
+     */
+    private void getPersonalized() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
+                    Request request = new Request.Builder()
+                            .url("http://www.willdonner.top:3000/personalized?limit=6")
+                            .build();
+                    Call call = client.newCall(request);
+                    call.enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                        }
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            final String responseData = response.body().string();//处理返回的数据
+                            Log.e(TAG, "onResponse: "+responseData);
+                            //处理JSON
+                            try {
+                                JSONObject newRes = new JSONObject(responseData);
+                                String code = newRes.getString("code");
+                                if (code.equals("200")){
+                                    Log.e(TAG, "推荐歌单获取成功");
+                                    JSONArray result = newRes.getJSONArray("result");
+                                    for (int i=0;i<result.length();i++){
+                                        String id = result.getJSONObject(i).getString("id");//歌单id
+                                        String name = result.getJSONObject(i).getString("name");//歌单名
+                                        String copywriter = result.getJSONObject(i).getString("copywriter");//文案
+                                        String picUrl = result.getJSONObject(i).getString("picUrl");//封面图
+                                        String playCount = result.getJSONObject(i).getString("playCount");//播放量
+
+                                        SongSheet songSheet = new SongSheet();
+                                        songSheet.setId(id);
+                                        songSheet.setName(name);
+                                        songSheet.setCopywriter(copywriter);
+                                        songSheet.setPicUrl(picUrl);
+                                        songSheet.setPlayCount(playCount);
+                                        songSheets.add(songSheet);
+                                    }
+                                    //刷新界面
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            personalizedAdapter.notifyDataSetChanged();
+                                        }
+                                    });
+                                }else {
+                                    Log.e(TAG, "推荐歌单获取失败");
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     /**
@@ -601,6 +698,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         LinearLayout_rankingList.setOnClickListener(this);
         LinearLayout_radioStation = view_find.findViewById(R.id.LinearLayout_radioStation);//电台
         LinearLayout_radioStation.setOnClickListener(this);
+        recyclerView_personalized = view_find.findViewById(R.id.recyclerView_personalized);//推荐歌单recyclerView
     }
 
     /**
@@ -898,11 +996,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 case "LAST":
                     //上一曲
                     Toast.makeText(context,"上一曲",Toast.LENGTH_SHORT).show();
-                    for (Song song:Common.songList){
+                    for (Song song: songList){
                         Log.e(TAG, "当前歌单歌曲: "+song.getName());
                     }
                     //更改公共变量
-                    Common.song_playing = Common.songList.get((ToolHelper.getSongListPosition()-1 < 0)?Common.songList.size()-1:ToolHelper.getSongListPosition()-1);
+                    Common.song_playing = songList.get((ToolHelper.getSongListPosition()-1 < 0)? songList.size()-1:ToolHelper.getSongListPosition()-1);
                     //发送本地广播播放
                     SendLocalBroadcast.playNew(context);
                     SendLocalBroadcast.refreshCover(context);
@@ -910,11 +1008,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 case "NEXT":
                     //下一曲
                     Toast.makeText(context,"下一曲",Toast.LENGTH_SHORT).show();
-                    for (Song song:Common.songList){
+                    for (Song song: songList){
                         Log.e(TAG, "当前歌单歌曲: "+song.getName());
                     }
                     //更改公共变量
-                    Common.song_playing = Common.songList.get((ToolHelper.getSongListPosition()+1>Common.songList.size()-1)?0:ToolHelper.getSongListPosition()+1);
+                    Common.song_playing = songList.get((ToolHelper.getSongListPosition()+1> songList.size()-1)?0:ToolHelper.getSongListPosition()+1);
                     //发送本地广播播放
                     SendLocalBroadcast.playNew(context);
                     SendLocalBroadcast.refreshCover(context);
