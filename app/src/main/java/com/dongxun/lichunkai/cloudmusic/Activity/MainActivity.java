@@ -364,6 +364,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 //设置标题样式
                 switch (position){
                     case 0:
+                        textView_county.setTextColor(Color.parseColor("#dfdfdf"));
+                        textView_county.setTextSize(16f);
                         textView_find.setTextColor(Color.parseColor("#dfdfdf"));
                         textView_find.setTextSize(16f);
 
@@ -375,10 +377,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                         banner.stopAutoPlay();
                         break;
                     case 1:
-                        textView_my.setTextColor(Color.parseColor("#dfdfdf"));
+                        textView_my.setTextColor(Color.parseColor("#adadad"));
                         textView_my.setTextSize(16f);
                         imageView_search.setImageResource(R.drawable.logo_search);
-                        textView_county.setTextColor(Color.parseColor("#dfdfdf"));
+                        textView_county.setTextColor(Color.parseColor("#adadad"));
                         textView_county.setTextSize(16f);
 
                         textView_find.setTextColor(Color.parseColor("#000000"));
@@ -387,7 +389,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                         banner.startAutoPlay();
                         break;
                     case 2:
-                        textView_find.setTextColor(Color.parseColor("#dfdfdf"));
+                        textView_find.setTextColor(Color.parseColor("#adadad"));
                         textView_find.setTextSize(16f);
 
                         textView_county.setTextColor(Color.parseColor("#000000"));
