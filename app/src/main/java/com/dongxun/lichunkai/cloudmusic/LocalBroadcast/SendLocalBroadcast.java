@@ -122,4 +122,14 @@ public class SendLocalBroadcast {
         localBroadcastManager = LocalBroadcastManager.getInstance(context);
         localBroadcastManager.sendBroadcast(intent);
     }
+
+    /**
+     * 显示banner
+     */
+    public static void refreshBanner(Context context) {
+        intent = new Intent("com.dongxun.lichunkai.cloudmusic.MUSIC_BROADCAST");
+        intent.putExtra("ACTION","BANNER");
+        localBroadcastManager = LocalBroadcastManager.getInstance(context);
+        localBroadcastManager.sendBroadcast(intent);
+    }
 }

@@ -30,6 +30,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.dongxun.lichunkai.cloudmusic.Adapter.MainPagerAdapter;
 import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.Class.ActivityCollector;
@@ -45,6 +46,11 @@ import com.dongxun.lichunkai.cloudmusic.R;
 import com.dongxun.lichunkai.cloudmusic.Util.PermissionUtil;
 import com.dongxun.lichunkai.cloudmusic.Util.ToolHelper;
 import com.gyf.immersionbar.ImmersionBar;
+import com.youth.banner.Banner;
+import com.youth.banner.BannerConfig;
+import com.youth.banner.Transformer;
+import com.youth.banner.listener.OnBannerListener;
+import com.youth.banner.loader.ImageLoader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,7 +78,7 @@ import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.showToast;
 /**
  * 播放器主页
  */
-public class MainActivity extends BaseActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener, OnBannerListener {
 
     private String TAG = "MainActivity";
     private ImageView imageView_search;
@@ -114,6 +120,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private RelativeLayout RelativeLayout_personalFM;//私人FM
     private ResizableImageView ResizableImageView_background;
 
+    //view_find组件
+    private Banner banner;
+    private List banner_imgs=new ArrayList<>();//banner图
+    private List banner_titles =new ArrayList<>();//banner标题
+    private List banner_url =new ArrayList<>();//banner URL
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,6 +141,106 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         getPermission();
         updateUI();
+        getBanner();
+    }
+
+    /**
+     * 获取banner
+     */
+    private void getBanner() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
+                    Request request = new Request.Builder()
+                            .url("http://www.willdonner.top:3000/banner?type=1")
+                            .build();
+                    Call call = client.newCall(request);
+                    call.enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                        }
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            final String responseData = response.body().string();//处理返回的数据
+                            Log.e(TAG, "onResponse: "+responseData);
+                            //处理JSON
+                            try {
+                                JSONObject newRes = new JSONObject(responseData);
+                                String code = newRes.getString("code");
+                                if (code.equals("200")){
+                                    Log.e(TAG, "banner获取成功");
+                                    JSONArray banners = newRes.getJSONArray("banners");
+                                    for (int i=0;i<banners.length();i++) {
+                                        String pic = banners.getJSONObject(i).getString("pic");//banner图地址
+                                        String typeTitle = banners.getJSONObject(i).getString("typeTitle");//banner 标题
+                                        String url = banners.getJSONObject(i).getString("url");//banner URL
+                                        Log.e(TAG, "onResponse: "+pic);
+                                        Log.e(TAG, "onResponse: "+typeTitle);
+                                        Log.e(TAG, "onResponse: "+url);
+                                        banner_titles.add(typeTitle);
+                                        banner_url.add(url);
+                                        banner_imgs.add(pic);
+                                    }
+                                    SendLocalBroadcast.refreshBanner(MainActivity.this);
+                                }else {
+                                    Log.e(TAG, "banner获取失败");
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * 设置Banner
+     */
+    private void setBanner() {
+        //设置内置样式，共有六种可以点入方法内逐一体验使用。
+        banner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR);
+        //设置图片加载器，图片加载器在下方
+        banner.setImageLoader(new MyLoader());
+        //设置图片网址或地址的集合
+        banner.setImages(banner_imgs);
+        //设置轮播的动画效果，内含多种特效，可点入方法内查找后内逐一体验
+        banner.setBannerAnimation(Transformer.Default);
+        //设置轮播图的标题集合
+        banner.setBannerTitles(banner_titles);
+        //设置轮播间隔时间
+        banner.setDelayTime(3000);
+        //设置是否为自动轮播，默认是“是”。
+        banner.isAutoPlay(true);
+        //设置指示器的位置，小点点，左中右。
+        banner.setIndicatorGravity(BannerConfig.CENTER).setOnBannerListener(this).start();
+    }
+
+    //自定义的图片加载器
+
+    private class MyLoader extends ImageLoader {
+
+        @Override
+        public void displayImage(Context context, Object path, ImageView imageView) {
+
+            Glide.with(context).load((String) path).into(imageView);
+        }
+
+    }
+
+    /**
+     * banner监听
+     * @param position 当前轮播图片位置
+     */
+    @Override
+    public void OnBannerClick(int position) {
+        Log.i("tag", "你点了第"+position+"张轮播图");
+        //根据banner信息进行具体动作
 
     }
 
@@ -259,6 +371,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         textView_my.setTextSize(20f);
                         //切换搜索图标
                         imageView_search.setImageResource(R.drawable.logo_white_search);
+                        //轮播图
+                        banner.stopAutoPlay();
                         break;
                     case 1:
                         textView_my.setTextColor(Color.parseColor("#dfdfdf"));
@@ -269,6 +383,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                         textView_find.setTextColor(Color.parseColor("#000000"));
                         textView_find.setTextSize(20f);
+                        //轮播图
+                        banner.startAutoPlay();
                         break;
                     case 2:
                         textView_find.setTextColor(Color.parseColor("#dfdfdf"));
@@ -276,6 +392,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                         textView_county.setTextColor(Color.parseColor("#000000"));
                         textView_county.setTextSize(20f);
+                        //轮播图
+                        banner.stopAutoPlay();
                         break;
                 }
             }
@@ -417,6 +535,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         RelativeLayout_personalFM = view_my.findViewById(R.id.RelativeLayout_personalFM);//私人FM
         RelativeLayout_personalFM.setOnClickListener(this);
         ResizableImageView_background = view_my.findViewById(R.id.ResizableImageView_background);//背景图
+
+        //view_find组件
+        banner = view_find.findViewById(R.id.banner);
     }
 
     /**
@@ -656,7 +777,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-
     @Override
     protected void onResume() {
         //更新封面
@@ -739,6 +859,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     musicMediaPlayer.seekToOption();
                     Common.state_playing = false;
                     Common.lyricPosition_playing = 0;
+                    break;
+                case "BANNER":
+                    setBanner();
                     break;
             }
         }
