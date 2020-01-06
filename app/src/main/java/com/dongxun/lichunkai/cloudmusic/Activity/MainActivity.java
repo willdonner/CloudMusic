@@ -127,6 +127,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private List banner_url = new ArrayList<>();//banner URL
     private List banner_targetType = new ArrayList<>();//banner内容类型
     private ArrayList<Song> banner_song = new ArrayList<>();//banner对应歌曲
+    private LinearLayout LinearLayout_dailyRecommend;//每日推荐
+    private LinearLayout LinearLayout_songList;//歌单
+    private LinearLayout LinearLayout_rankingList;//排行榜
+    private LinearLayout LinearLayout_radioStation;//电台
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -589,6 +593,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
         //view_find组件
         banner = view_find.findViewById(R.id.banner);
+        LinearLayout_dailyRecommend = view_find.findViewById(R.id.LinearLayout_dailyRecommend);//每日推荐
+        LinearLayout_dailyRecommend.setOnClickListener(this);
+        LinearLayout_songList = view_find.findViewById(R.id.LinearLayout_songList);//歌单
+        LinearLayout_songList.setOnClickListener(this);
+        LinearLayout_rankingList = view_find.findViewById(R.id.LinearLayout_rankingList);//排行榜
+        LinearLayout_rankingList.setOnClickListener(this);
+        LinearLayout_radioStation = view_find.findViewById(R.id.LinearLayout_radioStation);//电台
+        LinearLayout_radioStation.setOnClickListener(this);
     }
 
     /**
@@ -676,6 +688,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 break;
             case R.id.RelativeLayout_personalFM:
                 showToast(this,"私人FM");
+                break;
+
+            case R.id.LinearLayout_dailyRecommend:
+                showToast(this,"每日推荐");
+                break;
+            case R.id.LinearLayout_songList:
+                showToast(this,"歌单");
+                break;
+            case R.id.LinearLayout_rankingList:
+                showToast(this,"排行榜");
+                break;
+            case R.id.LinearLayout_radioStation:
+                showToast(this,"电台");
                 break;
         }
 

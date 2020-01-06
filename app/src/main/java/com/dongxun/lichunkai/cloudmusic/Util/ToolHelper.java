@@ -335,7 +335,7 @@ public class ToolHelper {
      * @param msg
      */
     public static void showToast(Context context,String msg){
-        Toast toast=Toast.makeText(context,msg,Toast.LENGTH_LONG);
+        Toast toast=Toast.makeText(context,msg,Toast.LENGTH_SHORT);
         toast.setText(msg);
         toast.show();
     }
