@@ -303,7 +303,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                     OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
                     //和风请求方式
                     Request request = new Request.Builder()
-                            .url("http://www.willdonner.top:3000/search?keywords="+ keyWord +"")
+                            .url("https://neteasecloudmusicapi.willdonner.top/search?keywords="+ keyWord +"")
                             .build();//创建一个Request对象
                     //第三步构建Call对象
                     Call call = client.newCall(request);
