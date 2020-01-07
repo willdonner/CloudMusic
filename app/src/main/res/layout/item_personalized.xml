@@ -26,7 +26,9 @@
             android:layout_marginTop="4dp"
             android:textSize="12sp"
             android:text="这是歌单名"
-            android:textColor="#000000"/>
+            android:textColor="#000000"
+            android:ellipsize="end"
+            android:lines="2"/>
 
         <LinearLayout
             android:layout_width="wrap_content"

@@ -379,12 +379,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 Intent intent = new Intent(this,PlayActivity.class);
                 startActivity(intent);
                 break;
+            case "1000":
+                //VIP专享
+                showToast(this,title);
+                break;
             case "1009":
                 //独家电台
                 showToast(this,title);
                 break;
             case "3000":
-                //独家策划（打开URL）
+                //独家策划/数字专辑（打开URL）
                 showToast(this,title);
                 //跳转(带参数，说明是播放新歌曲)
                 Intent intent_web = new Intent(this,WebActivity.class);
@@ -790,6 +794,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
             case R.id.LinearLayout_dailyRecommend:
                 showToast(this,"每日推荐");
+                Intent intent = new Intent(this,DailyRecommendActivity.class);
+                startActivity(intent);
                 break;
             case R.id.LinearLayout_songList:
                 showToast(this,"歌单");
