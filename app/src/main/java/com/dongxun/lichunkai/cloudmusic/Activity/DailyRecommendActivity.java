@@ -1,6 +1,7 @@
 package com.dongxun.lichunkai.cloudmusic.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
@@ -14,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.dongxun.lichunkai.cloudmusic.Adapter.DailyRecommendAdapter;
 import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
@@ -26,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 
 import okhttp3.Call;
@@ -52,6 +55,11 @@ public class DailyRecommendActivity extends AppCompatActivity implements View.On
     private RecyclerView recyclerView;
     private ImageView imageView_loading;
 
+    private ArrayList<Song> songs = new ArrayList<>();//每日推荐歌曲列表
+    private LinearLayoutManager linearLayoutManager;
+    private DailyRecommendAdapter dailyRecommendAdapter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +67,29 @@ public class DailyRecommendActivity extends AppCompatActivity implements View.On
 
         initStateBar();
         initView();
+        setAdapter();
         getData();
+    }
+
+
+    private void setAdapter() {
+        linearLayoutManager = new LinearLayoutManager(this);
+        dailyRecommendAdapter = new DailyRecommendAdapter(songs);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(dailyRecommendAdapter);
+        dailyRecommendAdapter.setOnItemClickListener(new DailyRecommendAdapter.OnItemClickListener() {
+            @Override
+            public void onClickPlay(int position) {
+                //播放
+                showToast(DailyRecommendActivity.this,"播放");
+            }
+
+            @Override
+            public void onClickMenu(int position) {
+                //菜单
+                showToast(DailyRecommendActivity.this,"菜单");
+            }
+        });
     }
 
     /**
@@ -73,52 +103,15 @@ public class DailyRecommendActivity extends AppCompatActivity implements View.On
         textView_day.setText(day);
         textView_month.setText(month);
         //获取每日推荐歌曲
-        refreshLogin();
+        Song song = new Song();
+        song.setId("1338022514");
+        song.setName("好心分手 抖音片段（Cover：王力宏）");
+        song.setArtist("孟祥龙");
+        song.setAlbumName("好心分手 抖音片段");
+        for (int i=0;i<20;i++)songs.add(song);
+        dailyRecommendAdapter.notifyDataSetChanged();
+        imageView_loading.setVisibility(View.GONE);
     }
-
-    /**
-     * 刷新登录
-     */
-    private void refreshLogin() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
-                    Request request = new Request.Builder()
-                            .url("http://www.willdonner.top:3000/login/refresh")
-                            .build();
-                    Call call = client.newCall(request);
-                    call.enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                        }
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            final String responseData = response.body().string();//处理返回的数据
-                            Log.e(TAG, "onResponse: "+responseData);
-                            //处理JSON
-                            try {
-                                JSONObject newRes = new JSONObject(responseData);
-                                String code = newRes.getString("code");
-                                if (code.equals("200")){
-                                    Log.e(TAG, "刷新登录成功");
-                                    getRecommend();
-                                }else {
-                                    Log.e(TAG, "刷新登录失败");
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
-
 
     /**
      * 获取recommend

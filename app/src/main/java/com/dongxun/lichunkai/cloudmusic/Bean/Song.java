@@ -11,6 +11,7 @@ public class Song {
     private String name;//歌曲名
     private String id;//歌曲ID
     private String albumId;//专辑Id
+    private String albumName;//专辑Name
     private String artist;//艺术家
     private Bitmap cover;//封面图Bitmap
     private String coverURL;//封面图URL
@@ -18,6 +19,22 @@ public class Song {
     private int nowTime;//歌曲当前播放到的时间
     private List<Lyric> lyricList;//歌词
     private String lyricURL;//歌词URL
+
+    public String getAlbumId() {
+        return albumId;
+    }
+
+    public void setAlbumId(String albumId) {
+        this.albumId = albumId;
+    }
+
+    public String getAlbumName() {
+        return albumName;
+    }
+
+    public void setAlbumName(String albumName) {
+        this.albumName = albumName;
+    }
 
     public List<Lyric> getLyricList() {
         return lyricList;
