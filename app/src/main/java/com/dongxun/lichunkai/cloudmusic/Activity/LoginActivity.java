@@ -182,7 +182,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 try{
                     OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
                     Request request = new Request.Builder()
-                            .url("http://www.willdonner.top:3000/cellphone/existence/check?phone="+ phone +"")
+                            .url("https://neteasecloudmusicapi.willdonner.top/cellphone/existence/check?phone="+ phone +"")
                             .build();
                     Call call = client.newCall(request);
                     call.enqueue(new Callback() {
@@ -248,7 +248,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 try{
                     OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
                     Request request = new Request.Builder()
-                            .url("http://www.willdonner.top:3000/login/cellphone?phone="+  phone +"&password="+ password +"")
+                            .url("https://neteasecloudmusicapi.willdonner.top/login/cellphone?phone="+  phone +"&password="+ password +"")
                             .build();
                     Call call = client.newCall(request);
                     call.enqueue(new Callback() {
@@ -341,7 +341,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 try{
                     OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
                     Request request = new Request.Builder()
-                            .url("http://www.willdonner.top:3000/captcha/sent?phone="+  phone +"")
+                            .url("https://neteasecloudmusicapi.willdonner.top/captcha/sent?phone="+  phone +"")
                             .build();
                     Call call = client.newCall(request);
                     call.enqueue(new Callback() {
@@ -400,7 +400,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 try{
                     OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
                     Request request = new Request.Builder()
-                            .url("http://www.willdonner.top:3000/register/cellphone?phone="+ phone +"&password="+ password +"&captcha="+ checkCode +"")
+                            .url("https://neteasecloudmusicapi.willdonner.top/register/cellphone?phone="+ phone +"&password="+ password +"&captcha="+ checkCode +"")
                             .build();
                     Call call = client.newCall(request);
                     call.enqueue(new Callback() {

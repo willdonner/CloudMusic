@@ -95,7 +95,7 @@ public class LunchActivity extends BaseActivity implements Animation.AnimationLi
                 try{
                     OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
                     Request request = new Request.Builder()
-                            .url("http://www.willdonner.top:3000/login/cellphone?phone="+  phone +"&password="+ password +"")
+                            .url("https://neteasecloudmusicapi.willdonner.top/login/cellphone?phone="+  phone +"&password="+ password +"")
                             .build();
                     Call call = client.newCall(request);
                     call.enqueue(new Callback() {

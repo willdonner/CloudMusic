@@ -257,7 +257,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 try{
                     OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
                     Request request = new Request.Builder()
-                            .url("http://www.willdonner.top:3000/banner?type=1")
+                            .url("https://neteasecloudmusicapi.willdonner.top/banner?type=1")
                             .build();
                     Call call = client.newCall(request);
                     call.enqueue(new Callback() {
@@ -809,6 +809,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
      */
     public void getSongUrl(){
         WebView webView = new WebView(this);
+        String s = Common.song_playing.getId();
         webView.loadUrl("https://music.163.com/song/media/outer/url?id="+Common.song_playing.getId());
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient(){
