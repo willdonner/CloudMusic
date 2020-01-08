@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingVertical="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <com.dongxun.lichunkai.cloudmusic.Class.CircleImageView
+                android:id="@+id/imageView_head"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:src="@drawable/head"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView_nickname"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="萤火夏日的忧伤"
+                        android:textColor="#656565"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/textView_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="2016年2月2日"
+                        android:textColor="#999999"
+                        android:textSize="10sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LinearLayout_like"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/textView_likeCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="33682" />
+
+                    <ImageView
+                        android:id="@+id/imageView14"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        app:srcCompat="@drawable/logo_thumb" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView_contentText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:text="从前，有一只兔子，。\n又来了一只兔子， 它扶着耳朵站在第一只兔子的肩膀上。\n又来了一只兔子， 它扶着耳朵站在第二只兔子的肩膀上。\n又来了一只兔子， 它扶着耳朵站在第三只兔子的肩膀上。\n……\n又来了一只兔子，它扶着耳朵站在第九只兔子的肩膀上， 亲了长颈鹿一下。"
+                android:textColor="#333333" />
+
+            <LinearLayout
+                android:id="@+id/LinearLayout_return"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView_returnCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="250"
+                    android:textColor="#517dae" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="条回复"
+                    android:textColor="#517dae" />
+
+                <ImageView
+                    android:id="@+id/imageView18"
+                    android:layout_width="16sp"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/logo_blue_more" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#e6e6e6"/>
+
+</LinearLayout>

@@ -135,7 +135,7 @@ public class SongSheetActivity extends AppCompatActivity {
                         public void onResponse(Call call, Response response) throws IOException {
                             final String responseData = response.body().string();//处理返回的数据
                             Log.e(TAG, "onResponse: "+responseData);
-                            //处理JSON
+                            //处理JSON（私人定制情况需要单独处理）
                             try {
                                 JSONObject newRes = new JSONObject(responseData);
                                 String code = newRes.getString("code");
@@ -149,7 +149,7 @@ public class SongSheetActivity extends AppCompatActivity {
                                         JSONArray ars = tracks.getJSONObject(i).getJSONArray("ar");
                                         for(int j=0;j<ars.length();j++){
                                             String ar = ars.getJSONObject(j).getString("name");
-                                            artist = ar.equals("")?ar:artist + "/" + ar;
+                                            artist = artist.equals("")?ar:artist + "/" + ar;
                                         }
                                         String al_name = tracks.getJSONObject(i).getJSONObject("al").getString("name");//专辑
                                         String al_id = tracks.getJSONObject(i).getJSONObject("al").getString("id");//专辑

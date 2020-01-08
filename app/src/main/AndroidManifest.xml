@@ -16,7 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activity.SongSheetActivity"></activity>
+        <activity android:name=".Activity.CommentActivity"></activity>
+        <activity android:name=".Activity.SongSheetActivity" />
         <activity android:name=".Activity.DailyRecommendActivity" />
         <activity android:name=".Activity.WebActivity" />
         <activity
