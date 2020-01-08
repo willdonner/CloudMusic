@@ -20,7 +20,7 @@
             android:paddingHorizontal="10dp">
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/imageView_back"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 app:srcCompat="@drawable/logo_back" />
@@ -49,12 +49,6 @@
                 android:textSize="18sp" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/line"
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:background="#f5f5f5"/>
-
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -62,34 +56,74 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="10dp">
+                android:orientation="vertical" >
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:text="精彩评论" />
+                    android:layout_height="5dp"
+                    android:background="#f5f5f5" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView_hotComment"
+                <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:text="最新评论" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView_newComment"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="10dp"
+                            android:text="精彩评论"
+                            android:textColor="#000000"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:paddingHorizontal="10dp"/>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerView_hotComment"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingHorizontal="10dp">
+
+                        </androidx.recyclerview.widget.RecyclerView>
+
+                        <TextView
+                            android:id="@+id/textView_allHotComment"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginVertical="10dp"
+                            android:background="@drawable/back_radius_button_gray_cancle"
+                            android:paddingHorizontal="20dp"
+                            android:paddingVertical="6dp"
+                            android:text="全部精彩评论"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="5dp"
+                            android:background="#f5f5f5" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="10dp"
+                            android:text="最新评论"
+                            android:textColor="#000000"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:paddingHorizontal="10dp"/>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerView_newComment"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingHorizontal="10dp"/>
+                    </LinearLayout>
+                </ScrollView>
             </LinearLayout>
         </ScrollView>
 

@@ -15,8 +15,12 @@ import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.millisecondToDate;
 
 /**
  * 搜索歌曲RecyclerView适配器
@@ -82,6 +86,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         holder.textView_nickname.setText(comment.getUser().getNickname());
         holder.textView_likeCount.setText(comment.getLikedCount());
         holder.textView_contentText.setText(comment.getContent());
+        holder.textView_time.setText(millisecondToDate(Long.valueOf(comment.getTime())));
         holder.textView_returnCount.setText("250");
 
         //点击评论内容，弹出操作

@@ -37,7 +37,9 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -359,5 +361,16 @@ public class ToolHelper {
         SharedPreferences preferences = context.getSharedPreferences("data",Context.MODE_PRIVATE);
         String account = preferences.getString("account","");
         return account;
+    }
+
+    /**
+     * 毫秒转日期
+     * @param time
+     * @return
+     */
+    public static String millisecondToDate(Long time) {
+        Date d = new Date(time);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+        return sdf.format(d);
     }
 }
