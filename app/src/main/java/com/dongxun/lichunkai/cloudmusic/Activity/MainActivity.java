@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -161,8 +162,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         getPermission();
         updateUI();
         getBanner();
-        getPersonalized();
         setPersonalizedAdapter();
+        getPersonalized();
+
+
     }
 
     /**
@@ -178,6 +181,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             public void onClick(int position) {
                 //点击歌单
                 showToast(MainActivity.this,songSheets.get(position).getName());
+                SongSheet songSheet = songSheets.get(position);
+                //带参跳转歌单详情页
+                Intent intent = new Intent(MainActivity.this,SongSheetActivity.class);
+                intent.putExtra("songsheet",songSheet);
+                startActivity(intent);
             }
         });
     }

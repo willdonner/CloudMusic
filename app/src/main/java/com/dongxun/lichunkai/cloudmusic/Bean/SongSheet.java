@@ -2,10 +2,12 @@ package com.dongxun.lichunkai.cloudmusic.Bean;
 
 import android.graphics.Bitmap;
 
+import java.io.Serializable;
+
 /**
  * 歌单类
  */
-public class SongSheet {
+public class SongSheet implements Serializable {
     private String id;//歌单id
     private String name;//歌单名
     private String copywriter;//文案

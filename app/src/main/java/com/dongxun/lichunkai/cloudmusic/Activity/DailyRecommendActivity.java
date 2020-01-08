@@ -11,6 +11,7 @@ import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -192,10 +193,10 @@ public class DailyRecommendActivity extends AppCompatActivity implements View.On
                 finish();
                 break;
             case R.id.LinearLayout_playAll:
-                ToolHelper.showToast(this,"播放全部");
+                showToast(this,"播放全部");
                 break;
             case R.id.LinearLayout_selects:
-                ToolHelper.showToast(this,"多选");
+                showToast(this,"多选");
                 break;
         }
     }
