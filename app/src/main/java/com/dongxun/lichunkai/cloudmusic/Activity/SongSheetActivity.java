@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 import com.dongxun.lichunkai.cloudmusic.Adapter.SongSheetAdapter;
 import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.Bean.SongSheet;
+import com.dongxun.lichunkai.cloudmusic.Common.Common;
+import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.dongxun.lichunkai.cloudmusic.Util.ToolHelper;
 import com.gyf.immersionbar.ImmersionBar;
@@ -67,6 +70,13 @@ public class SongSheetActivity extends AppCompatActivity {
             public void onClickPlay(int position) {
                 //播放
                 ToolHelper.showToast(SongSheetActivity.this,"播放"+songs.get(position).getId());
+                //更改公共变量
+                Common.song_playing = songs.get(position);
+                //发送本地广播播放
+                SendLocalBroadcast.playNew(SongSheetActivity.this);
+                //跳转(带参数，说明是播放新歌曲)
+                Intent intent = new Intent(SongSheetActivity.this,PlayActivity.class);
+                startActivity(intent);
             }
 
             @Override
