@@ -576,7 +576,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                     Intent intent = new Intent(this,CommentActivity.class);
                     intent.putExtra("id",Common.song_playing.getId());
                     intent.putExtra("type",0);
-                    intent.putExtra("limit",10);
+                    intent.putExtra("limit",20);
                     startActivity(intent);
                 } else {
                     Toast.makeText(this, "当前暂无歌曲，快去选一首吧", Toast.LENGTH_SHORT).show();
