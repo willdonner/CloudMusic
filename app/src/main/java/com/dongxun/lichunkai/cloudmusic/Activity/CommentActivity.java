@@ -110,6 +110,12 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
             public void onClickAllHot(int position) {
                 //所有热评
                 showToast(CommentActivity.this,"所有热评");
+                Intent intent = new Intent(CommentActivity.this,CommentActivity.class);
+                intent.putExtra("id","186016");
+                intent.putExtra("type",0);
+                intent.putExtra("limit",20);
+                intent.putExtra("hotModel",true);
+                startActivity(intent);
             }
         });
     }
@@ -128,10 +134,6 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
         //热评模式
         if (HotModel){
             textView_title.setText("精彩评论(");
-            textView_title_hot.setVisibility(View.GONE);
-            textView_title_new.setVisibility(View.GONE);
-            textView_allHotComment.setVisibility(View.GONE);
-            recyclerView_newComment.setVisibility(View.GONE);
             getHotComment(id,type,limit);
         }
         //获取评论（根据资源类型使用对应方法）
@@ -212,13 +214,6 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                                         }
                                         commentList.add(comment);
                                     }
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            textView_total.setText(total);
-                                            commentAdapter.notifyDataSetChanged();
-                                        }
-                                    });
                                     //解析最新评论
                                     JSONArray comments = newRes.getJSONArray("comments");
                                     for (int i=0;i<comments.length();i++){
@@ -253,6 +248,7 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
+                                            textView_total.setText(total);
                                             commentAdapter.notifyDataSetChanged();
                                         }
                                     });
@@ -303,6 +299,7 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                                 if (code.equals("200")){
                                     Log.e(TAG, "热门评论获取成功");
                                     final String total = newRes.getString("total");
+                                    //解析热门评论
                                     JSONArray hotComments = newRes.getJSONArray("hotComments");
                                     for (int i=0;i<hotComments.length();i++){
                                         JSONObject user = hotComments.getJSONObject(i).getJSONObject("user");
@@ -323,13 +320,16 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                                         comment.setContent(content);
                                         comment.setLikedCount(likedCount);
                                         comment.setTime(time);
+                                        comment.setShowNew(false);
+                                        comment.setShowHot(false);
+                                        comment.setShowAllHot(false);
                                         commentList.add(comment);
                                     }
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             textView_total.setText(total);
-                                            commentAdapter_hot.notifyDataSetChanged();
+                                            commentAdapter.notifyDataSetChanged();
                                         }
                                     });
                                 }else {
