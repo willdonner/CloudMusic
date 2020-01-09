@@ -63,6 +63,8 @@ public class SongSheetActivity extends AppCompatActivity implements View.OnClick
     private CircleImageView circleImageView_head;
     private RelativeLayout RelativeLayout_songSheet;
     private LinearLayout LinearLayout_creator;
+    private TextView textView_count;
+    private TextView textView_collectionCount;
 
     private ArrayList<Song> songs = new ArrayList<>();
     private LinearLayoutManager linearLayoutManager;
@@ -167,6 +169,8 @@ public class SongSheetActivity extends AppCompatActivity implements View.OnClick
         RelativeLayout_songSheet.setOnClickListener(this);
         LinearLayout_creator = findViewById(R.id.LinearLayout_creator);
         LinearLayout_creator.setOnClickListener(this);
+        textView_count = findViewById(R.id.textView_count);
+        textView_collectionCount = findViewById(R.id.textView_collectionCount);
     }
 
     /**
@@ -233,9 +237,10 @@ public class SongSheetActivity extends AppCompatActivity implements View.OnClick
                                     final String commentCount = newRes.getJSONObject("playlist").getString("commentCount");//评论数量
                                     final String shareCount = newRes.getJSONObject("playlist").getString("shareCount");//分享数量
                                     final String description = newRes.getJSONObject("playlist").getString("description");//歌单描述
+                                    final String subscribedCount = newRes.getJSONObject("playlist").getString("subscribedCount");//收藏数
                                     String userId = newRes.getJSONObject("playlist").getString("userId");//作者id
                                     String commentThreadId = newRes.getJSONObject("playlist").getString("commentThreadId");//评论随机码
-                                    String trackCount = newRes.getJSONObject("playlist").getString("trackCount");//歌曲总数量
+                                    final String trackCount = newRes.getJSONObject("playlist").getString("trackCount");//歌曲总数量
                                     String coverImgUrl = newRes.getJSONObject("playlist").getString("coverImgUrl");//封面图
                                     final String creator_nickname = newRes.getJSONObject("playlist").getJSONObject("creator").getString("nickname");//作者昵称
                                     final String creator_avatarUrl = newRes.getJSONObject("playlist").getJSONObject("creator").getString("avatarUrl");//作者头像
@@ -250,6 +255,12 @@ public class SongSheetActivity extends AppCompatActivity implements View.OnClick
                                             textview_commentsCount.setText(commentCount);
                                             //分享数
                                             textview_shareCount.setText(shareCount);
+                                            //歌曲总数量
+                                            textView_count.setText(trackCount);
+                                            //收藏数量
+                                            Log.e(TAG, "run: "+subscribedCount);
+                                            textView_collectionCount.setText((subscribedCount.length()>4)?(int)Integer.parseInt(subscribedCount)/10000+"万":subscribedCount);//超过万改变单位
+                                            textView_collectionCount.setText((subscribedCount.length()>8)?(int)Integer.parseInt(subscribedCount)/100000000+"亿":(subscribedCount.length()>4)?(int)Integer.parseInt(subscribedCount)/10000+"万":subscribedCount);//超过亿改变单位
                                             //头像
                                             new Thread(new Runnable() {
                                                 @Override
@@ -305,8 +316,9 @@ public class SongSheetActivity extends AppCompatActivity implements View.OnClick
                 finish();
                 break;
             case R.id.RelativeLayout_songSheet: case R.id.textView_description:
-                //显示歌单介绍
+                //显示歌单介绍(透明度变化)
                 ToolHelper.showToast(this,"歌单介绍");
+
                 break;
             case R.id.LinearLayout_creator:
                 //作者

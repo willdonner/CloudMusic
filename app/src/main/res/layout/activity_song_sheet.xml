@@ -72,7 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:paddingHorizontal="10dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal">
 
             <RelativeLayout
@@ -190,7 +190,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/LinearLayout_date"
-            android:layout_marginVertical="20dp"
+            android:layout_marginVertical="10dp"
             android:paddingHorizontal="10dp"
             android:orientation="horizontal">
 
@@ -308,6 +308,26 @@
                         android:text="播放全部"
                         android:textColor="#333333"
                         android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="12sp"
+                        android:text="(共" />
+                    <TextView
+                        android:id="@+id/textView_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="12sp"
+                        android:text="0" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="12sp"
+                        android:text="首)" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -338,7 +358,7 @@
                         android:id="@+id/textView_collectionCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="200万"
+                        android:text="0"
                         android:textColor="#ffffff"
                         android:textSize="12sp" />
 

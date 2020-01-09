@@ -74,7 +74,7 @@ public class PersonalizedAdapter extends RecyclerView.Adapter<PersonalizedAdapte
         String playCount = mList.get(position).getPlayCount();//播放量
         holder.textView_name.setText(name);
         holder.textView_playCount.setText((playCount.length()>5)?(int)Integer.parseInt(playCount)/10000+"万":playCount);//超过万改变单位
-        holder.textView_playCount.setText((playCount.length()>8)?(int)Integer.parseInt(playCount)/100000000+"亿":(int)Integer.parseInt(playCount)/10000+"万");//超过亿改变单位
+        holder.textView_playCount.setText((playCount.length()>8)?(int)Integer.parseInt(playCount)/100000000+"亿":(playCount.length()>5)?(int)Integer.parseInt(playCount)/10000+"万":playCount);//超过亿改变单位
 
         //获取封面
         new Thread(new Runnable() {
