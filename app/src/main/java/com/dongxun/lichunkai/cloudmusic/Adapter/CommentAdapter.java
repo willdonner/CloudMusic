@@ -1,5 +1,7 @@
 package com.dongxun.lichunkai.cloudmusic.Adapter;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,11 @@ import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.R;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -96,10 +103,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
 
-        Comment comment = mList.get(position);
-        holder.imageView_head.setImageResource(R.drawable.img_head);
+        final Comment comment = mList.get(position);
         holder.textView_nickname.setText(comment.getUser().getNickname());
         holder.textView_likeCount.setText(comment.getLikedCount());
         holder.textView_contentText.setText(comment.getContent());
@@ -110,6 +116,36 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         holder.textView_title_new.setVisibility(comment.getShowNew()?View.VISIBLE:View.GONE);
         holder.textView_allHotComment.setVisibility(comment.getShowAllHot()?View.VISIBLE:View.GONE);
         holder.LinearLayout_loading.setVisibility(position == mList.size()-1?View.VISIBLE:View.GONE);//加载数据
+
+        //获取头像
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                URL imageurl = null;
+                try {
+                    imageurl = new URL(comment.getUser().getAvatarUrl());
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    HttpURLConnection conn = (HttpURLConnection)imageurl.openConnection();
+                    conn.setDoInput(true);
+                    conn.connect();
+                    InputStream is = conn.getInputStream();
+                    final Bitmap bitmap = BitmapFactory.decodeStream(is);
+                    //切换主线程更新UI
+                    holder.imageView_head.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            holder.imageView_head.setImageBitmap(bitmap);
+                        }
+                    });
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
 
         //加载全部
         if (comment.getAllData()!=null){

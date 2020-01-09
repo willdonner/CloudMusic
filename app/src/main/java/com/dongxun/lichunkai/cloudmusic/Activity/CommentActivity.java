@@ -160,7 +160,7 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                 //所有热评
                 showToast(CommentActivity.this,"所有热评");
                 Intent intent = new Intent(CommentActivity.this,CommentActivity.class);
-                intent.putExtra("id","186016");
+                intent.putExtra("id",Common.song_playing.getId());
                 intent.putExtra("type",0);
                 intent.putExtra("limit",20);
                 intent.putExtra("hotModel",true);
@@ -361,8 +361,10 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                                 if (code.equals("200")){
                                     Log.e(TAG, "热门评论获取成功");
                                     final String total = newRes.getString("total");
+                                    //是否还有更多
+                                    isAll = newRes.getBoolean("hasMore");
                                     //解析热门评论
-                                    JSONArray hotComments = newRes.getJSONArray("hotComments");
+                                    final JSONArray hotComments = newRes.getJSONArray("hotComments");
                                     for (int i=0;i<hotComments.length();i++){
                                         JSONObject user = hotComments.getJSONObject(i).getJSONObject("user");
 
@@ -382,7 +384,7 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                                         comment.setContent(content);
                                         comment.setLikedCount(likedCount);
                                         comment.setTime(time);
-                                        comment.setShowNew(false);
+                                        comment.setShowNew(!isAll);
                                         comment.setShowHot(false);
                                         comment.setShowAllHot(false);
                                         commentList.add(comment);
@@ -390,6 +392,9 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
+                                            if (isAll) {
+                                                commentList.get(commentList.size()-1).setAllData(true);
+                                            }
                                             if (commentList.size()!=0) LinearLayout_loading.setVisibility(View.GONE);
                                             textView_total.setText(total);
                                             commentAdapter.notifyDataSetChanged();

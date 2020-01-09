@@ -12,7 +12,7 @@
         android:orientation="vertical">
 
         <com.dongxun.lichunkai.cloudmusic.Class.ResizableImageView
-            android:id="@+id/imageView8"
+            android:id="@+id/ResizableImageView_background"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_alignParentTop="true"
@@ -21,7 +21,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:alpha="0.7"
+            android:alpha="0.4"
             android:background="#000000" />
 
         <LinearLayout
@@ -76,12 +76,13 @@
             android:orientation="horizontal">
 
             <RelativeLayout
+                android:id="@+id/RelativeLayout_songSheet"
                 android:layout_width="120dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <com.dongxun.lichunkai.cloudmusic.Class.RoundImageView
-                    android:id="@+id/imageView_cover"
+                    android:id="@+id/roundImageView_cover"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
                     android:src="@drawable/img" />
@@ -90,7 +91,7 @@
                     android:layout_width="120dp"
                     android:layout_height="120dp"
                     android:background="#000000"
-                    android:alpha="0.2"/>
+                    android:alpha="0.1"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -112,7 +113,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#ffffff"
-                        android:text="1323" />
+                        android:text="0" />
                 </LinearLayout>
             </RelativeLayout>
 
@@ -132,20 +133,21 @@
                     android:text="歌单名" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:id="@+id/LinearLayout_creator"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginVertical="10dp"
                     android:gravity="left">
 
                     <com.dongxun.lichunkai.cloudmusic.Class.CircleImageView
-                        android:id="@+id/imageView_head"
+                        android:id="@+id/circleImageView_head"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:src="@drawable/head" />
 
                     <TextView
-                        android:id="@+id/textView_artist"
+                        android:id="@+id/textView_creatorNickName"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="10dp"
@@ -168,21 +170,16 @@
                     android:gravity="center|left">
 
                     <TextView
-                        android:id="@+id/textView_copywriter2"
+                        android:id="@+id/textView_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:lines="2"
                         android:text="介绍"
                         android:textColor="#cad1d7"
-                        android:gravity="center"
+                        android:gravity="center|left"
                         android:textSize="12sp" />
 
-                    <ImageView
-                        android:id="@+id/imageView15"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        app:srcCompat="@drawable/logo_more" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -214,7 +211,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#ffffff"
-                    android:text="13434" />
+                    android:text="0" />
             </LinearLayout>
 
             <LinearLayout
@@ -227,13 +224,13 @@
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    app:srcCompat="@android:drawable/ic_menu_share" />
+                    app:srcCompat="@drawable/logo_share" />
 
                 <TextView
                     android:id="@+id/textview_shareCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="45345"
+                    android:text="0"
                     android:textColor="#ffffff" />
             </LinearLayout>
 
@@ -356,11 +353,12 @@
 
             <pl.droidsonroids.gif.GifImageView
                 android:id="@+id/gifImageView_loading"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
-                android:src="@drawable/gif_waiting" />
+                android:layout_marginTop="100dp"
+                android:src="@drawable/gif_loading2" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
