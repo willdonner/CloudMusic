@@ -10,9 +10,9 @@ public class Comment {
     private String time;//评论时间
     private String likedCount;//点赞数
 
-    private Boolean showHot;
-    private Boolean showAllHot;
-    private Boolean showNew;
+    private Boolean showHot;//显示热评标题
+    private Boolean showAllHot;//显示所有热评按钮
+    private Boolean showNew;//显示最新评论标题
 
     public Boolean getShowHot() {
         return showHot;
