@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import pl.droidsonroids.gif.GifImageView;
+
 import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.millisecondToDate;
 
 /**
@@ -44,6 +46,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         TextView textView_title_hot;
         TextView textView_title_new;
         TextView textView_allHotComment;
+        LinearLayout LinearLayout_loading;
+        GifImageView gifImageView_loading;
+        TextView textView_loading;
 
 
         public ViewHolder( View itemView) {
@@ -60,6 +65,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             textView_title_hot = (TextView)itemView.findViewById(R.id.textView_title_hot);
             textView_title_new = (TextView)itemView.findViewById(R.id.textView_title_new);
             textView_allHotComment = (TextView)itemView.findViewById(R.id.textView_allHotComment);
+            LinearLayout_loading = (LinearLayout)itemView.findViewById(R.id.LinearLayout_loading);
+            gifImageView_loading = (GifImageView)itemView.findViewById(R.id.gifImageView_loading);
+            textView_loading = (TextView)itemView.findViewById(R.id.textView_loading);
         }
     }
 
@@ -101,6 +109,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         holder.textView_title_hot.setVisibility(comment.getShowHot()?View.VISIBLE:View.GONE);
         holder.textView_title_new.setVisibility(comment.getShowNew()?View.VISIBLE:View.GONE);
         holder.textView_allHotComment.setVisibility(comment.getShowAllHot()?View.VISIBLE:View.GONE);
+        holder.LinearLayout_loading.setVisibility(position == mList.size()-1?View.VISIBLE:View.GONE);//加载数据
+
+        //加载全部
+        if (comment.getAllData()!=null){
+            holder.gifImageView_loading.setImageResource(R.drawable.logo_complete);
+            holder.textView_loading.setText("已加载全部评论");
+        }
 
         //点击评论内容，弹出操作
         holder.textView_contentText.setOnClickListener(new View.OnClickListener() {

@@ -14,6 +14,16 @@ public class Comment {
     private Boolean showAllHot;//显示所有热评按钮
     private Boolean showNew;//显示最新评论标题
 
+    private Boolean allData;//已经加载全部数据
+
+    public Boolean getAllData() {
+        return allData;
+    }
+
+    public void setAllData(Boolean allData) {
+        this.allData = allData;
+    }
+
     public Boolean getShowHot() {
         return showHot;
     }

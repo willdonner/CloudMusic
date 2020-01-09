@@ -50,6 +50,26 @@
                 android:textSize="18sp" />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/LinearLayout_loading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <pl.droidsonroids.gif.GifImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/gif_loading3" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="正在加载更多评论..." />
+        </LinearLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView_comment"
             android:layout_width="match_parent"

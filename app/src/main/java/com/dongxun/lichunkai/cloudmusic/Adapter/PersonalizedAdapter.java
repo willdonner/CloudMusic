@@ -1,6 +1,7 @@
 package com.dongxun.lichunkai.cloudmusic.Adapter;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dongxun.lichunkai.cloudmusic.Bean.SongSheet;
 import com.dongxun.lichunkai.cloudmusic.R;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -24,7 +30,7 @@ public class PersonalizedAdapter extends RecyclerView.Adapter<PersonalizedAdapte
     private List<SongSheet> mList;
     private OnItemClickListener listener;
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView textView_name;//歌单名
         TextView textView_playCount;//播放量
@@ -62,13 +68,42 @@ public class PersonalizedAdapter extends RecyclerView.Adapter<PersonalizedAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         String name = mList.get(position).getName();//歌单名
         Bitmap pic = mList.get(position).getPic();//封面图
         String playCount = mList.get(position).getPlayCount();//播放量
         holder.textView_name.setText(name);
         holder.textView_playCount.setText((playCount.length()>5)?(int)Integer.parseInt(playCount)/100000+"万":playCount);//超过十万改变单位
-        holder.imageView_cover.setImageResource(R.drawable.img_background);
+
+        //获取封面
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                URL imageurl = null;
+                try {
+                    imageurl = new URL(mList.get(position).getPicUrl());
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    HttpURLConnection conn = (HttpURLConnection)imageurl.openConnection();
+                    conn.setDoInput(true);
+                    conn.connect();
+                    InputStream is = conn.getInputStream();
+                    final Bitmap bitmap = BitmapFactory.decodeStream(is);
+                    //切换主线程更新UI
+                    holder.imageView_cover.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            holder.imageView_cover.setImageBitmap(bitmap);
+                        }
+                    });
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
 
         holder.RelativeLayout_personalized.setOnClickListener(new View.OnClickListener() {
             @Override

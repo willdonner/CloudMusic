@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dongxun.lichunkai.cloudmusic.Adapter.CommentAdapter;
@@ -49,6 +50,7 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
     private ImageView imageView_back;
     private TextView textView_title;
     private TextView textView_total;
+    private LinearLayout LinearLayout_loading;
 
     private LinearLayoutManager linearLayoutManager;
     private CommentAdapter commentAdapter;
@@ -60,6 +62,8 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
     private int scrollY = 0;//recycleView滑动的距离
     private int page = 1;//获取的评论页码
     private Boolean isRequest = false;
+    private int limit = 20;//每次请求数据条数
+    private Boolean isAll = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +82,7 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
         recyclerView_comment = findViewById(R.id.recyclerView_comment);
         imageView_back = findViewById(R.id.imageView_back);
         imageView_back.setOnClickListener(this);
+        LinearLayout_loading = findViewById(R.id.LinearLayout_loading);
     }
 
     private void setAdapter() {
@@ -104,14 +109,16 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                     Log.e(TAG, "最后一个可见view的位置: "+lastItemPosition);
                     Log.e(TAG, "第一个可见view的位置: "+firstItemPosition);
                     if (lastItemPosition == commentList.size()-1){
+                        if (isRequest) return;
+                        if (isAll) return;
                         //加载新数据
                         showToast(CommentActivity.this,"加载新数据");
                         page = commentList.size()-15/10+1;
                         if (HotModel){
                             //热评模式
-                            getHotComment(sourceID,0,10,page);
+                            getHotComment(sourceID,0,limit,page);
                         }else {
-                            getMusicComment(sourceID,10,page);
+                            getMusicComment(sourceID,limit,page);
                         }
                     }
                 }
@@ -122,9 +129,8 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                 super.onScrolled(recyclerView, dx, dy);
                 switch (recyclerView.getId()){
                     case R.id.recyclerView_comment:
+                        //记录滑动的总距离
                         scrollY = scrollY + dy;
-                        int position =
-                        Log.e(TAG, "onScrolled: "+scrollY);
                         break;
                 }
             }
@@ -167,11 +173,9 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
         //获取参数（id,type,limit）
         sourceID = getIntent().getStringExtra("id");
         int type = getIntent().getIntExtra("type",0);
-        int limit = getIntent().getIntExtra("limit",10);
         HotModel = getIntent().getBooleanExtra("hotModel",false);
         Log.e(TAG, "getdata: "+sourceID);
         Log.e(TAG, "getdata: "+type);
-        Log.e(TAG, "getdata: "+limit);
         Log.e(TAG, "getdata: "+HotModel);
 
         //热评模式
@@ -184,7 +188,7 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
             switch (type){
                 case 0:
                     //歌曲评论
-                    getMusicComment(sourceID,10,page);
+                    getMusicComment(sourceID,limit,page);
                     break;
             }
         }
@@ -263,7 +267,7 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                                         }
                                     }
                                     //解析最新评论
-                                    JSONArray comments = newRes.getJSONArray("comments");
+                                    final JSONArray comments = newRes.getJSONArray("comments");
                                     for (int i=0;i<comments.length();i++){
                                         JSONObject user = comments.getJSONObject(i).getJSONObject("user");
 
@@ -296,6 +300,11 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
+                                            if (comments.length()==0) {
+                                                commentList.get(commentList.size()-1).setAllData(true);
+                                                isAll = true;
+                                            }
+                                            if (commentList.size()!=0) LinearLayout_loading.setVisibility(View.GONE);
                                             textView_total.setText(total);
                                             commentAdapter.notifyDataSetChanged();
                                             for (Comment comment:commentList)
@@ -381,6 +390,7 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
+                                            if (commentList.size()!=0) LinearLayout_loading.setVisibility(View.GONE);
                                             textView_total.setText(total);
                                             commentAdapter.notifyDataSetChanged();
                                             isRequest = false;

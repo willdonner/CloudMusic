@@ -127,7 +127,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/textView_returnCount"
@@ -170,5 +171,26 @@
         android:paddingVertical="6dp"
         android:text="全部精彩评论"
         android:textSize="12sp" />
+
+    <LinearLayout
+        android:id="@+id/LinearLayout_loading"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginVertical="10dp">
+
+        <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/gifImageView_loading"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/gif_loading3"/>
+
+        <TextView
+            android:id="@+id/textView_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="正在加载更多评论..." />
+    </LinearLayout>
 
 </LinearLayout>

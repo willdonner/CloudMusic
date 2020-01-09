@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.dongxun.lichunkai.cloudmusic.Activity.LoginActivity;
+import com.dongxun.lichunkai.cloudmusic.Adapter.PersonalizedAdapter;
 import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 
@@ -35,6 +36,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
@@ -53,6 +56,7 @@ import okhttp3.Response;
 public class ToolHelper {
 
     private static String TAG = "ToolHelper";
+    private static Bitmap bitmap;
 
     /**
      * 读取txt文件内容
@@ -373,4 +377,5 @@ public class ToolHelper {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
         return sdf.format(d);
     }
+
 }
