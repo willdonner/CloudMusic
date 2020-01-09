@@ -1,6 +1,7 @@
 package com.dongxun.lichunkai.cloudmusic.Activity;
 
 import androidx.activity.ComponentActivity;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,21 +46,20 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
     private String TAG = "CommentActivity";
 
     private RecyclerView recyclerView_comment;
-    private RecyclerView recyclerView_newComment;
-    private TextView textView_allHotComment;
     private ImageView imageView_back;
     private TextView textView_title;
-    private TextView textView_title_hot;
-    private TextView textView_title_new;
     private TextView textView_total;
 
     private LinearLayoutManager linearLayoutManager;
-    private CommentAdapter commentAdapter_hot;
-    private LinearLayoutManager linearLayoutManager_new;
     private CommentAdapter commentAdapter;
     private ArrayList<Comment> commentList = new ArrayList<>();
 
     private Boolean HotModel = false;//精彩评论模式
+
+    private String sourceID = "";//资源id
+    private int scrollY = 0;//recycleView滑动的距离
+    private int page = 1;//获取的评论页码
+    private Boolean isRequest = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +86,49 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
         commentAdapter = new CommentAdapter(commentList);
         recyclerView_comment.setLayoutManager(linearLayoutManager);
         recyclerView_comment.setAdapter(commentAdapter);
+        //滑动监听
+        recyclerView_comment.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                //onScrollStateChanged 方法
+                RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                //判断是当前layoutManager是否为LinearLayoutManager
+                //只有LinearLayoutManager才有查找第一个和最后一个可见view位置的方法
+                if (layoutManager instanceof LinearLayoutManager) {
+                    LinearLayoutManager linearManager = (LinearLayoutManager) layoutManager;
+                    //获取最后一个可见view的位置
+                    int lastItemPosition = linearManager.findLastVisibleItemPosition();
+                    //获取第一个可见view的位置
+                    int firstItemPosition = linearManager.findFirstVisibleItemPosition();
+                    Log.e(TAG, "最后一个可见view的位置: "+lastItemPosition);
+                    Log.e(TAG, "第一个可见view的位置: "+firstItemPosition);
+                    if (lastItemPosition == commentList.size()-1){
+                        //加载新数据
+                        showToast(CommentActivity.this,"加载新数据");
+                        page = commentList.size()-15/10+1;
+                        if (HotModel){
+                            //热评模式
+                            getHotComment(sourceID,0,10,page);
+                        }else {
+                            getMusicComment(sourceID,10,page);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                switch (recyclerView.getId()){
+                    case R.id.recyclerView_comment:
+                        scrollY = scrollY + dy;
+                        int position =
+                        Log.e(TAG, "onScrolled: "+scrollY);
+                        break;
+                }
+            }
+        });
         commentAdapter.setOnItemClickListener(new CommentAdapter.OnItemClickListener() {
             @Override
             public void onClick(int position) {
@@ -122,11 +165,11 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
 
     private void getdata() {
         //获取参数（id,type,limit）
-        String id = getIntent().getStringExtra("id");
+        sourceID = getIntent().getStringExtra("id");
         int type = getIntent().getIntExtra("type",0);
         int limit = getIntent().getIntExtra("limit",10);
         HotModel = getIntent().getBooleanExtra("hotModel",false);
-        Log.e(TAG, "getdata: "+id);
+        Log.e(TAG, "getdata: "+sourceID);
         Log.e(TAG, "getdata: "+type);
         Log.e(TAG, "getdata: "+limit);
         Log.e(TAG, "getdata: "+HotModel);
@@ -134,14 +177,14 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
         //热评模式
         if (HotModel){
             textView_title.setText("精彩评论(");
-            getHotComment(id,type,limit);
+            getHotComment(sourceID,type,limit,page);
         }
         //获取评论（根据资源类型使用对应方法）
         if (!HotModel){
             switch (type){
                 case 0:
                     //歌曲评论
-                    getMusicComment(id,limit);
+                    getMusicComment(sourceID,10,page);
                     break;
             }
         }
@@ -149,17 +192,20 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
 
     /**
      * 获取歌曲评论(包括15条热门评论和规定条最新评论)
-     * @param id
-     * @param limit
+     * @param id 歌曲id
+     * @param limit 取出评论数量 , 默认为 20
+     * @param page 页码，offset:偏移数量 , 用于分页 , 如 :( 评论页数 -1)*20, 其中 20 为 limit 的值
      */
-    private void getMusicComment(final String id, final int limit) {
+    private void getMusicComment(final String id, final int limit,final int page) {
+        if (isRequest) return;
+        isRequest = true;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try{
                     OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
                     Request request = new Request.Builder()
-                            .url("https://neteasecloudmusicapi.willdonner.top/comment/music?id="+ id +"&limit="+ limit +"")
+                            .url("https://neteasecloudmusicapi.willdonner.top/comment/music?id="+ id +"&limit="+ limit +"&offset="+ (page-1)*limit +"")
                             .build();
                     Call call = client.newCall(request);
                     call.enqueue(new Callback() {
@@ -178,41 +224,43 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                                     Log.e(TAG, "歌曲评论获取成功");
                                     final String total = newRes.getString("total");
                                     //解析热门评论
-                                    JSONArray hotComments = newRes.getJSONArray("hotComments");
-                                    for (int i=0;i<hotComments.length();i++){
-                                        JSONObject user = hotComments.getJSONObject(i).getJSONObject("user");
+                                    if (page==1){
+                                        JSONArray hotComments = newRes.getJSONArray("hotComments");
+                                        for (int i=0;i<hotComments.length();i++){
+                                            JSONObject user = hotComments.getJSONObject(i).getJSONObject("user");
 
-                                        User user1 = new User();
-                                        user1.setUserId(user.getString("userId"));
-                                        user1.setNickname(user.getString("nickname"));
-                                        user1.setAvatarUrl(user.getString("avatarUrl"));
+                                            User user1 = new User();
+                                            user1.setUserId(user.getString("userId"));
+                                            user1.setNickname(user.getString("nickname"));
+                                            user1.setAvatarUrl(user.getString("avatarUrl"));
 
-                                        String commentId = hotComments.getJSONObject(i).getString("commentId");
-                                        String content = hotComments.getJSONObject(i).getString("content");
-                                        String time = hotComments.getJSONObject(i).getString("time");
-                                        String likedCount = hotComments.getJSONObject(i).getString("likedCount");
+                                            String commentId = hotComments.getJSONObject(i).getString("commentId");
+                                            String content = hotComments.getJSONObject(i).getString("content");
+                                            String time = hotComments.getJSONObject(i).getString("time");
+                                            String likedCount = hotComments.getJSONObject(i).getString("likedCount");
 
-                                        Comment comment = new Comment();
-                                        comment.setUser(user1);
-                                        comment.setCommentId(commentId);
-                                        comment.setContent(content);
-                                        comment.setLikedCount(likedCount);
-                                        comment.setTime(time);
-                                        comment.setShowNew(false);
-                                        if (i==hotComments.length()-1) {
-                                            //最后一条热评
-                                            comment.setShowHot(false);
-                                            comment.setShowAllHot(true);
-                                        }else if (i==0){
-                                            //第一条热评
-                                            comment.setShowHot(true);
-                                            comment.setShowAllHot(false);
-                                        }else {
-                                            //中间热评
-                                            comment.setShowHot(false);
-                                            comment.setShowAllHot(false);
+                                            Comment comment = new Comment();
+                                            comment.setUser(user1);
+                                            comment.setCommentId(commentId);
+                                            comment.setContent(content);
+                                            comment.setLikedCount(likedCount);
+                                            comment.setTime(time);
+                                            comment.setShowNew(false);
+                                            if (i==hotComments.length()-1) {
+                                                //最后一条热评
+                                                comment.setShowHot(false);
+                                                comment.setShowAllHot(true);
+                                            }else if (i==0){
+                                                //第一条热评
+                                                comment.setShowHot(true);
+                                                comment.setShowAllHot(false);
+                                            }else {
+                                                //中间热评
+                                                comment.setShowHot(false);
+                                                comment.setShowAllHot(false);
+                                            }
+                                            commentList.add(comment);
                                         }
-                                        commentList.add(comment);
                                     }
                                     //解析最新评论
                                     JSONArray comments = newRes.getJSONArray("comments");
@@ -237,7 +285,7 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                                         comment.setTime(time);
                                         comment.setShowHot(false);
                                         comment.setShowAllHot(false);
-                                        if (i==0){
+                                        if (i==0 && page==1){
                                             //第一条评论
                                             comment.setShowNew(true);
                                         }else {
@@ -250,6 +298,9 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                                         public void run() {
                                             textView_total.setText(total);
                                             commentAdapter.notifyDataSetChanged();
+                                            for (Comment comment:commentList)
+                                                Log.e(TAG, "run: "+comment.getCommentId());
+                                            isRequest = false;
                                         }
                                     });
 
@@ -274,14 +325,16 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
      * @param type 数字 , 资源类型 , 对应歌曲(0) , mv(1), 歌单(2) , 专辑(3) , 电台(4), 视频(5)
      * @param limit 取出评论数量 , 默认为 20
      */
-    private void getHotComment(final String id, final int type, final int limit) {
+    private void getHotComment(final String id, final int type, final int limit,final int page) {
+        if (isRequest) return;
+        isRequest = true;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try{
                     OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
                     Request request = new Request.Builder()
-                            .url("https://neteasecloudmusicapi.willdonner.top/comment/hot?id="+ id +"&type="+ type +"&limit="+ limit +"")
+                            .url("https://neteasecloudmusicapi.willdonner.top/comment/hot?id="+ id +"&type="+ type +"&limit="+ limit +"&offset="+ (page-1)*limit +"")
                             .build();
                     Call call = client.newCall(request);
                     call.enqueue(new Callback() {
@@ -330,6 +383,7 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                                         public void run() {
                                             textView_total.setText(total);
                                             commentAdapter.notifyDataSetChanged();
+                                            isRequest = false;
                                         }
                                     });
                                 }else {
