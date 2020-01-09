@@ -41,6 +41,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         LinearLayout LinearLayout_like;//点赞
         LinearLayout LinearLayout_return;//回复
 
+        TextView textView_title_hot;
+        TextView textView_title_new;
+        TextView textView_allHotComment;
+
 
         public ViewHolder( View itemView) {
             super(itemView);
@@ -52,6 +56,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             textView_returnCount = (TextView)itemView.findViewById(R.id.textView_returnCount);
             LinearLayout_like = (LinearLayout)itemView.findViewById(R.id.LinearLayout_like);
             LinearLayout_return = (LinearLayout)itemView.findViewById(R.id.LinearLayout_return);
+
+            textView_title_hot = (TextView)itemView.findViewById(R.id.textView_title_hot);
+            textView_title_new = (TextView)itemView.findViewById(R.id.textView_title_new);
+            textView_allHotComment = (TextView)itemView.findViewById(R.id.textView_allHotComment);
         }
     }
 
@@ -64,6 +72,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         void onClick(int position);
         void onClickLike(int position);
         void onClickReturn(int position);
+        void onClickAllHot(int position);
     }
 
     //第二步， 写一个公共的方法
@@ -88,6 +97,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         holder.textView_contentText.setText(comment.getContent());
         holder.textView_time.setText(millisecondToDate(Long.valueOf(comment.getTime())));
         holder.textView_returnCount.setText("250");
+
+        holder.textView_title_hot.setVisibility(comment.getShowHot()?View.VISIBLE:View.GONE);
+        holder.textView_title_new.setVisibility(comment.getShowNew()?View.VISIBLE:View.GONE);
+        holder.textView_allHotComment.setVisibility(comment.getShowAllHot()?View.VISIBLE:View.GONE);
 
         //点击评论内容，弹出操作
         holder.textView_contentText.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +129,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 }
             }
         });
-
+        //所有热评
+        holder.textView_allHotComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onClickAllHot(position);
+                }
+            }
+        });
     }
 
     @Override

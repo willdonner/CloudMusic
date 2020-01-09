@@ -44,7 +44,7 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
 
     private String TAG = "CommentActivity";
 
-    private RecyclerView recyclerView_hotComment;
+    private RecyclerView recyclerView_comment;
     private RecyclerView recyclerView_newComment;
     private TextView textView_allHotComment;
     private ImageView imageView_back;
@@ -53,11 +53,10 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
     private TextView textView_title_new;
     private TextView textView_total;
 
-    private LinearLayoutManager linearLayoutManager_hot;
+    private LinearLayoutManager linearLayoutManager;
     private CommentAdapter commentAdapter_hot;
     private LinearLayoutManager linearLayoutManager_new;
-    private CommentAdapter commentAdapter_new;
-    private ArrayList<Comment> hotCommentList = new ArrayList<>();
+    private CommentAdapter commentAdapter;
     private ArrayList<Comment> commentList = new ArrayList<>();
 
     private Boolean HotModel = false;//精彩评论模式
@@ -76,23 +75,18 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
     private void initView() {
         textView_total = findViewById(R.id.textView_total);
         textView_title = findViewById(R.id.textView_title);
-        textView_title_hot = findViewById(R.id.textView_title_hot);
-        textView_title_new = findViewById(R.id.textView_title_new);
-        recyclerView_hotComment = findViewById(R.id.recyclerView_hotComment);
-        recyclerView_newComment = findViewById(R.id.recyclerView_newComment);
-        textView_allHotComment = findViewById(R.id.textView_allHotComment);
-        textView_allHotComment.setOnClickListener(this);
+        recyclerView_comment = findViewById(R.id.recyclerView_comment);
         imageView_back = findViewById(R.id.imageView_back);
         imageView_back.setOnClickListener(this);
     }
 
     private void setAdapter() {
         //热门评论Adapter
-        linearLayoutManager_hot = new LinearLayoutManager(this);
-        commentAdapter_hot = new CommentAdapter(hotCommentList);
-        recyclerView_hotComment.setLayoutManager(linearLayoutManager_hot);
-        recyclerView_hotComment.setAdapter(commentAdapter_hot);
-        commentAdapter_hot.setOnItemClickListener(new CommentAdapter.OnItemClickListener() {
+        linearLayoutManager = new LinearLayoutManager(this);
+        commentAdapter = new CommentAdapter(commentList);
+        recyclerView_comment.setLayoutManager(linearLayoutManager);
+        recyclerView_comment.setAdapter(commentAdapter);
+        commentAdapter.setOnItemClickListener(new CommentAdapter.OnItemClickListener() {
             @Override
             public void onClick(int position) {
                 //点击评论内容，弹出操作
@@ -108,33 +102,14 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onClickReturn(int position) {
-                //c
+                //查看回复
                 showToast(CommentActivity.this,"查看回复");
             }
-        });
-        //最新评论Adapter
-        linearLayoutManager_new = new LinearLayoutManager(this);
-        commentAdapter_new = new CommentAdapter(commentList);
-        recyclerView_newComment.setLayoutManager(linearLayoutManager_new);
-        recyclerView_newComment.setAdapter(commentAdapter_new);
-        commentAdapter_new.setOnItemClickListener(new CommentAdapter.OnItemClickListener() {
-            @Override
-            public void onClick(int position) {
-                //点击评论内容，弹出操作
-                showToast(CommentActivity.this,"弹出操作");
-            }
 
             @Override
-            public void onClickLike(int position) {
-                //点赞
-                showToast(CommentActivity.this,"点赞");
-
-            }
-
-            @Override
-            public void onClickReturn(int position) {
-                //c
-                showToast(CommentActivity.this,"查看回复");
+            public void onClickAllHot(int position) {
+                //所有热评
+                showToast(CommentActivity.this,"所有热评");
             }
         });
     }
@@ -221,13 +196,27 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                                         comment.setContent(content);
                                         comment.setLikedCount(likedCount);
                                         comment.setTime(time);
-                                        hotCommentList.add(comment);
+                                        comment.setShowNew(false);
+                                        if (i==hotComments.length()-1) {
+                                            //最后一条热评
+                                            comment.setShowHot(false);
+                                            comment.setShowAllHot(true);
+                                        }else if (i==0){
+                                            //第一条热评
+                                            comment.setShowHot(true);
+                                            comment.setShowAllHot(false);
+                                        }else {
+                                            //中间热评
+                                            comment.setShowHot(false);
+                                            comment.setShowAllHot(false);
+                                        }
+                                        commentList.add(comment);
                                     }
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             textView_total.setText(total);
-                                            commentAdapter_hot.notifyDataSetChanged();
+                                            commentAdapter.notifyDataSetChanged();
                                         }
                                     });
                                     //解析最新评论
@@ -251,12 +240,20 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                                         comment.setContent(content);
                                         comment.setLikedCount(likedCount);
                                         comment.setTime(time);
+                                        comment.setShowHot(false);
+                                        comment.setShowAllHot(false);
+                                        if (i==0){
+                                            //第一条评论
+                                            comment.setShowNew(true);
+                                        }else {
+                                            comment.setShowNew(false);
+                                        }
                                         commentList.add(comment);
                                     }
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            commentAdapter_new.notifyDataSetChanged();
+                                            commentAdapter.notifyDataSetChanged();
                                         }
                                     });
 
@@ -326,7 +323,7 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
                                         comment.setContent(content);
                                         comment.setLikedCount(likedCount);
                                         comment.setTime(time);
-                                        hotCommentList.add(comment);
+                                        commentList.add(comment);
                                     }
                                     runOnUiThread(new Runnable() {
                                         @Override
@@ -362,16 +359,6 @@ public class CommentActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.textView_allHotComment:
-                //跳转并获取全部评论
-                showToast(this,"全部精彩评论");
-                Intent intent = new Intent(this,CommentActivity.class);
-                intent.putExtra("id", Common.song_playing.getId());
-                intent.putExtra("type",0);
-                intent.putExtra("limit",20);
-                intent.putExtra("hotModel",true);
-                startActivity(intent);
-                break;
             case R.id.imageView_back:
                 finish();
                 break;

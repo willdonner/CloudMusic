@@ -3,130 +3,172 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingVertical="10dp">
+    android:orientation="vertical">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/textView_title_hot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginHorizontal="4dp"
-        android:orientation="horizontal">
+        android:layout_marginVertical="10dp"
+        android:paddingHorizontal="10dp"
+        android:text="精彩评论"
+        android:textColor="#000000"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+    <TextView
+        android:id="@+id/textView_title_new"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="10dp"
+        android:paddingHorizontal="10dp"
+        android:text="最新评论"
+        android:textColor="#000000"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
-            <com.dongxun.lichunkai.cloudmusic.Class.CircleImageView
-                android:id="@+id/imageView_head"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_weight="1"
-                android:src="@drawable/head"/>
-        </LinearLayout>
+    <LinearLayout
+        android:id="@+id/LinearLayout_comment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="4dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <com.dongxun.lichunkai.cloudmusic.Class.CircleImageView
+                    android:id="@+id/imageView_head"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/head" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:orientation="vertical">
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/textView_nickname"
-                        android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="萤火夏日的忧伤"
-                        android:textColor="#656565"
-                        android:textSize="12sp" />
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/textView_time"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="2016年2月2日"
-                        android:textColor="#999999"
-                        android:textSize="10sp" />
+                        <TextView
+                            android:id="@+id/textView_nickname"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="萤火夏日的忧伤"
+                            android:textColor="#656565"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/textView_time"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="2016年2月2日"
+                            android:textColor="#999999"
+                            android:textSize="10sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/LinearLayout_like"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/textView_likeCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="33682"
+                            android:textColor="#999999" />
+
+                        <ImageView
+                            android:id="@+id/imageView14"
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            app:srcCompat="@drawable/logo_gray_thumb" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/textView_contentText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="10dp"
+                    android:text="从前，有一只兔子，。\n又来了一只兔子， 它扶着耳朵站在第一只兔子的肩膀上。\n又来了一只兔子， 它扶着耳朵站在第二只兔子的肩膀上。\n又来了一只兔子， 它扶着耳朵站在第三只兔子的肩膀上。\n……\n又来了一只兔子，它扶着耳朵站在第九只兔子的肩膀上， 亲了长颈鹿一下。"
+                    android:textColor="#333333" />
+
                 <LinearLayout
-                    android:id="@+id/LinearLayout_like"
+                    android:id="@+id/LinearLayout_return"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="center">
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/textView_likeCount"
+                        android:id="@+id/textView_returnCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#999999"
-                        android:text="33682" />
+                        android:text="250"
+                        android:textColor="#517dae" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="条回复"
+                        android:textColor="#517dae" />
 
                     <ImageView
-                        android:id="@+id/imageView14"
-                        android:layout_width="26dp"
-                        android:layout_height="26dp"
-                        app:srcCompat="@drawable/logo_gray_thumb" />
-
+                        android:id="@+id/imageView18"
+                        android:layout_width="16sp"
+                        android:layout_height="match_parent"
+                        app:srcCompat="@drawable/logo_blue_more" />
                 </LinearLayout>
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/textView_contentText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="10dp"
-                android:text="从前，有一只兔子，。\n又来了一只兔子， 它扶着耳朵站在第一只兔子的肩膀上。\n又来了一只兔子， 它扶着耳朵站在第二只兔子的肩膀上。\n又来了一只兔子， 它扶着耳朵站在第三只兔子的肩膀上。\n……\n又来了一只兔子，它扶着耳朵站在第九只兔子的肩膀上， 亲了长颈鹿一下。"
-                android:textColor="#333333" />
-
-            <LinearLayout
-                android:id="@+id/LinearLayout_return"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textView_returnCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="250"
-                    android:textColor="#517dae" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="条回复"
-                    android:textColor="#517dae" />
-
-                <ImageView
-                    android:id="@+id/imageView18"
-                    android:layout_width="16sp"
-                    android:layout_height="match_parent"
-                    app:srcCompat="@drawable/logo_blue_more" />
             </LinearLayout>
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginTop="10dp"
+            android:background="#e6e6e6" />
     </LinearLayout>
 
     <TextView
-        android:id="@+id/line"
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginTop="10dp"
-        android:background="#e6e6e6"/>
+        android:id="@+id/textView_allHotComment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginVertical="10dp"
+        android:background="@drawable/back_radius_button_gray_cancle"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="6dp"
+        android:text="全部精彩评论"
+        android:textSize="12sp" />
 
 </LinearLayout>

@@ -571,13 +571,14 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(this, "循环", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.imageView_comments:
+                Toast.makeText(this, "评论", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this,CommentActivity.class);
+                intent.putExtra("id","186016");
+                intent.putExtra("type",0);
+                intent.putExtra("limit",20);
+                startActivity(intent);
                 if (Common.song_playing.getId() != null) {
-                    Toast.makeText(this, "评论", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(this,CommentActivity.class);
-                    intent.putExtra("id",Common.song_playing.getId());
-                    intent.putExtra("type",0);
-                    intent.putExtra("limit",20);
-                    startActivity(intent);
+
                 } else {
                     Toast.makeText(this, "当前暂无歌曲，快去选一首吧", Toast.LENGTH_SHORT).show();
                 }
