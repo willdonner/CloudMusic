@@ -779,6 +779,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
             case R.id.LinearLayout_myInfo:
                 showToast(this,"我的信息");
+                Intent intent_myInfo = new Intent(this,UserActivity.class);
+                startActivity(intent_myInfo);
                 //弹出个人信息
                 break;
             case R.id.LinearLayout_local:

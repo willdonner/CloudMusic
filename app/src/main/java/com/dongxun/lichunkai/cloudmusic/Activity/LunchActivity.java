@@ -131,6 +131,7 @@ public class LunchActivity extends BaseActivity implements Animation.AnimationLi
                     @Override
                     public void run() {
                         showToast(LunchActivity.this,"貌似服务器有些问题呢");
+                        button_phoneLogin.setVisibility(View.VISIBLE);
                     }
                 });
             }
@@ -173,6 +174,7 @@ public class LunchActivity extends BaseActivity implements Animation.AnimationLi
                         finish();
                     }else {
                         showToast(LunchActivity.this,"用户名或密码错误");
+                        button_phoneLogin.setVisibility(View.VISIBLE);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
