@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.dongxun.lichunkai.cloudmusic.Adapter.SearcHistoryAdapter;
 import com.dongxun.lichunkai.cloudmusic.Adapter.SearchAdapter;
 import com.dongxun.lichunkai.cloudmusic.Bean.Song;
+import com.dongxun.lichunkai.cloudmusic.Class.BaseActivity;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 import com.dongxun.lichunkai.cloudmusic.R;
@@ -53,7 +54,7 @@ import pl.droidsonroids.gif.GifImageView;
 /**
  * 歌曲搜索页
  */
-public class SearchActivity extends AppCompatActivity implements View.OnClickListener {
+public class SearchActivity extends BaseActivity implements View.OnClickListener {
 
 
     private static final String TAG = "SearchActivity";

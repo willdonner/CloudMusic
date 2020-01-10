@@ -11,6 +11,13 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <include
+            android:id="@+id/play"
+            layout="@layout/playing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true" />
+
         <com.dongxun.lichunkai.cloudmusic.Class.ResizableImageView
             android:id="@+id/ResizableImageView_background"
             android:layout_width="match_parent"

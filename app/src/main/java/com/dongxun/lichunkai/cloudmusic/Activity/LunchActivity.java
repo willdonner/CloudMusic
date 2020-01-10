@@ -60,7 +60,6 @@ public class LunchActivity extends BaseActivity implements Animation.AnimationLi
     private ImageView imageView_logo;
     private TextView textView_name;
     private Button button_phoneLogin;
-    private SharedPreferences sp;
     private Activity context;
     //请求状态
     private Boolean isRequesting = false;
@@ -70,24 +69,20 @@ public class LunchActivity extends BaseActivity implements Animation.AnimationLi
     private AlphaAnimation alphaAnimation_hide;//logo及下方字体透明度动画（消失）
     private TranslateAnimation translateAnimation_logo;//logo平移动画
     private AlphaAnimation alphaAnimation_loginAppear;//登录透明度动画（出现）
+    private AlphaAnimation alphaAnimation_appear2;//logo登录动画（出现）
+    private AlphaAnimation alphaAnimation_hide2;//logo登录动画（消失）
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView(R.layout.activity_lunch);
+
         initBar();
         initView();
         initAnimation();
         //透明度动画
         startAnimation();
-        sp = getSharedPreferences("Login",Context.MODE_PRIVATE);
-        String a = sp.getString("Account", "");
-        String p = sp.getString("Password", "");
-        if(sp!=null) {
-            if (sp.getBoolean("LoginBool", false)) {
-                postAsynHttp(sp.getString("Account", ""), sp.getString("Password", ""));
-            }
-        }
+
     }
 
     /**
@@ -95,7 +90,7 @@ public class LunchActivity extends BaseActivity implements Animation.AnimationLi
      * @param phone
      * @param password
      */
-    private void postAsynHttp(final String phone, final String password) {
+    private void login(final String phone, final String password) {
         Common.mOkHttpClient=new OkHttpClient.Builder()
                 .cookieJar(new CookieJar() {
                     private final HashMap<HttpUrl, List<Cookie>> cookieStore = new HashMap<>();
@@ -218,6 +213,14 @@ public class LunchActivity extends BaseActivity implements Animation.AnimationLi
         alphaAnimation_loginAppear = new AlphaAnimation(0.0f, 1.0f);//第一个参数开始的透明度，第二个参数结束的透明度
         alphaAnimation_loginAppear.setDuration(800);//多长时间完成这个动作
         alphaAnimation_loginAppear.setAnimationListener(this);
+        //登录过程logo透明度动画（隐藏）
+        alphaAnimation_hide2 = new AlphaAnimation(1.0f, 0.5f);//第一个参数开始的透明度，第二个参数结束的透明度
+        alphaAnimation_hide2.setDuration(800);//多长时间完成这个动作
+        alphaAnimation_hide2.setAnimationListener(this);
+        //登录过程logo透明度动画（显示）
+        alphaAnimation_appear2 = new AlphaAnimation(0.5f, 1.0f);//第一个参数开始的透明度，第二个参数结束的透明度
+        alphaAnimation_appear2.setDuration(800);//多长时间完成这个动作
+        alphaAnimation_appear2.setAnimationListener(this);
     }
 
     /**
@@ -249,14 +252,23 @@ public class LunchActivity extends BaseActivity implements Animation.AnimationLi
     @Override
     public void onAnimationEnd(Animation animation) {
         //结束
-        if (animation.equals(alphaAnimation_appear)){   //logo及name显示
+        if (animation.equals(alphaAnimation_appear)){   //logo及name显示(透明度动画)
+            //显示权限申请窗口
             showPermissionDialog();
         }
         if (animation.equals(alphaAnimation_hide)){   //name消失
             textView_name.setVisibility(View.GONE);
+            //自动登录
+            autoLogin();
         }
         if (animation.equals(alphaAnimation_loginAppear)){   //logo平移
             button_phoneLogin.setVisibility(View.VISIBLE);
+        }
+        if (animation.equals(alphaAnimation_hide2)){   //logo登录动画
+            imageView_logo.startAnimation(alphaAnimation_appear2);
+        }
+        if (animation.equals(alphaAnimation_appear2)){   //logo登录动画
+            imageView_logo.startAnimation(alphaAnimation_hide2);
         }
     }
 
@@ -295,8 +307,28 @@ public class LunchActivity extends BaseActivity implements Animation.AnimationLi
         textView_name.startAnimation(alphaAnimation_hide);
         //logo平移动画
         imageView_logo.startAnimation(translateAnimation_logo);
-        //登录按钮出现
-        button_phoneLogin.startAnimation(alphaAnimation_loginAppear);
+    }
+
+    /**
+     * 自动登录
+     */
+    private void autoLogin() {
+        SharedPreferences sp = getSharedPreferences("Login",Context.MODE_PRIVATE);
+        String account = sp.getString("Account", "");
+        String password = sp.getString("Password", "");
+        if(sp!=null) {
+            if (sp.getBoolean("LoginBool", false)) {
+                //等待动画
+                imageView_logo.startAnimation(alphaAnimation_hide2);
+                login(account, password);
+            }else {
+                //登录按钮出现
+                button_phoneLogin.startAnimation(alphaAnimation_loginAppear);
+            }
+        }else {
+            //登录按钮出现
+            button_phoneLogin.startAnimation(alphaAnimation_loginAppear);
+        }
     }
 
     /**
@@ -332,6 +364,7 @@ public class LunchActivity extends BaseActivity implements Animation.AnimationLi
                                 }
                             }).show();
                         }else {
+                            //已经允许权限不显示弹窗
                             hideLogo();
                         }
                     }

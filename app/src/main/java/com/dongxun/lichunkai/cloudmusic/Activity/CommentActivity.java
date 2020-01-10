@@ -18,6 +18,7 @@ import com.dongxun.lichunkai.cloudmusic.Adapter.CommentAdapter;
 import com.dongxun.lichunkai.cloudmusic.Bean.Comment;
 import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.Bean.User;
+import com.dongxun.lichunkai.cloudmusic.Class.BaseActivity;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 import com.dongxun.lichunkai.cloudmusic.R;
@@ -42,7 +43,7 @@ import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.showToast;
 /**
  * 评论页
  */
-public class CommentActivity extends AppCompatActivity implements View.OnClickListener {
+public class CommentActivity extends BaseActivity implements View.OnClickListener {
 
     private String TAG = "CommentActivity";
 

@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.dongxun.lichunkai.cloudmusic.Bean.Lyric;
 import com.dongxun.lichunkai.cloudmusic.Bean.Song;
+import com.dongxun.lichunkai.cloudmusic.Class.BaseActivity;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 import com.dongxun.lichunkai.cloudmusic.PopWindow.ListWindow;
@@ -66,7 +67,7 @@ import static com.dongxun.lichunkai.cloudmusic.Common.Common.songList;
 /**
  * 播放控制页
  */
-public class PlayActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class PlayActivity extends BaseActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private static String TAG = "PlayActivity";
 

@@ -9,10 +9,11 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
 
+import com.dongxun.lichunkai.cloudmusic.Class.BaseActivity;
 import com.dongxun.lichunkai.cloudmusic.R;
 import com.gyf.immersionbar.ImmersionBar;
 
-public class WebActivity extends AppCompatActivity {
+public class WebActivity extends BaseActivity {
 
     private WebView webView;
     private ImageView imageView_back;

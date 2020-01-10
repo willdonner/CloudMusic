@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.dongxun.lichunkai.cloudmusic.Adapter.SongSheetAdapter;
 import com.dongxun.lichunkai.cloudmusic.Bean.Song;
 import com.dongxun.lichunkai.cloudmusic.Bean.SongSheet;
+import com.dongxun.lichunkai.cloudmusic.Class.BaseActivity;
 import com.dongxun.lichunkai.cloudmusic.Class.CircleImageView;
 import com.dongxun.lichunkai.cloudmusic.Class.RoundImageView;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
@@ -44,7 +45,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import pl.droidsonroids.gif.GifImageView;
 
-public class SongSheetActivity extends AppCompatActivity implements View.OnClickListener {
+public class SongSheetActivity extends BaseActivity implements View.OnClickListener {
 
     private String TAG = "SongSheetActivity";
 

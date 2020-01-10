@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.dongxun.lichunkai.cloudmusic.Adapter.DailyRecommendAdapter;
 import com.dongxun.lichunkai.cloudmusic.Bean.Song;
+import com.dongxun.lichunkai.cloudmusic.Class.BaseActivity;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 import com.dongxun.lichunkai.cloudmusic.R;
@@ -58,7 +59,7 @@ import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.showToast;
 /**
  * 每日推荐页
  */
-public class DailyRecommendActivity extends AppCompatActivity implements View.OnClickListener {
+public class DailyRecommendActivity extends BaseActivity implements View.OnClickListener {
 
     private String TAG = "DailyRecommendActivity";
 
