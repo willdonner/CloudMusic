@@ -150,16 +150,17 @@
 
             <pl.droidsonroids.gif.GifImageView
                 android:id="@+id/imageView_loading"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
-                android:src="@drawable/gif_loading"/>
+                android:layout_marginTop="50dp"
+                android:src="@drawable/gif_loading2" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp">
 
             </androidx.recyclerview.widget.RecyclerView>
