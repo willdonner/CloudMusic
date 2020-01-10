@@ -48,6 +48,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import pl.droidsonroids.gif.GifImageView;
 
 /**
  * 歌曲搜索页
@@ -65,7 +66,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private ImageView imageView_deleteHistory;
     private RecyclerView recyclerView_history;
     private LinearLayout LinearLayout_history;
-    private ImageView imageView_waiting;
+    private GifImageView gifImageView_waiting;
 
     private SearchAdapter searchAdapter;
     private LinearLayoutManager layoutManager;
@@ -276,8 +277,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         imageView_deleteHistory.setOnClickListener(this);
         recyclerView_history = findViewById(R.id.recyclerView_history);
         LinearLayout_history = findViewById(R.id.LinearLayout_history);
-        imageView_waiting = findViewById(R.id.imageView_waiting);
-        imageView_waiting.setVisibility(View.GONE);
+        gifImageView_waiting = findViewById(R.id.gifImageView_waiting);
+        gifImageView_waiting.setVisibility(View.GONE);
     }
 
     /**
@@ -294,7 +295,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
      * @param keyWord 关键词
      */
     private void search(final String keyWord) {
-        imageView_waiting.setVisibility(View.VISIBLE);
+        gifImageView_waiting.setVisibility(View.VISIBLE);
         recyclerView_result.setVisibility(View.GONE);
         new Thread(new Runnable() {
             @Override
@@ -358,7 +359,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    imageView_waiting.setVisibility(View.GONE);
+                    gifImageView_waiting.setVisibility(View.GONE);
                     recyclerView_result.setVisibility(View.VISIBLE);
                     //回到顶部并应用更改
                     layoutManager.scrollToPosition(0);

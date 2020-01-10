@@ -65,11 +65,11 @@
                 android:background="#ffff"
                 android:paddingHorizontal="20dp">
 
-                <ImageView
-                    android:id="@+id/imageView_waiting"
+                <pl.droidsonroids.gif.GifImageView
+                    android:id="@+id/gifImageView_waiting"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    app:srcCompat="@drawable/logo_waiting"
+                    android:src="@drawable/gif_loading2"
                     android:layout_gravity="center"
                     android:layout_marginTop="200dp"/>
 

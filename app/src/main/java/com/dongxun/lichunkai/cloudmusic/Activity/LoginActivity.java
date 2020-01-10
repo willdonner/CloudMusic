@@ -32,13 +32,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.getAccount;
@@ -105,7 +113,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         else{
             // 判断是否刚注销
             if (sp.getBoolean("LoginBool", false)) {
-                loginWithPhone(account,password);
+                postAsynHttp(account,password);
             } else {
                 initView();
             }
@@ -328,6 +336,123 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         }).start();
     }
 
+    /**
+     * 登录（okhttp3带cookie请求，登录保存cookie,后续请求使用同一个OkHttpClient对象，参考：https://blog.csdn.net/shengfakun1234/article/details/54615592）
+     * @param phone
+     * @param password
+     */
+    private void postAsynHttp(final String phone, final String password) {
+        Common.mOkHttpClient=new OkHttpClient.Builder()
+                .cookieJar(new CookieJar() {
+                    private final HashMap<HttpUrl, List<Cookie>> cookieStore = new HashMap<>();
+
+                    @Override
+                    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                        cookieStore.put(url, cookies);
+                        cookieStore.put(HttpUrl.parse("https://neteasecloudmusicapi.willdonner.top"), cookies);
+                        for(Cookie cookie:cookies){
+                            System.out.println("cookie Name:"+cookie.name());
+                            System.out.println("cookie Path:"+cookie.path());
+                        }
+                    }
+
+                    @Override
+                    public List<Cookie> loadForRequest(HttpUrl url) {
+                        List<Cookie> cookies = cookieStore.get(HttpUrl.parse("https://neteasecloudmusicapi.willdonner.top"));
+                        if(cookies==null){
+                            System.out.println("没加载到cookie");
+                        }
+                        return cookies != null ? cookies : new ArrayList<Cookie>();
+                    }
+                })
+                .build();
+        RequestBody formBody = new FormBody.Builder()
+                .add("username", phone)
+                .add("password", password)
+                .build();
+        final Request request = new Request.Builder()
+                .url("https://neteasecloudmusicapi.willdonner.top/login/cellphone?phone="+  phone +"&password="+ password +"")
+                .post(formBody)
+                .build();
+        Call call = Common.mOkHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showToast(LoginActivity.this,"貌似服务器有些问题呢");
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                isRequesting = false;
+                final String responseData = response.body().string();//处理返回的数据
+                Log.e(TAG, "onResponse: "+responseData);
+                //处理JSON
+                try {
+                    JSONObject newResponse = new JSONObject(responseData);
+                    String code = newResponse.getString("code");
+                    if (code.equals("200")){
+                        //密码正确
+                        //保存此次登录账号
+                        saveAccount(LoginActivity.this,account);
+                        Common.loginJSONOString = responseData;
+                        //解析信息
+                        JSONObject profile = newResponse.getJSONObject("profile");
+                        String userId = profile.getString("userId");//用户ID
+                        String gender = profile.getString("gender");//性别
+                        String birthday = profile.getString("birthday");//生日
+                        String nickname = profile.getString("nickname");//昵称
+                        String city = profile.getString("city");//城市
+                        String province = profile.getString("province");//省份
+                        String avatarUrl = profile.getString("avatarUrl");//头像Url
+                        String backgroundUrl = profile.getString("backgroundUrl");//背景图Url
+
+                        Common.user.setUserId(userId);
+                        Common.user.setGender(gender);
+                        Common.user.setBirthday(birthday);
+                        Common.user.setNickname(nickname);
+                        Common.user.setCity(city);
+                        Common.user.setProvince(province);
+                        Common.user.setAvatarUrl(avatarUrl);
+                        Common.user.setBackgroundUrl(backgroundUrl);
+
+                        sp = getSharedPreferences("Login",Context.MODE_PRIVATE);
+                        if (sp.getBoolean("LoginBool", true)) {
+                            Editor editor = sp.edit();
+                            editor.putString("Account",editText_account.getText().toString());
+                            editor.putString("Password",editText_password.getText().toString());
+                            editor.putBoolean("LoginBool",true);
+                            editor.commit();
+                        }
+
+
+                        //跳转主页
+                        Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }else {
+                        //密码错误
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showToast(LoginActivity.this,"用户名或密码错误");
+                                button_login.setText("登录");
+                                showInput(editText_password);
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        });
+    }
+
 
     /**
      * 发送验证码
@@ -506,7 +631,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     //发起登录请求
                     account = editText_account.getText().toString().trim();
                     password = editText_password.getText().toString().trim();
-                    loginWithPhone(account,password);
+                    postAsynHttp(account,password);
                 }
                 break;
             case R.id.textView_forgetPassword:
