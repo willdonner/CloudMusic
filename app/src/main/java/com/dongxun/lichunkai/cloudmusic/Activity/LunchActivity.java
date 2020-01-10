@@ -33,11 +33,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.os.SystemClock.sleep;
@@ -77,81 +85,108 @@ public class LunchActivity extends BaseActivity implements Animation.AnimationLi
         String p = sp.getString("Password", "");
         if(sp!=null) {
             if (sp.getBoolean("LoginBool", false)) {
-                loginWithPhone(sp.getString("Account", ""), sp.getString("Password", ""));
+                postAsynHttp(sp.getString("Account", ""), sp.getString("Password", ""));
             }
         }
     }
 
     /**
-     * 登录
-     * @param phone 电话号码
-     * @param password 密码
+     * 登录（okhttp3带cookie请求，登录保存cookie,后续请求使用同一个OkHttpClient对象，参考：https://blog.csdn.net/shengfakun1234/article/details/54615592）
+     * @param phone
+     * @param password
      */
-    private void loginWithPhone(final String phone, final String password) {
-        isRequesting = true;
-        new Thread(new Runnable() {
+    private void postAsynHttp(final String phone, final String password) {
+        Common.mOkHttpClient=new OkHttpClient.Builder()
+                .cookieJar(new CookieJar() {
+                    private final HashMap<HttpUrl, List<Cookie>> cookieStore = new HashMap<>();
+
+                    @Override
+                    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                        cookieStore.put(url, cookies);
+                        cookieStore.put(HttpUrl.parse("https://neteasecloudmusicapi.willdonner.top"), cookies);
+                        for(Cookie cookie:cookies){
+                            System.out.println("cookie Name:"+cookie.name());
+                            System.out.println("cookie Path:"+cookie.path());
+                        }
+                    }
+
+                    @Override
+                    public List<Cookie> loadForRequest(HttpUrl url) {
+                        List<Cookie> cookies = cookieStore.get(HttpUrl.parse("https://neteasecloudmusicapi.willdonner.top"));
+                        if(cookies==null){
+                            System.out.println("没加载到cookie");
+                        }
+                        return cookies != null ? cookies : new ArrayList<Cookie>();
+                    }
+                })
+                .build();
+        RequestBody formBody = new FormBody.Builder()
+                .add("username", phone)
+                .add("password", password)
+                .build();
+        final Request request = new Request.Builder()
+                .url("https://neteasecloudmusicapi.willdonner.top/login/cellphone?phone="+  phone +"&password="+ password +"")
+                .post(formBody)
+                .build();
+        Call call = Common.mOkHttpClient.newCall(request);
+        call.enqueue(new Callback() {
             @Override
-            public void run() {
-                try{
-                    OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
-                    Request request = new Request.Builder()
-                            .url("https://neteasecloudmusicapi.willdonner.top/login/cellphone?phone="+  phone +"&password="+ password +"")
-                            .build();
-                    Call call = client.newCall(request);
-                    call.enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                        }
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            isRequesting = false;
-                            final String responseData = response.body().string();//处理返回的数据
-                            Log.e(TAG, "onResponse: "+responseData);
-                            //处理JSON
-                            try {
-                                JSONObject newResponse = new JSONObject(responseData);
-                                String code = newResponse.getString("code");
-                                if (code.equals("200")){
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showToast(LunchActivity.this,"貌似服务器有些问题呢");
+                    }
+                });
+            }
 
-                                    Common.loginJSONOString = responseData;
-                                    //解析信息
-                                    JSONObject profile = newResponse.getJSONObject("profile");
-                                    String userId = profile.getString("userId");//用户ID
-                                    String gender = profile.getString("gender");//性别
-                                    String birthday = profile.getString("birthday");//生日
-                                    String nickname = profile.getString("nickname");//昵称
-                                    String city = profile.getString("city");//城市
-                                    String province = profile.getString("province");//省份
-                                    String avatarUrl = profile.getString("avatarUrl");//头像Url
-                                    String backgroundUrl = profile.getString("backgroundUrl");//背景图Url
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                isRequesting = false;
+                final String responseData = response.body().string();//处理返回的数据
+                Log.e(TAG, "onResponse: "+responseData);
+                //处理JSON
+                try {
+                    JSONObject newResponse = new JSONObject(responseData);
+                    String code = newResponse.getString("code");
+                    if (code.equals("200")){
 
-                                    Common.user.setUserId(userId);
-                                    Common.user.setGender(gender);
-                                    Common.user.setBirthday(birthday);
-                                    Common.user.setNickname(nickname);
-                                    Common.user.setCity(city);
-                                    Common.user.setProvince(province);
-                                    Common.user.setAvatarUrl(avatarUrl);
-                                    Common.user.setBackgroundUrl(backgroundUrl);
+                        Common.loginJSONOString = responseData;
+                        //解析信息
+                        JSONObject profile = newResponse.getJSONObject("profile");
+                        String userId = profile.getString("userId");//用户ID
+                        String gender = profile.getString("gender");//性别
+                        String birthday = profile.getString("birthday");//生日
+                        String nickname = profile.getString("nickname");//昵称
+                        String city = profile.getString("city");//城市
+                        String province = profile.getString("province");//省份
+                        String avatarUrl = profile.getString("avatarUrl");//头像Url
+                        String backgroundUrl = profile.getString("backgroundUrl");//背景图Url
 
-                                    //跳转主页
-                                    Intent intent = new Intent(LunchActivity.this,MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                }else {
-                                    showToast(LunchActivity.this,"用户名或密码错误");
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                }catch (Exception e){
+                        Common.user.setUserId(userId);
+                        Common.user.setGender(gender);
+                        Common.user.setBirthday(birthday);
+                        Common.user.setNickname(nickname);
+                        Common.user.setCity(city);
+                        Common.user.setProvince(province);
+                        Common.user.setAvatarUrl(avatarUrl);
+                        Common.user.setBackgroundUrl(backgroundUrl);
+
+                        //跳转主页
+                        Intent intent = new Intent(LunchActivity.this,MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }else {
+                        showToast(LunchActivity.this,"用户名或密码错误");
+                    }
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-        }).start();
+
+        });
     }
+
 
     /**
      * 初始化组件

@@ -8,10 +8,15 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+
 /**
  * 公用变量
  */
 public class Common {
+
+    //需要登录请求cookie
+    public static OkHttpClient mOkHttpClient;
 
     //当前歌曲
     public static Song song_playing = new Song();

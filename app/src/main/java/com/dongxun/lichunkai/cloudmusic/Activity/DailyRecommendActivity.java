@@ -103,13 +103,7 @@ public class DailyRecommendActivity extends AppCompatActivity implements View.On
         String day = new SimpleDateFormat("dd").format(date);
         textView_day.setText(day);
         textView_month.setText(month);
-        //获取每日推荐歌曲
-        Song song = new Song();
-        song.setId("1338022514");
-        song.setName("好心分手 抖音片段（Cover：王力宏）");
-        song.setArtist("孟祥龙");
-        song.setAlbumName("好心分手 抖音片段");
-        for (int i=0;i<20;i++)songs.add(song);
+        getRecommend();
         dailyRecommendAdapter.notifyDataSetChanged();
         imageView_loading.setVisibility(View.GONE);
     }
@@ -122,14 +116,14 @@ public class DailyRecommendActivity extends AppCompatActivity implements View.On
             @Override
             public void run() {
                 try{
-                    OkHttpClient client = new OkHttpClient();//新建一个OKHttp的对象
-                    Request request = new Request.Builder()
+                    final Request request = new Request.Builder()
                             .url("http://www.willdonner.top:3000/recommend/songs")
                             .build();
-                    Call call = client.newCall(request);
+                    Call call = Common.mOkHttpClient.newCall(request);
                     call.enqueue(new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
+
                         }
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
@@ -137,13 +131,13 @@ public class DailyRecommendActivity extends AppCompatActivity implements View.On
                             Log.e(TAG, "onResponse: "+responseData);
                             //处理JSON
                             try {
-                                JSONObject newRes = new JSONObject(responseData);
-                                String code = newRes.getString("code");
+                                JSONObject newResponse = new JSONObject(responseData);
+                                String code = newResponse.getString("code");
                                 if (code.equals("200")){
-                                    Log.e(TAG, "每日推荐获取成功");
+                                    Log.e(TAG, "onResponse: 每日推荐歌曲获取成功");
 
                                 }else {
-                                    Log.e(TAG, "每日推荐获取失败");
+                                    Log.e(TAG, "onResponse: 每日推荐歌曲获取失败");
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
