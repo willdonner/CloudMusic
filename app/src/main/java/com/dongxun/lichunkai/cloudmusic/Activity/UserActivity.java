@@ -49,6 +49,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.betweenDate;
 import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.millisecondToDate;
 
 /**
@@ -164,19 +165,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                                             int month = Integer.parseInt(millisecondToDate(new Long(birthday)).substring(5,7));
                                             int day = Integer.parseInt(millisecondToDate(new Long(birthday)).substring(8,10));
                                             textView_constellation.setText(Year.getConstellation(month,day));
-
-                                            //计算村龄
-                                            Date d = new Date(new Long(createTime));
-                                            int createTime_year = Integer.parseInt(new SimpleDateFormat("yyyy").format(d));//注册年
-                                            int createTime_month = Integer.parseInt(new SimpleDateFormat("MM").format(d));//注册月
-                                            int createTime_day = Integer.parseInt(new SimpleDateFormat("dd").format(d));//注册日
-                                            LocalDate localDate = LocalDate.now();  //当前时间
-                                            LocalDate createDate = LocalDate.of(createTime_year,createTime_month,createTime_day);//要计算的时间
-                                            Period betweenDate = Period.between(createDate, localDate); //计算时间间隔
-//                                            System.out.println("year:"+betweenDate.getYears());
-//                                            System.out.println("months:"+betweenDate.getMonths());
-//                                            System.out.println("day:"+betweenDate.getDays());
-                                            textView_createTime.setText(betweenDate.getYears()+"年"+"（"+millisecondToDate(new Long(createTime))+"注册）");
+                                            textView_createTime.setText(betweenDate(createTime,"year")+"年"+"（"+millisecondToDate(new Long(createTime))+"注册）");
                                         }
                                     });
 

@@ -41,6 +41,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Collections;
 import java.util.Date;
 
@@ -376,6 +378,33 @@ public class ToolHelper {
         Date d = new Date(time);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
         return sdf.format(d);
+    }
+
+    /**
+     * 获取指定日期到今天的时间间隔
+     * @param millionSeconds 毫秒数
+     * @param returnWhat 返回类型（year,month,day,all）
+     * @return
+     */
+    public static String betweenDate(String millionSeconds,String returnWhat){
+        Date d = new Date(new Long(millionSeconds));
+        int createTime_year = Integer.parseInt(new SimpleDateFormat("yyyy").format(d));//年
+        int createTime_month = Integer.parseInt(new SimpleDateFormat("MM").format(d));//月
+        int createTime_day = Integer.parseInt(new SimpleDateFormat("dd").format(d));//日
+        LocalDate localDate = LocalDate.now();  //当前时间
+        LocalDate createDate = LocalDate.of(createTime_year,createTime_month,createTime_day);//要计算的时间
+        Period betweenDate = Period.between(createDate, localDate); //计算时间间隔
+        switch (returnWhat){
+            case "year":
+                return betweenDate.getYears()+"";
+            case "month":
+                return betweenDate.getMonths()+"";
+            case "day":
+                return betweenDate.getDays()+"";
+            case "all":
+                return betweenDate.getYears()+"年"+betweenDate.getMonths()+"月"+betweenDate.getDays()+"天";
+        }
+        return "0";
     }
 
 }
