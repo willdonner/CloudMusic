@@ -341,11 +341,11 @@
                         android:text="村龄：" />
 
                     <TextView
-                        android:id="@+id/textView_villageAge"
+                        android:id="@+id/textView_createTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="3年（2016年12月注册）" />
+                        android:text="0年（0年0月注册）" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -361,17 +361,18 @@
                         android:text="年龄：" />
 
                     <TextView
-                        android:id="@+id/textView3_year"
+                        android:id="@+id/textView_year"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="90后 " />
+                        android:text="后 " />
 
                     <TextView
                         android:id="@+id/textView_constellation"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="魔羯座" />
+                        android:layout_marginLeft="10dp"
+                        android:text="座" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -396,6 +397,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:layout_marginLeft="10dp"
                         android:text="市" />
                 </LinearLayout>
 

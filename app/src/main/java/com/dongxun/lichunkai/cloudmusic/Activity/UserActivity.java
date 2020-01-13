@@ -21,7 +21,10 @@ import com.dongxun.lichunkai.cloudmusic.Class.ResizableImageView;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 import com.dongxun.lichunkai.cloudmusic.LocalBroadcast.SendLocalBroadcast;
 import com.dongxun.lichunkai.cloudmusic.R;
+import com.dongxun.lichunkai.cloudmusic.Util.CityAndCodeUtil;
+import com.dongxun.lichunkai.cloudmusic.Util.ProvinceAndCodeUtil;
 import com.dongxun.lichunkai.cloudmusic.Util.ToolHelper;
+import com.dongxun.lichunkai.cloudmusic.Util.Year;
 import com.gyf.immersionbar.ImmersionBar;
 
 import org.json.JSONArray;
@@ -33,7 +36,11 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.Call;
@@ -41,6 +48,8 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.millisecondToDate;
 
 /**
  * 用户主页（自己和其他用户）
@@ -71,7 +80,9 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     private TextView textView_listenCount;
     private TextView textView_province;
     private TextView textView_city;
-
+    private TextView textView_year;
+    private TextView textView_constellation;
+    private TextView textView_createTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +145,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                                     final String follows = profile.getString("follows");//关注
                                     final String followeds = profile.getString("followeds");//粉丝
                                     final String eventCount = profile.getString("eventCount");//动态数量
+                                    final String createTime = profile.getString("createTime");//注册时间
 
                                     runOnUiThread(new Runnable() {
                                         @Override
@@ -143,13 +155,28 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                                             textView_follow.setText(follows);
                                             textView_fans.setText(followeds);
                                             textView_level.setText("Lv."+level);
-                                            textView_years.setText(ToolHelper.millisecondToDate(new Long(birthday)).substring(2,3)+"0后");//年代
+                                            textView_years.setText(millisecondToDate(new Long(birthday)).substring(2,3)+"0后");//年代
                                             //view_index组件UI
                                             textView_listenCount.setText(listenSongs);
-                                            textView_province.setText(province);
-                                            textView_city.setText(city);
+                                            textView_province.setText(ProvinceAndCodeUtil.getCityByCode(province.substring(0,2)));
+                                            textView_city.setText(CityAndCodeUtil.getCityByCode(city.substring(0,4)));
+                                            textView_year.setText(millisecondToDate(new Long(birthday)).substring(2,3)+"0后");
+                                            int month = Integer.parseInt(millisecondToDate(new Long(birthday)).substring(5,7));
+                                            int day = Integer.parseInt(millisecondToDate(new Long(birthday)).substring(8,10));
+                                            textView_constellation.setText(Year.getConstellation(month,day));
 
-
+                                            //计算村龄
+                                            Date d = new Date(new Long(createTime));
+                                            int createTime_year = Integer.parseInt(new SimpleDateFormat("yyyy").format(d));//注册年
+                                            int createTime_month = Integer.parseInt(new SimpleDateFormat("MM").format(d));//注册月
+                                            int createTime_day = Integer.parseInt(new SimpleDateFormat("dd").format(d));//注册日
+                                            LocalDate localDate = LocalDate.now();  //当前时间
+                                            LocalDate createDate = LocalDate.of(createTime_year,createTime_month,createTime_day);//要计算的时间
+                                            Period betweenDate = Period.between(createDate, localDate); //计算时间间隔
+//                                            System.out.println("year:"+betweenDate.getYears());
+//                                            System.out.println("months:"+betweenDate.getMonths());
+//                                            System.out.println("day:"+betweenDate.getDays());
+                                            textView_createTime.setText(betweenDate.getYears()+"年"+"（"+millisecondToDate(new Long(createTime))+"注册）");
                                         }
                                     });
 
@@ -263,6 +290,9 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         textView_listenCount = view_index.findViewById(R.id.textView_listenCount);
         textView_province = view_index.findViewById(R.id.textView_province);
         textView_city = view_index.findViewById(R.id.textView_city);
+        textView_year = view_index.findViewById(R.id.textView_year);
+        textView_constellation = view_index.findViewById(R.id.textView_constellation);
+        textView_createTime = view_index.findViewById(R.id.textView_createTime);
     }
 
     /**
