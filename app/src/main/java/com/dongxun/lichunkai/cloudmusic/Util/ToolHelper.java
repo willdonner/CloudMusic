@@ -19,6 +19,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.dongxun.lichunkai.cloudmusic.Activity.LoginActivity;
 import com.dongxun.lichunkai.cloudmusic.Adapter.PersonalizedAdapter;
 import com.dongxun.lichunkai.cloudmusic.Bean.Song;
+import com.dongxun.lichunkai.cloudmusic.Bean.Time;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
 
 import org.json.JSONException;
@@ -381,12 +382,11 @@ public class ToolHelper {
     }
 
     /**
-     * 获取指定日期到今天的时间间隔
+     * 获取指定日期到今天的时间间隔(年-月-天)
      * @param millionSeconds 毫秒数
-     * @param returnWhat 返回类型（year,month,day,all）
-     * @return
+     * @return Time类
      */
-    public static String betweenDate(String millionSeconds,String returnWhat){
+    public static Time betweenDate(String millionSeconds){
         Date d = new Date(new Long(millionSeconds));
         int createTime_year = Integer.parseInt(new SimpleDateFormat("yyyy").format(d));//年
         int createTime_month = Integer.parseInt(new SimpleDateFormat("MM").format(d));//月
@@ -394,17 +394,11 @@ public class ToolHelper {
         LocalDate localDate = LocalDate.now();  //当前时间
         LocalDate createDate = LocalDate.of(createTime_year,createTime_month,createTime_day);//要计算的时间
         Period betweenDate = Period.between(createDate, localDate); //计算时间间隔
-        switch (returnWhat){
-            case "year":
-                return betweenDate.getYears()+"";
-            case "month":
-                return betweenDate.getMonths()+"";
-            case "day":
-                return betweenDate.getDays()+"";
-            case "all":
-                return betweenDate.getYears()+"年"+betweenDate.getMonths()+"月"+betweenDate.getDays()+"天";
-        }
-        return "0";
+        Time time = new Time();
+        time.setYear(betweenDate.getYears());
+        time.setMonth(betweenDate.getMonths());
+        time.setDay(betweenDate.getDays());
+        return time;
     }
 
 }

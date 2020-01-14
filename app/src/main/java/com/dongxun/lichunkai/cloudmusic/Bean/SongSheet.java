@@ -14,6 +14,42 @@ public class SongSheet implements Serializable {
     private String picUrl;//封面图URL
     private Bitmap pic;//封面图
     private String playCount;//播放量
+    private Creator creator;//创建人
+    private String trackCount;//歌曲数量
+    private String description;//歌单描述
+    private String subscribedCount;//订阅数
+
+    public String getSubscribedCount() {
+        return subscribedCount;
+    }
+
+    public void setSubscribedCount(String subscribedCount) {
+        this.subscribedCount = subscribedCount;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getTrackCount() {
+        return trackCount;
+    }
+
+    public void setTrackCount(String trackCount) {
+        this.trackCount = trackCount;
+    }
+
+    public Creator getCreator() {
+        return creator;
+    }
+
+    public void setCreator(Creator creator) {
+        this.creator = creator;
+    }
 
     public Bitmap getPic() {
         return pic;
