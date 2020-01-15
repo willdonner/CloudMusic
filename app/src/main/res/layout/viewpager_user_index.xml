@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -139,7 +140,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/创建的歌单"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -147,9 +148,11 @@
                 android:layout_marginTop="30dp">
 
                 <LinearLayout
+                    android:id="@+id/title1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_alignParentTop="true">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -193,14 +196,16 @@
                         android:textSize="12sp"/>
                 </LinearLayout>
 
+                <!--想要使RecyclerView显示全部数据而不产生ScollView的效果，必须父布局使用相对布局而不是线性布局-->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView_createPlayList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"/>
-            </LinearLayout>
+                    android:layout_marginTop="4dp"
+                    android:layout_below="@+id/title1"/>
+            </RelativeLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/收藏的歌单"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -208,9 +213,11 @@
                 android:layout_marginTop="30dp">
 
                 <LinearLayout
+                    android:id="@+id/title2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_alignParentTop="true">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -241,67 +248,14 @@
                         android:textSize="12sp"/>
                 </LinearLayout>
 
+                <!--想要使RecyclerView显示全部数据而不产生ScollView的效果，必须父布局使用相对布局而不是线性布局-->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView_collection"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/我的评论"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="30dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="我的评论"
-                        android:textColor="#000000"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:text="(仅自己可见，可以在隐私设置中修改)"
-                        android:textSize="12sp"/>
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView_myComments"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <LinearLayout
-                    android:id="@+id/LinearLayout_moreComments"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="30dp"
-                    android:gravity="center">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="更多评论"
-                        android:textColor="#000000"/>
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        app:srcCompat="@drawable/logo_more" />
-                </LinearLayout>
-
-            </LinearLayout>
+                    android:layout_marginTop="4dp"
+                    android:layout_below="@+id/title2"/>
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/基本信息"

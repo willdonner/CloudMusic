@@ -16,6 +16,15 @@ public class User {
     private String backgroundUrl;//背景图Url
     private Bitmap avatarUrl_bitmap;//头像
     private Bitmap backgroundUrl_bitmap;//背景图
+    private String signature;//个性签名
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
 
     public Bitmap getAvatarUrl_bitmap() {
         return avatarUrl_bitmap;

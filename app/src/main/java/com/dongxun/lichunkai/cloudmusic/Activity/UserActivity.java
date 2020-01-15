@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -74,6 +75,8 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     private TextView textView_years;
     private TextView textView_level;
     private TextView textView_momentCount;
+    private TextView textView_edit;
+    private TextView textView_changeback;
 
     //viewpager相关
     private View view_index, view_moments;
@@ -96,6 +99,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     private TextView textView_likeCount;
     private TextView textView_likePlayCount;
     private TextView textView_createPlayListBeLike;
+    private LinearLayout LinearLayout_moreInfo;
 
     private SongSheet songSheet_like = new SongSheet();//我喜欢的音乐
 
@@ -159,6 +163,54 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     private void getData() {
         getUserInfo();
         getPlaylist();
+//        getEvent();
+    }
+
+    /**
+     * 获取用户动态
+     */
+    private void getEvent() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    final Request request = new Request.Builder()
+                            .url("https://neteasecloudmusicapi.willdonner.top/user/event?uid="+ Common.user.getUserId() +"&limit=10&lasttime="+ System.currentTimeMillis() +"")
+                            .build();
+                    Call call = Common.mOkHttpClient.newCall(request);
+                    call.enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+
+                        }
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            final String responseData = response.body().string();//处理返回的数据
+                            Log.e(TAG, "onResponse: "+responseData);
+                            //处理JSON
+                            try {
+                                JSONObject newResponse = new JSONObject(responseData);
+                                String code = newResponse.getString("code");
+                                if (code.equals("200")){
+                                    Log.e(TAG, "onResponse: 用户动态获取成功");
+                                    JSONArray events = newResponse.getJSONArray("events");
+                                    for (int i=0;i<events.length();i++) {
+                                        JSONObject event = events.getJSONObject(i);
+
+                                    }
+                                }else {
+                                    Log.e(TAG, "onResponse: 用户动态获取失败");
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     /**
@@ -473,6 +525,10 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         textView_years = findViewById(R.id.textView_years);
         textView_level = findViewById(R.id.textView_level);
         textView_momentCount = findViewById(R.id.textView_momentCount);
+        textView_edit = findViewById(R.id.textView_edit);
+        textView_edit.setOnClickListener(this);
+        textView_changeback = findViewById(R.id.textView_changeback);
+        textView_changeback.setOnClickListener(this);
 
         //实例化view
         viewPager = findViewById(R.id.viewpager);
@@ -502,6 +558,8 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView_createPlayList = view_index.findViewById(R.id.recyclerView_createPlayList);
         recyclerView_collection = view_index.findViewById(R.id.recyclerView_collection);
         textView_createPlayListBeLike = view_index.findViewById(R.id.textView_createPlayListBeLike);
+        LinearLayout_moreInfo = view_index.findViewById(R.id.LinearLayout_moreInfo);
+        LinearLayout_moreInfo.setOnClickListener(this);
     }
 
     /**
@@ -600,6 +658,20 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.CircleImageView_head:
                 //查看头像
 
+                break;
+            case R.id.LinearLayout_moreInfo:
+                //更多个人信息
+                showToast(this,"更多个人信息");
+                break;
+            case R.id.textView_edit:
+                //编辑资料
+                showToast(this,"编辑资料");
+                Intent intent = new Intent(this,EditMyInfoActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.textView_changeback:
+                //更换背景
+                showToast(this,"更换背景");
                 break;
         }
     }
