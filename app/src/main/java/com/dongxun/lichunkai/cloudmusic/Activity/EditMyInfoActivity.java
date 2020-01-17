@@ -94,6 +94,13 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
     private ArrayList<ArrayList<String>> options_city = new ArrayList<>();//市
     private com.bigkoo.pickerview.view.OptionsPickerView OptionsPickerView;
 
+    //修改哪一项数据的标识符(修改完成改为默认值：false)
+    private Boolean mark_nickName = false;//昵称
+    private Boolean mark_gender = false;//性别
+    private Boolean mark_birthday = false;//生日
+    private Boolean mark_place = false;//地区
+    private Boolean mark_signature = false;//签名
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +110,6 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         initStateBar();
         initView();
         updateUI();
-        initOptionPicker();
     }
 
 
@@ -269,6 +275,18 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                                             }
                                         });
                                     }
+                                    //修改地区
+                                    if (mark_place){
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                updateUI();
+                                            }
+                                        });
+                                        Common.user.setProvince(user_update.getProvince());
+                                        Common.user.setCity(user_update.getCity());
+                                        mark_place = false;
+                                    }
                                 }else {
                                     Log.e(TAG, "更新用户信息失败");
                                     //显示错误信息
@@ -347,20 +365,45 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         //添加数据
         options_province = addProvinceData(options_province);
         options_city = addCityData(options_city);
+        //获取默认选中项下标
+        int index_province = options_province.indexOf(ProvinceAndCodeUtil.getCityByCode(user_update.getProvince().substring(0,2)));
+        Log.e(TAG, "省份代码: "+user_update.getProvince());
+        Log.e(TAG, "省份默认选中项: "+index_province);
+        int index_city = options_city.get(index_province).indexOf(CityAndCodeUtil.getCityByCode(user_update.getCity().substring(0,4)));
+        Log.e(TAG, "省份代码: "+CityAndCodeUtil.getCityByCode(user_update.getCity().substring(0,4)));
+        Log.e(TAG, "省份默认选中项: "+index_city);
         //初始化选择器
         OptionsPickerView = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
             @Override
             public void onOptionsSelect(int options1, int options2, int options3, View v) {
                 //返回的分别是三个级别的选中位置
-                String tx = options_province.get(options1)
-                        + options_city.get(options1).get(options2);
-                Toast.makeText(EditMyInfoActivity.this, tx, Toast.LENGTH_SHORT).show();
+                String province = options_province.get(options1);//省名
+                String city = options_city.get(options1).get(options2);//市名
+                Toast.makeText(EditMyInfoActivity.this, province+"，"+city, Toast.LENGTH_SHORT).show();
+                //将名称转化为省市级代码
+                String code_province = ProvinceAndCodeUtil.getCodeByCity(province);
+                String code_city = CityAndCodeUtil.getCodeByCity(city);
+                Log.e(TAG, "省级代码: "+code_province);
+                Log.e(TAG, "市级代码: "+code_city);
+                showToast(EditMyInfoActivity.this,code_province+"，"+code_city);
+                //直辖市及其特别行政区作特殊判断，当前湖北省、海南省、新疆维吾尔族自治区、地区代码不完全，台湾省、海外全空。
+                if (code_province != null && code_city != null) {
+                    //修改数据
+                    user_update.setProvince(code_province+"0000");
+                    user_update.setCity(code_city+"00");
+                    Log.e(TAG, "省级代码: "+user_update.getProvince());
+                    Log.e(TAG, "市级代码: "+user_update.getCity());
+                    mark_place = true;
+                    updateMyInfo();
+                }
+
+
             }
         })
                 .setTitleText("城市选择")
                 .setContentTextSize(20)//设置滚轮文字大小
                 .setDividerColor(Color.LTGRAY)//设置分割线的颜色
-                .setSelectOptions(0, 0)//默认选中项
+                .setSelectOptions(index_province, index_city)//默认选中项
                 .setBgColor(Color.WHITE)
                 .setTitleBgColor(Color.WHITE)
                 .setTitleColor(Color.BLACK)
@@ -369,18 +412,25 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                 .setTextColorCenter(Color.RED)
                 .isRestoreItem(true)//切换时是否还原，设置默认选中第一项。
                 .isCenterLabel(false) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
-                .setLabels("省", "市", "区")
+                .setLabels("", "", "区")//不适应label,添加数据的时候已经带有"省","市"
                 .setOutSideColor(0x00000000) //设置外部遮罩颜色
                 .setOptionsSelectChangeListener(new OnOptionsSelectChangeListener() {
                     @Override
                     public void onOptionsSelectChanged(int options1, int options2, int options3) {
                         String province = options_province.get(options1);
                         String city = options_city.get(options1).get(options2);
-                        Toast.makeText(EditMyInfoActivity.this, province+"，"+city, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(EditMyInfoActivity.this, province+"，"+city, Toast.LENGTH_SHORT).show();
+                        String code_province = ProvinceAndCodeUtil.getCodeByCity(province);
+                        String code_city = CityAndCodeUtil.getCodeByCity(city);
+                        Log.e(TAG, "省级代码: "+code_province);
+                        Log.e(TAG, "市级代码: "+code_city);
+                        showToast(EditMyInfoActivity.this,code_province+"，"+code_city);
                     }
                 })
                 .build();
         OptionsPickerView.setPicker(options_province, options_city);//二级选择器
+        //弹出选择器
+        OptionsPickerView.show();
     }
 
     /**
@@ -475,7 +525,7 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.LinearLayout_place:
                 //地区(根据工具类里的省份和城市编码表实现)
-                OptionsPickerView.show();
+                initOptionPicker();
                 break;
             case R.id.LinearLayout_school:
                 //大学

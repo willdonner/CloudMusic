@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -77,6 +78,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     private TextView textView_momentCount;
     private TextView textView_edit;
     private TextView textView_changeback;
+    private ImageView imageView_back;
 
     //viewpager相关
     private View view_index, view_moments;
@@ -529,6 +531,8 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         textView_edit.setOnClickListener(this);
         textView_changeback = findViewById(R.id.textView_changeback);
         textView_changeback.setOnClickListener(this);
+        imageView_back = findViewById(R.id.imageView_back);
+        imageView_back.setOnClickListener(this);
 
         //实例化view
         viewPager = findViewById(R.id.viewpager);
@@ -645,6 +649,9 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case R.id.imageView_back:
+                finish();
+                break;
             case R.id.LinearLayout_index:
                 viewPager.setCurrentItem(0);
                 break;

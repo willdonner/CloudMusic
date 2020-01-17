@@ -267,6 +267,8 @@ public class CityAndCodeUtil {
         codeKeyMap.put("3412","阜阳市");
         cityKeyMap.put("宿州市","3413");
         codeKeyMap.put("3413","宿州市");
+        cityKeyMap.put("巢湖市","3414");
+        codeKeyMap.put("3414","巢湖市");
         cityKeyMap.put("六安市","3415");
         codeKeyMap.put("3415","六安市");
         cityKeyMap.put("池州市","3417");

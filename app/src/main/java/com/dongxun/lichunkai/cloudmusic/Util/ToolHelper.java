@@ -405,38 +405,37 @@ public class ToolHelper {
      * 添加省份
      */
     public static ArrayList<String> addProvinceData(ArrayList<String> options_province) {
-        options_province.add("直辖市");
-        options_province.add("特别行政区");
-        options_province.add("河北省");
-        options_province.add("山西省");
-        options_province.add("内蒙古");
-        options_province.add("辽宁省");
-        options_province.add("吉林省");
-        options_province.add("吉林省");
-        options_province.add("黑龙江省");
-        options_province.add("江苏省");
-        options_province.add("浙江省");
-        options_province.add("安徽省");
-        options_province.add("福建省");
-        options_province.add("江西省");
-        options_province.add("山东省");
-        options_province.add("河南省");
-        options_province.add("湖北省");
-        options_province.add("湖南省");
-        options_province.add("广东省");
-        options_province.add("广西省");
-        options_province.add("海南省");
-        options_province.add("四川省");
-        options_province.add("贵州省");
-        options_province.add("云南省");
-        options_province.add("西藏");
-        options_province.add("陕西省");
-        options_province.add("甘肃省");
-        options_province.add("青海省");
-        options_province.add("宁夏回族自治区");
-        options_province.add("新疆维吾尔自治区");
-        options_province.add("台湾省");
-        options_province.add("海外");
+        options_province.add("直辖市");//item1
+        options_province.add("特别行政区");//item2
+        options_province.add("河北省");//item3
+        options_province.add("山西省");//item4
+        options_province.add("内蒙古自治区");//item5
+        options_province.add("辽宁省");//item6
+        options_province.add("吉林省");//item7
+        options_province.add("黑龙江省");//item8
+        options_province.add("江苏省");//item9
+        options_province.add("浙江省");//item10
+        options_province.add("安徽省");//item11
+        options_province.add("福建省");//item12
+        options_province.add("江西省");//item13
+        options_province.add("山东省");//item14
+        options_province.add("河南省");//item15
+        options_province.add("湖北省");//item16
+        options_province.add("湖南省");//item17
+        options_province.add("广东省");//item18
+        options_province.add("广西壮族自治区");//item19
+        options_province.add("海南省");//item20
+        options_province.add("四川省");//item21
+        options_province.add("贵州省");//item22
+        options_province.add("云南省");//item23
+        options_province.add("西藏自治区");//item24
+        options_province.add("陕西省");//item25
+        options_province.add("甘肃省");//item26
+        options_province.add("青海省");//item27
+        options_province.add("宁夏回族自治区");//item28
+        options_province.add("新疆维吾尔自治区");//item29
+        options_province.add("台湾省");//item30
+        options_province.add("海外");//item31
         return options_province;
     }
 
@@ -579,7 +578,7 @@ public class ToolHelper {
         item11.add("宿州市");
         item11.add("巢湖市");
         item11.add("六安市");
-        item11.add("毫州市");
+        item11.add("亳州市");
         item11.add("池州市");
         item11.add("宣城市");
         options_city.add(item11);
@@ -660,7 +659,7 @@ public class ToolHelper {
         item16.add("黄冈市");
         item16.add("咸宁市");
         item16.add("随州市");
-        item16.add("恩施土家族苗族");
+        item16.add("恩施土家族苗族自治州");
         item16.add("仙桃市");
         item16.add("潜江市");
         item16.add("天门市");
@@ -680,7 +679,7 @@ public class ToolHelper {
         item17.add("永州市");
         item17.add("怀化市");
         item17.add("娄底市");
-        item17.add("湘西土家族苗族");
+        item17.add("湘西土家族苗族自治州");
         options_city.add(item17);
         ArrayList<String> item18 = new ArrayList<>();
         item18.add("广州市");
@@ -702,7 +701,7 @@ public class ToolHelper {
         item18.add("东莞市");
         item18.add("中山市");
         item18.add("潮州市");
-        item18.add("揭云市");
+        item18.add("揭阳市");
         item18.add("云浮市");
         options_city.add(item18);
         ArrayList<String> item19 = new ArrayList<>();
@@ -720,7 +719,7 @@ public class ToolHelper {
         item19.add("河池市");
         item19.add("来宾市");
         item19.add("崇左市");
-        options_city.add(item18);
+        options_city.add(item19);
         ArrayList<String> item20 = new ArrayList<>();
         item20.add("海口市");
         item20.add("三亚市");
@@ -772,9 +771,9 @@ public class ToolHelper {
         item22.add("六盘水市");
         item22.add("遵义市");
         item22.add("安顺市");
-        item22.add("铜仁地区");
+        item22.add("铜仁市");
         item22.add("黔西南布依族苗族自治州");
-        item22.add("毕节地区");
+        item22.add("毕节市");
         item22.add("黔东南苗族侗族自治州");
         item22.add("黔南布依族苗族自治州");
         options_city.add(item22);
@@ -800,7 +799,7 @@ public class ToolHelper {
         item24.add("拉萨市");
         item24.add("昌都地区");
         item24.add("山南地区");
-        item24.add("日喀则地区");
+        item24.add("日喀则市");
         item24.add("那曲地区");
         item24.add("阿里地区");
         item24.add("林芝地区");
@@ -835,7 +834,7 @@ public class ToolHelper {
         options_city.add(item26);
         ArrayList<String> item27 = new ArrayList<>();
         item27.add("西宁市");
-        item27.add("海东地区");
+        item27.add("海东市");
         item27.add("海北藏族自治州");
         item27.add("黄南藏族自治州");
         item27.add("海南藏族自治州");

@@ -159,7 +159,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         setViewpager();
         initReceiver();
 
-        getPermission();
+        createDirectory();
         updateUI();
         getBanner();
         setPersonalizedAdapter();
@@ -621,32 +621,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         File file_user=new File(path_user);
         if(!file_user.exists())
             file_user.mkdir();
-    }
-
-
-    /**
-     * 获取读写权限
-     */
-    private void getPermission() {
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            PermissionUtil.getInstance().requestSD(this);
-        }else {
-            createDirectory();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
-            case 502:
-                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    createDirectory();
-                }else {
-                    Toast.makeText(this,"用户拒绝了权限申请",Toast.LENGTH_SHORT).show();
-                }
-                break;
-        }
     }
 
     /**
