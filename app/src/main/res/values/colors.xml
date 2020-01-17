@@ -5,4 +5,5 @@
     <color name="colorAccent">#D81B60</color>
     <color name="grayStateBar">#ececec</color>
     <color name="white">#ffff</color>
+    <color name="red">#cd3d3d</color>
 </resources>

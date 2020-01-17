@@ -4,42 +4,28 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.dongxun.lichunkai.cloudmusic.Bean.User;
 import com.dongxun.lichunkai.cloudmusic.R;
 
 
 /**
- * description:自定义dialog
+ * 自定义性别选择器
  */
 
 public class GenderDialog extends Dialog {
 
     private TextView textView_female;//男
     private TextView textView_male;//女
+    private ImageView imageView_femaleHook;//男勾图标
+    private ImageView imageView_maleHook;//女勾图标
+    private User user;
 
-    /**
-     * 确认和取消按钮
-     */
-    private Button negtiveBn ,positiveBn;
-
-    public GenderDialog(Context context) {
+    public GenderDialog(Context context, User user) {
         super(context, R.style.CustomDialog);
     }
-
-    /**
-     * 都是内容数据
-     */
-    private String message;
-    private String title;
-    private String positive,negtive ;
-    private int imageResId = -1 ;
-
-    /**
-     * 底部是否只有一个按钮
-     */
-    private boolean isSingle = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +37,25 @@ public class GenderDialog extends Dialog {
         initView();
         //初始化界面控件的事件
         initEvent();
+        //刷新界面
+        refresh();
+    }
+
+    /**
+     * 更改界面组件显示
+     */
+    private void refresh() {
+        if (user.getGender().equals("0")){
+            //保密
+            imageView_femaleHook.setVisibility(View.GONE);
+            imageView_maleHook.setVisibility(View.GONE);
+        }else if (user.getGender().equals("1")){
+            //男
+            imageView_maleHook.setVisibility(View.GONE);
+        }else if (user.getGender().equals("2")){
+            //女
+            imageView_femaleHook.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -90,6 +95,8 @@ public class GenderDialog extends Dialog {
     private void initView() {
         textView_female = (TextView) findViewById(R.id.textView_female);
         textView_male = (TextView) findViewById(R.id.textView_male);
+        imageView_femaleHook = (ImageView) findViewById(R.id.imageView_femaleHook);
+        imageView_maleHook = (ImageView) findViewById(R.id.imageView_maleHook);
     }
 
     /**
@@ -100,6 +107,7 @@ public class GenderDialog extends Dialog {
         this.onClickBottomListener = onClickBottomListener;
         return this;
     }
+
     public interface OnClickBottomListener{
         /**
          * 点击确定按钮事件
@@ -109,6 +117,16 @@ public class GenderDialog extends Dialog {
          * 点击取消按钮事件
          */
         public void onMaleClick();
+    }
+
+    /**
+     * 设置性别显示
+     * @param user
+     * @return
+     */
+    public GenderDialog getUser(User user) {
+        this.user = user;
+        return this;
     }
 
 }

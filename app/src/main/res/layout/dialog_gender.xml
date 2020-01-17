@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minWidth="260dp"
+        android:minWidth="300dp"
         android:layout_centerInParent="true"
         android:paddingTop="16dp"
         android:background="@drawable/back_radius_button_black_white2"
@@ -33,10 +33,10 @@
                 android:text="男" />
 
             <ImageView
-                android:id="@+id/imageView19"
+                android:id="@+id/imageView_femaleHook"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                app:srcCompat="@drawable/logo_play" />
+                app:srcCompat="@drawable/logo_red_gou" />
         </LinearLayout>
 
         <LinearLayout
@@ -55,10 +55,10 @@
                 android:text="女" />
 
             <ImageView
-                android:id="@+id/imageView20"
+                android:id="@+id/imageView_maleHook"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                app:srcCompat="@drawable/logo_like2" />
+                app:srcCompat="@drawable/logo_red_gou" />
         </LinearLayout>
     </LinearLayout>
 

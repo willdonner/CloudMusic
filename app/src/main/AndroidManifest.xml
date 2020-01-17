@@ -16,7 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activity.EditMyInfoActivity"></activity>
+        <activity android:name=".Activity.EditMyInfoActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.UserActivity"
             android:screenOrientation="portrait" />

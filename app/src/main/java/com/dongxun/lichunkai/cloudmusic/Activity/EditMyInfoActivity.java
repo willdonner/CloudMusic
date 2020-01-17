@@ -2,19 +2,28 @@ package com.dongxun.lichunkai.cloudmusic.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
+import com.bigkoo.pickerview.listener.OnOptionsSelectChangeListener;
+import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
+import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.dongxun.lichunkai.cloudmusic.Bean.User;
 import com.dongxun.lichunkai.cloudmusic.Class.CircleImageView;
 import com.dongxun.lichunkai.cloudmusic.Common.Common;
@@ -29,12 +38,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.addCityData;
+import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.addProvinceData;
 import static com.dongxun.lichunkai.cloudmusic.Util.ToolHelper.showToast;
 
 public class EditMyInfoActivity extends AppCompatActivity implements View.OnClickListener {
@@ -68,8 +83,16 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
     private LinearLayout LinearLayout_errInfo;
     private TextView textView_errInfo;
     private LinearLayout LinearLayout_editting;
+    private EditText editText_signature;
+    private LinearLayout LinearLayout_editSignature;
+    private TextView textView_sinatureTextCount;
 
     private User user_update = new User();//上传的用户参数
+
+    //省市选择器
+    private ArrayList<String> options_province = new ArrayList<>();//省
+    private ArrayList<ArrayList<String>> options_city = new ArrayList<>();//市
+    private com.bigkoo.pickerview.view.OptionsPickerView OptionsPickerView;
 
 
     @Override
@@ -80,24 +103,25 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         initStateBar();
         initView();
         updateUI();
-
+        initOptionPicker();
     }
 
 
 
     private void updateUI() {
-        CircleImageView_head.setImageBitmap(Common.user.getAvatarUrl_bitmap());
-        textView_name.setText(Common.user.getNickname());
-        textView_gender.setText(Common.user.getGender().equals("0")?"保密":Common.user.getGender().equals("1")?"男":"女");//性别 0:保密 1:男性 2:女性
-//        imageView_QRCode.setImageBitmap(Common.user.getAvatarUrl_bitmap());
-        textView_birthday.setText(ToolHelper.millisecondToDate(new Long(Common.user.getBirthday())));
-        textView_place.setText(ProvinceAndCodeUtil.getCityByCode(Common.user.getProvince().substring(0,2)) +" "+ CityAndCodeUtil.getCityByCode(Common.user.getCity().substring(0,4)));
-        Log.e(TAG, "updateUI: "+Common.user.getProvince()+"，"+Common.user.getCity());
-        if (Common.user.getSignature() != null) textView_signature.setText(Common.user.getSignature());
-//        textView_school.setText(Common.user.getNickname());
+        CircleImageView_head.setImageBitmap(user_update.getAvatarUrl_bitmap());
+        textView_name.setText(user_update.getNickname());
+        textView_gender.setText(user_update.getGender().equals("0")?"保密":user_update.getGender().equals("1")?"男":"女");//性别 0:保密 1:男性 2:女性
+//        imageView_QRCode.setImageBitmap(user_update.getAvatarUrl_bitmap());
+        textView_birthday.setText(ToolHelper.millisecondToDate(new Long(user_update.getBirthday())));
+        textView_place.setText(ProvinceAndCodeUtil.getCityByCode(user_update.getProvince().substring(0,2)) +" "+ CityAndCodeUtil.getCityByCode(user_update.getCity().substring(0,4)));
+        Log.e(TAG, "updateUI: "+user_update.getProvince()+"，"+user_update.getCity());
+        if (user_update.getSignature() != null) textView_signature.setText(user_update.getSignature());
+//        textView_school.setText(user_update.getNickname());
     }
 
     private void initView() {
+        user_update.setAvatarUrl_bitmap(Common.user.getAvatarUrl_bitmap());
         user_update.setNickname(Common.user.getNickname());
         user_update.setGender(Common.user.getGender());
         user_update.setSignature(Common.user.getSignature());
@@ -167,6 +191,21 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         textView_signature = findViewById(R.id.textView_signature);
         imageView_back = findViewById(R.id.imageView_back);
         imageView_back.setOnClickListener(this);
+
+        editText_signature = findViewById(R.id.editText_signature);
+        LinearLayout_editSignature = findViewById(R.id.LinearLayout_editSignature);
+        LinearLayout_editSignature.setVisibility(View.GONE);
+        textView_sinatureTextCount = findViewById(R.id.textView_sinatureTextCount);
+        editText_signature.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                textView_sinatureTextCount.setText(300 - editText_signature.getText().length()+"");
+            }
+        });
     }
 
     /**
@@ -215,7 +254,7 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                                 });
                                 if (code.equals("200")){
                                     Log.e(TAG, "更新用户信息成功");
-                                    if (editText_nickName.getVisibility() == View.VISIBLE){
+                                    if (LinearLayout_editNickName.getVisibility() == View.VISIBLE){
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
@@ -226,13 +265,14 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                                                 LinearLayout_editNickName.setVisibility(View.GONE);
                                                 textView_save.setVisibility(View.GONE);
                                                 textView_title.setText("我的资料");
+                                                updateUI();
                                             }
                                         });
                                     }
                                 }else {
                                     Log.e(TAG, "更新用户信息失败");
                                     //显示错误信息
-                                    if (editText_nickName.getVisibility() == View.VISIBLE){
+                                    if (LinearLayout_editNickName.getVisibility() == View.VISIBLE){
                                         final String message = newResponse.getString("message");
                                         runOnUiThread(new Runnable() {
                                             @Override
@@ -264,6 +304,7 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
         et.requestFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         imm.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT);
+        et.setSelection(et.getText().length());
     }
 
     /**
@@ -275,22 +316,101 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
     }
 
     /**
-     * 性别dialog
+     * 性别修改dialog(信息修改完成后不做提示)
      */
-    private void initDialog() {
-        final GenderDialog dialog = new GenderDialog(this);
-        dialog.setOnClickBottomListener(new GenderDialog.OnClickBottomListener() {
+    private void initGenderDialog() {
+        final GenderDialog dialog = new GenderDialog(this,user_update);
+        dialog.getUser(user_update).setOnClickBottomListener(new GenderDialog.OnClickBottomListener() {
             @Override
             public void onFemaleClick() {
                 //男
-                showToast(EditMyInfoActivity.this,"男");
+                user_update.setGender("1");
+                updateUI();
+                updateMyInfo();
+                dialog.dismiss();
             }
             @Override
             public void onMaleClick() {
                 //女
-                showToast(EditMyInfoActivity.this,"女");
+                user_update.setGender("2");
+                updateUI();
+                updateMyInfo();
+                dialog.dismiss();
             }
         }).show();
+    }
+
+    /**
+     * 省，市选择器
+     */
+    private void initOptionPicker() {
+        //添加数据
+        options_province = addProvinceData(options_province);
+        options_city = addCityData(options_city);
+        //初始化选择器
+        OptionsPickerView = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(int options1, int options2, int options3, View v) {
+                //返回的分别是三个级别的选中位置
+                String tx = options_province.get(options1)
+                        + options_city.get(options1).get(options2);
+                Toast.makeText(EditMyInfoActivity.this, tx, Toast.LENGTH_SHORT).show();
+            }
+        })
+                .setTitleText("城市选择")
+                .setContentTextSize(20)//设置滚轮文字大小
+                .setDividerColor(Color.LTGRAY)//设置分割线的颜色
+                .setSelectOptions(0, 0)//默认选中项
+                .setBgColor(Color.WHITE)
+                .setTitleBgColor(Color.WHITE)
+                .setTitleColor(Color.BLACK)
+                .setCancelColor(Color.RED)
+                .setSubmitColor(Color.RED)
+                .setTextColorCenter(Color.RED)
+                .isRestoreItem(true)//切换时是否还原，设置默认选中第一项。
+                .isCenterLabel(false) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
+                .setLabels("省", "市", "区")
+                .setOutSideColor(0x00000000) //设置外部遮罩颜色
+                .setOptionsSelectChangeListener(new OnOptionsSelectChangeListener() {
+                    @Override
+                    public void onOptionsSelectChanged(int options1, int options2, int options3) {
+                        String province = options_province.get(options1);
+                        String city = options_city.get(options1).get(options2);
+                        Toast.makeText(EditMyInfoActivity.this, province+"，"+city, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .build();
+        OptionsPickerView.setPicker(options_province, options_city);//二级选择器
+    }
+
+    /**
+     * 日期选择对话框
+     */
+    private void initDataPicker() {
+        Date d = new Date(new Long(user_update.getBirthday()));
+        SimpleDateFormat sdf_year = new SimpleDateFormat("yyyy");
+        SimpleDateFormat sdf_month = new SimpleDateFormat("MM");
+        SimpleDateFormat sdf_day = new SimpleDateFormat("dd");
+        final int mYear = Integer.parseInt(sdf_year.format(d));
+        final int mMonth = Integer.parseInt(sdf_month.format(d));
+        final int mDay = Integer.parseInt(sdf_day.format(d));
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                R.style.MyDatePickerDialogTheme,//主题颜色
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        //设置生日
+                        Log.e(TAG, "onClick: "+year+"，"+month+"，"+dayOfMonth);
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(year, month, dayOfMonth, 0, 0, 0);
+                        user_update.setBirthday(calendar.getTimeInMillis()+"");
+                        updateMyInfo();
+                        updateUI();
+                    }
+                },
+                mYear, mMonth-1, mDay);
+        datePickerDialog.show();
     }
 
     @Override
@@ -305,15 +425,26 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                     textView_title.setText("我的资料");
                     LinearLayout_main.setVisibility(View.VISIBLE);
 
+                    LinearLayout_editSignature.setVisibility(View.GONE);
+
                 }else {
                     finish();
                 }
                 break;
             case R.id.textView_save:
                 //保存
-                if (editText_nickName.getVisibility() == View.VISIBLE) {
+                if (LinearLayout_editNickName.getVisibility() == View.VISIBLE) {
                     user_update.setNickname(editText_nickName.getText().toString());
                     LinearLayout_editting.setVisibility(View.VISIBLE);
+                }
+                if (editText_signature.getVisibility() == View.VISIBLE) {
+                    user_update.setSignature(editText_signature.getText().toString());
+                    hideInput();
+                    updateUI();
+                    LinearLayout_editSignature.setVisibility(View.GONE);
+                    textView_save.setVisibility(View.GONE);
+                    textView_title.setText("我的资料");
+                    LinearLayout_main.setVisibility(View.VISIBLE);
                 }
                 updateMyInfo();
                 break;
@@ -327,12 +458,12 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                 textView_save.setVisibility(View.VISIBLE);
                 LinearLayout_main.setVisibility(View.GONE);
                 LinearLayout_editNickName.setVisibility(View.VISIBLE);
-                editText_nickName.setText(Common.user.getNickname());
+                editText_nickName.setText(user_update.getNickname());
                 showInput(editText_nickName);
                 break;
             case R.id.LinearLayout_gender:
                 //性别，dialog
-                initDialog();
+                initGenderDialog();
                 break;
             case R.id.LinearLayout_QRCode:
                 //二维码
@@ -340,11 +471,11 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.LinearLayout_birthday:
                 //生日
-
+                initDataPicker();
                 break;
             case R.id.LinearLayout_place:
-                //地区
-
+                //地区(根据工具类里的省份和城市编码表实现)
+                OptionsPickerView.show();
                 break;
             case R.id.LinearLayout_school:
                 //大学
@@ -352,7 +483,13 @@ public class EditMyInfoActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.LinearLayout_signature:
                 //个性签名
-
+                //昵称
+                textView_title.setText("修改签名");
+                textView_save.setVisibility(View.VISIBLE);
+                LinearLayout_main.setVisibility(View.GONE);
+                LinearLayout_editSignature.setVisibility(View.VISIBLE);
+                editText_signature.setText(user_update.getSignature());
+                showInput(editText_signature);
                 break;
 
         }
