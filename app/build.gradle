@@ -39,7 +39,7 @@ dependencies {
     implementation 'com.youth.banner:banner:1.4.10'
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     //gif图
-    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.15'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.23'
     //滚动选择器
     implementation 'com.contrarywind:Android-PickerView:4.1.9'
 }
